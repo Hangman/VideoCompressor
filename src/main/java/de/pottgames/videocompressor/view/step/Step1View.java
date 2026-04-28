@@ -1,7 +1,12 @@
-package org.example.view.step;
+package de.pottgames.videocompressor.view.step;
+
+import de.pottgames.videocompressor.engine.Engine;
+import de.pottgames.videocompressor.view.StepView;
+import de.pottgames.videocompressor.view.cell.FileListCell;
 
 import java.io.File;
 import java.util.List;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -11,9 +16,6 @@ import javafx.scene.control.ListView;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
-import org.example.engine.Engine;
-import org.example.view.StepView;
-import org.example.view.cell.FileListCell;
 
 /**
  * Step 1 of the video compressor wizard: allows the user to add video files

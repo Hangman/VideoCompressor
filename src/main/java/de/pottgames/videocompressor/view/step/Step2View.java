@@ -1,4 +1,4 @@
-package org.example.view.step;
+package de.pottgames.videocompressor.view.step;
 
 import java.util.function.Consumer;
 import javafx.collections.FXCollections;
@@ -8,7 +8,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import org.example.view.StepView;
+import de.pottgames.videocompressor.view.StepView;
 
 /**
  * Step 2 of the video compressor wizard: allows the user to select a processing preset.

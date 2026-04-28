@@ -1,5 +1,5 @@
-module org.example {
-    // JavaFX modules
+module de.pottgames.videocompressor {
+// JavaFX modules
     requires javafx.controls;
     requires javafx.fxml;
 
@@ -11,14 +11,14 @@ module org.example {
     requires java.logging;
 
     // Export packages for application use
-    exports org.example;
-    exports org.example.view;
-    exports org.example.view.cell;
-    exports org.example.view.step;
+    exports de.pottgames.videocompressor;
+    exports de.pottgames.videocompressor.view;
+    exports de.pottgames.videocompressor.view.cell;
+    exports de.pottgames.videocompressor.view.step;
 
     // Open packages for JavaFX FXML reflection
-    opens org.example to javafx.fxml;
-    opens org.example.view to javafx.fxml;
-    opens org.example.view.cell to javafx.fxml;
-    opens org.example.view.step to javafx.fxml;
+    opens de.pottgames.videocompressor to javafx.fxml;
+    opens de.pottgames.videocompressor.view to javafx.fxml;
+    opens de.pottgames.videocompressor.view.cell to javafx.fxml;
+    opens de.pottgames.videocompressor.view.step to javafx.fxml;
 }

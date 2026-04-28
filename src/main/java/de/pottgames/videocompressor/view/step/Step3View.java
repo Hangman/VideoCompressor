@@ -1,4 +1,4 @@
-package org.example.view.step;
+package de.pottgames.videocompressor.view.step;
 
 import java.util.function.Consumer;
 import javafx.geometry.Insets;
@@ -9,7 +9,7 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
-import org.example.view.StepView;
+import de.pottgames.videocompressor.view.StepView;
 
 /**
  * Step 3 of the video compressor wizard: displays the processing progress,

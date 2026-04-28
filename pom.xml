@@ -6,7 +6,7 @@
 >
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.example</groupId>
+    <groupId>de.pottgames</groupId>
     <artifactId>VideoCompressor</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
@@ -86,7 +86,8 @@
                     <launcher>videoCompressor</launcher>
                     <jlinkImageName>VideoCompressor</jlinkImageName>
                     <jlinkZipName>VideoCompressor</jlinkZipName>
-                    <mainClass>org.example/org.example.App</mainClass>
+                    <mainClass
+                    >de.pottgames.videocompressor/de.pottgames.videocompressor.App</mainClass>
                 </configuration>
             </plugin>
 
@@ -107,7 +108,8 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>org.example.App</mainClass>
+                            <mainClass
+                            >de.pottgames.videocompressor.App</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

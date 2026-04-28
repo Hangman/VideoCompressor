@@ -1,4 +1,4 @@
-package org.example.view.cell;
+package de.pottgames.videocompressor.view.cell;
 
 import java.io.File;
 import javafx.geometry.Pos;

@@ -1,4 +1,4 @@
-package org.example.view;
+package de.pottgames.videocompressor.view;
 
 import javafx.scene.Node;
 

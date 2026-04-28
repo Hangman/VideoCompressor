@@ -1,4 +1,4 @@
-package org.example.engine;
+package de.pottgames.videocompressor.engine;
 
 import java.io.File;
 import java.util.List;
