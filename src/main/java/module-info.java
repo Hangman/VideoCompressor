@@ -9,6 +9,7 @@ module de.pottgames.videocompressor {
     // Standard Java modules
     requires java.desktop;
     requires java.logging;
+	requires javafx.base;
 
     // Export packages for application use
     exports de.pottgames.videocompressor;

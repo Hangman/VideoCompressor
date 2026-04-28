@@ -22,14 +22,14 @@ import javafx.stage.Stage;
 
 public class App extends Application {
 
-    private static final int TOTAL_STEPS = 3;
-    private int currentStep = 1;
+    private StepView currentStep;
 
     private Step1View step1View;
     private Step2View step2View;
     private Step3View step3View;
 
     private Button backButton;
+    private Button centerButton;
     private Button nextButton;
     private BorderPane root;
 
@@ -44,29 +44,20 @@ public class App extends Application {
         step2View = new Step2View();
         step3View = new Step3View();
 
-        // Register file list listener once to update next button visibility
-        step1View
-            .getFiles()
-            .addListener(
-                (javafx.collections.ListChangeListener<File>) c -> {
-                    nextButton.setVisible(!step1View.getFiles().isEmpty());
-                }
-            );
-
         // Initialize the root layout
         root = new BorderPane();
         root.setPadding(new Insets(0));
 
         // Create navigation buttons
         backButton = createNavigationButton("← Zurück", false);
+        centerButton = createNavigationButton("", false);
         nextButton = createNavigationButton("Weiter →", true);
 
         // Create bottom navigation bar
-        HBox navBar = createNavBar();
+        BorderPane navBar = createNavBar();
         root.setBottom(navBar);
 
-        // Set initial step
-        updateView();
+        switchStep(null, false);
 
         Scene scene = new Scene(root, 900, 650);
         stage.setTitle("VideoCompressor");
@@ -76,8 +67,8 @@ public class App extends Application {
 
     private Button createNavigationButton(String text, boolean primary) {
         Button button = new Button(text);
-        button.setMinWidth(120);
-        button.setMaxWidth(Double.MAX_VALUE);
+        button.setMinWidth(160);
+        button.setMaxWidth(200);
         button.setPadding(new Insets(10, 16, 10, 16));
 
         if (primary) {
@@ -94,68 +85,38 @@ public class App extends Application {
         return button;
     }
 
-    private HBox createNavBar() {
-        HBox navBar = new HBox(backButton, nextButton);
-        navBar.setAlignment(Pos.CENTER_LEFT);
+    private BorderPane createNavBar() {
+        BorderPane navBar = new BorderPane();
         navBar.setPadding(new Insets(16, 20, 16, 20));
-        navBar.setSpacing(12);
-
-        // Make next button expand to fill remaining space (pushes it to the right)
-        HBox.setHgrow(nextButton, javafx.scene.layout.Priority.ALWAYS);
-        nextButton.setAlignment(Pos.CENTER_RIGHT);
+        navBar.setLeft(backButton);
+        navBar.setCenter(centerButton);
+        navBar.setRight(nextButton);
 
         // Button click handlers
-        backButton.setOnAction(e -> navigateToStep(currentStep - 1));
-        nextButton.setOnAction(e -> {
-            // Validate current step before proceeding
-            if (currentStep == 1 && step1View.getFiles().isEmpty()) {
-                return; // Don't proceed without files
-            }
-            if (currentStep == 2 && step2View.getSelectedPreset() == null) {
-                return; // Don't proceed without a preset
-            }
-            navigateToStep(currentStep + 1);
-        });
+        backButton.setOnAction(e -> switchStep(currentStep, true));
+        nextButton.setOnAction(e -> switchStep(currentStep, false));
 
         return navBar;
     }
 
-    private void navigateToStep(int step) {
-        if (step < 1 || step > TOTAL_STEPS) {
-            return;
-        }
-        currentStep = step;
-        updateView();
-    }
+    private void switchStep(StepView fromStep, boolean goBack) {
+        StepView nextStep;
 
-    private void updateView() {
-        // Update which step's view is displayed in the center
-        StepView currentView = switch (currentStep) {
-            case 1 -> step1View;
-            case 2 -> step2View;
-            case 3 -> step3View;
-            default -> throw new IllegalStateException(
-                "Unexpected step: " + currentStep
-            );
-        };
-
-        this.root.setCenter(currentView.getNode());
-
-        // Update button states
-        backButton.setVisible(currentStep > 1);
-        nextButton.setText(currentStep == TOTAL_STEPS ? "Finish" : "Weiter →");
-
-        // Step-specific logic
-        if (currentStep == 2) {
-            step2View.setSelectionListener(preset -> {
-                // Enable next button when a preset is selected
-                nextButton.setDisable(false);
-            });
+        if (fromStep == step1View) {
+            nextStep = goBack ? step1View : step2View;
+        } else if (fromStep == step2View) {
+            nextStep = goBack ? step1View : step3View;
+        } else if (fromStep == step3View) {
+            nextStep = goBack ? step2View : step3View;
+        } else {
+            nextStep = step1View;
         }
 
-        if (currentStep == 1) {
-            // Ensure visibility reflects current file list state
-            nextButton.setVisible(!step1View.getFiles().isEmpty());
+        if (nextStep != fromStep) {
+            if (fromStep != null) fromStep.deactivate();
+            this.root.setCenter(nextStep.getNode());
+            currentStep = nextStep;
+            nextStep.activate(backButton, centerButton, nextButton);
         }
     }
 

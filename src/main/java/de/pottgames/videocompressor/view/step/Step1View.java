@@ -3,11 +3,10 @@ package de.pottgames.videocompressor.view.step;
 import de.pottgames.videocompressor.engine.Engine;
 import de.pottgames.videocompressor.view.StepView;
 import de.pottgames.videocompressor.view.cell.FileListCell;
-
 import java.io.File;
 import java.util.List;
-
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
@@ -28,6 +27,8 @@ public class Step1View implements StepView {
     private final ListView<File> fileListView;
     private final Label dropLabel;
     private final VBox root;
+    private Button nextButton;
+    private boolean activated = false;
 
     public Step1View() {
         fileListView = new ListView<>(files);
@@ -48,6 +49,10 @@ public class Step1View implements StepView {
         VBox.setVgrow(fileListView, Priority.ALWAYS);
 
         setupDragAndDrop();
+
+        files.addListener(
+            (ListChangeListener<File>) _ -> updateNextButtonState()
+        );
     }
 
     @Override
@@ -113,5 +118,31 @@ public class Step1View implements StepView {
         root.setOnDragExited(event -> {
             event.consume();
         });
+    }
+
+    @Override
+    public void activate(
+        Button backButton,
+        Button centerButton,
+        Button nextButton
+    ) {
+        activated = true;
+        centerButton.setText("Dateien hinzufügen");
+        centerButton.setVisible(true);
+        centerButton.setDisable(false);
+        backButton.setVisible(false);
+        this.nextButton = nextButton;
+        updateNextButtonState();
+    }
+
+    private void updateNextButtonState() {
+        if (!activated) return;
+
+        nextButton.setVisible(!files.isEmpty());
+    }
+
+    @Override
+    public void deactivate() {
+        activated = false;
     }
 }

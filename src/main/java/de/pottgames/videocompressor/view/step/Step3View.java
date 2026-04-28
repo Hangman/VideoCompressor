@@ -1,15 +1,16 @@
 package de.pottgames.videocompressor.view.step;
 
+import de.pottgames.videocompressor.view.StepView;
 import java.util.function.Consumer;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.Button;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
-import de.pottgames.videocompressor.view.StepView;
 
 /**
  * Step 3 of the video compressor wizard: displays the processing progress,
@@ -133,5 +134,19 @@ public class Step3View implements StepView {
         if (cancelListener != null) {
             cancelListener.accept(true);
         }
+    }
+
+    @Override
+    public void activate(
+        Button backButton,
+        Button centerButton,
+        Button nextButton
+    ) {
+        // TODO
+    }
+
+    @Override
+    public void deactivate() {
+        // TODO
     }
 }
