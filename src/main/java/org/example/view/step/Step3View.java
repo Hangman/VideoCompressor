@@ -31,31 +31,19 @@ public class Step3View implements StepView {
         progressBar.setPrefWidth(400);
 
         statusLabel = new Label("Ready to process");
-        statusLabel.setFont(new Font(14));
-        statusLabel.setStyle("-fx-text-fill: #333;");
 
         logArea = new TextArea();
         logArea.setPrefRowCount(8);
         logArea.setWrapText(true);
         logArea.setEditable(false);
-        logArea.setStyle(
-                "-fx-background-color: #f5f5f5; " +
-                        "-fx-border-color: #ddd; " +
-                        "-fx-border-radius: 4; " +
-                        "-fx-font-family: monospace; " +
-                        "-fx-font-size: 12px;"
-        );
+        logArea.setStyle("-fx-font-family: monospace; ");
 
         startButton = new Button("Start Processing");
-        startButton.setStyle(
-            "-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 24;"
-        );
+        startButton.setStyle("-fx-padding: 8 24;");
         startButton.setOnAction(e -> onStartClicked());
 
         cancelButton = new Button("Cancel");
-        cancelButton.setStyle(
-            "-fx-background-color: #f44336; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 24;"
-        );
+        cancelButton.setStyle("-fx-padding: 8 24;");
         cancelButton.setOnAction(e -> onCancelClicked());
         cancelButton.setVisible(false);
 
@@ -102,7 +90,7 @@ public class Step3View implements StepView {
         startButton.setVisible(true);
         cancelButton.setVisible(false);
         statusLabel.setText("Processing complete!");
-        statusLabel.setStyle("-fx-text-fill: #4CAF50;");
+        // Status color handled by Dracula theme
         progressBar.setProgress(1);
         addLogEntry("Processing completed successfully.");
     }
@@ -112,7 +100,7 @@ public class Step3View implements StepView {
         startButton.setVisible(true);
         cancelButton.setVisible(false);
         statusLabel.setText("Processing failed");
-        statusLabel.setStyle("-fx-text-fill: #f44336;");
+        // Status color handled by Dracula theme
         progressBar.setProgress(-1);
         addLogEntry("Error: " + error);
     }

@@ -23,9 +23,6 @@ public class FileListCell extends ListCell<File> {
         nameLabel.setMaxWidth(Double.MAX_VALUE);
 
         removeButton = new Button("✕");
-        removeButton.setStyle(
-            "-fx-min-width: 24px; -fx-max-width: 24px; -fx-min-height: 24px; -fx-max-height: 24px;"
-        );
         removeButton.setOnAction(e -> {
             int index = getIndex();
             if (index >= 0 && index < getListView().getItems().size()) {
@@ -35,7 +32,6 @@ public class FileListCell extends ListCell<File> {
 
         root = new HBox(8, nameLabel, removeButton);
         root.setAlignment(Pos.CENTER_LEFT);
-        root.setStyle("-fx-padding: 4px 8px;");
         HBox.setHgrow(nameLabel, Priority.ALWAYS);
     }
 
@@ -49,7 +45,6 @@ public class FileListCell extends ListCell<File> {
         } else {
             nameLabel.setText(file.getName());
             setGraphic(root);
-            setStyle("-fx-background-color: transparent;");
         }
     }
 }

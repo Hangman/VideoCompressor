@@ -35,7 +35,6 @@ public class Step1View implements StepView {
             "Drag & drop video files here\nor click the button below to browse"
         );
         dropLabel.setWrapText(true);
-        dropLabel.setStyle("-fx-text-fill: #999; -fx-font-size: 14px;");
 
         Button addFilesButton = new Button("Add Files");
         addFilesButton.setPrefWidth(200);
@@ -104,14 +103,10 @@ public class Step1View implements StepView {
 
         // Style the drop area when dragging over
         root.setOnDragEntered(event -> {
-            dropLabel.setStyle(
-                "-fx-text-fill: #0077cc; -fx-font-size: 14px; -fx-font-weight: bold;"
-            );
             event.consume();
         });
 
         root.setOnDragExited(event -> {
-            dropLabel.setStyle("-fx-text-fill: #999; -fx-font-size: 14px;");
             event.consume();
         });
     }

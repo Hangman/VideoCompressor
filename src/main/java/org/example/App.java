@@ -3,7 +3,8 @@
  */
 package org.example;
 
-import atlantafx.base.theme.Dracula;
+import atlantafx.base.theme.PrimerLight;
+import atlantafx.base.theme.Styles;
 import java.io.File;
 import javafx.application.Application;
 import javafx.collections.ListChangeListener;
@@ -35,7 +36,7 @@ public class App extends Application {
     @Override
     public void start(Stage stage) {
         Application.setUserAgentStylesheet(
-            new Dracula().getUserAgentStylesheet()
+            new PrimerLight().getUserAgentStylesheet()
         );
 
         // Initialize step views
@@ -71,54 +72,14 @@ public class App extends Application {
         button.setPadding(new Insets(10, 16, 10, 16));
 
         if (primary) {
-            button.setStyle(
-                "-fx-background-color: #2196F3; " +
-                    "-fx-text-fill: white; " +
-                    "-fx-font-size: 14px; " +
-                    "-fx-font-weight: bold; " +
-                    "-fx-cursor: hand;"
-            );
-            button.setOnMouseEntered(e ->
-                button.setStyle(
-                    "-fx-background-color: #1976D2; " +
-                        "-fx-text-fill: white; " +
-                        "-fx-font-size: 14px; " +
-                        "-fx-font-weight: bold; " +
-                        "-fx-cursor: hand;"
-                )
-            );
-            button.setOnMouseExited(e ->
-                button.setStyle(
-                    "-fx-background-color: #2196F3; " +
-                        "-fx-text-fill: white; " +
-                        "-fx-font-size: 14px; " +
-                        "-fx-font-weight: bold; " +
-                        "-fx-cursor: hand;"
-                )
-            );
+            button.setStyle("-fx-cursor: hand;");
+            button.getStyleClass().add(Styles.ACCENT);
+            button.setOnMouseEntered(e -> button.setStyle("-fx-cursor: hand;"));
+            button.setOnMouseExited(e -> button.setStyle("-fx-cursor: hand;"));
         } else {
-            button.setStyle(
-                "-fx-background-color: #E0E0E0; " +
-                    "-fx-text-fill: #333; " +
-                    "-fx-font-size: 14px; " +
-                    "-fx-cursor: hand;"
-            );
-            button.setOnMouseEntered(e ->
-                button.setStyle(
-                    "-fx-background-color: #BDBDBD; " +
-                        "-fx-text-fill: #333; " +
-                        "-fx-font-size: 14px; " +
-                        "-fx-cursor: hand;"
-                )
-            );
-            button.setOnMouseExited(e ->
-                button.setStyle(
-                    "-fx-background-color: #E0E0E0; " +
-                        "-fx-text-fill: #333; " +
-                        "-fx-font-size: 14px; " +
-                        "-fx-cursor: hand;"
-                )
-            );
+            button.setStyle("-fx-cursor: hand;");
+            button.setOnMouseEntered(e -> button.setStyle("-fx-cursor: hand;"));
+            button.setOnMouseExited(e -> button.setStyle("-fx-cursor: hand;"));
         }
 
         return button;
@@ -129,11 +90,6 @@ public class App extends Application {
         navBar.setAlignment(Pos.CENTER_LEFT);
         navBar.setPadding(new Insets(16, 20, 16, 20));
         navBar.setSpacing(12);
-        navBar.setStyle(
-            "-fx-background-color: #FAFAFA; " +
-                "-fx-border-color: #E0E0E0; " +
-                "-fx-border-width: 1 0 0 0;"
-        );
 
         // Make next button expand to fill remaining space (pushes it to the right)
         HBox.setHgrow(nextButton, javafx.scene.layout.Priority.ALWAYS);

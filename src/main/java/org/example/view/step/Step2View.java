@@ -116,14 +116,8 @@ public class Step2View implements StepView {
 
         detailLabel = new Label("Select a preset to see details");
         detailLabel.setWrapText(true);
-        detailLabel.setStyle(
-            "-fx-text-fill: #666; -fx-font-size: 13px; -fx-padding: 10px;"
-        );
 
         sizeLabel = new Label("Estimated output size: —");
-        sizeLabel.setStyle(
-            "-fx-text-fill: #0077cc; -fx-font-size: 13px; -fx-font-weight: bold;"
-        );
 
         VBox detailBox = new VBox(5, detailLabel, sizeLabel);
         detailBox.setPadding(new Insets(10, 0, 0, 0));
@@ -138,12 +132,7 @@ public class Step2View implements StepView {
         VBox.setVgrow(presetListView, Priority.ALWAYS);
 
         // Style the list view
-        presetListView.setStyle(
-            "-fx-background-color: transparent; -fx-border-color: #ddd; -fx-border-radius: 4;"
-        );
-        detailLabel.setStyle(
-            "-fx-text-fill: #666; -fx-font-size: 13px; -fx-padding: 10px; -fx-background-color: #f9f9f9; -fx-border-radius: 4;"
-        );
+        presetListView.setStyle("-fx-background-color: transparent;");
     }
 
     @Override
@@ -185,16 +174,12 @@ public class Step2View implements StepView {
 
         public PresetListCell() {
             nameLabel = new Label();
-            nameLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
 
             sizeIndicator = new Label();
-            sizeIndicator.setStyle("-fx-font-size: 11px; -fx-text-fill: #888;");
 
             root = new VBox(4, nameLabel, sizeIndicator);
             root.setPadding(new Insets(8, 12, 8, 12));
-            root.setStyle(
-                "-fx-background-color: transparent; -fx-border-radius: 4;"
-            );
+            root.setStyle("-fx-background-color: transparent;");
         }
 
         @Override
@@ -213,7 +198,7 @@ public class Step2View implements StepView {
                 // Style selected item
                 if (isSelected()) {
                     root.setStyle(
-                        "-fx-background-color: #e3f2fd; -fx-border-color: #2196f3; -fx-border-width: 1; -fx-border-radius: 4;"
+                        "-fx-border-color: #2196f3; -fx-border-width: 1;"
                     );
                 } else {
                     root.setStyle("-fx-background-color: transparent;");
