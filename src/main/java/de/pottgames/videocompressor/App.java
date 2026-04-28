@@ -9,15 +9,18 @@ import de.pottgames.videocompressor.view.StepView;
 import de.pottgames.videocompressor.view.step.Step1View;
 import de.pottgames.videocompressor.view.step.Step2View;
 import de.pottgames.videocompressor.view.step.Step3View;
-import java.io.File;
 import javafx.application.Application;
-import javafx.collections.ListChangeListener;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 
 public class App extends Application {
@@ -52,6 +55,10 @@ public class App extends Application {
         backButton = createNavigationButton("← Zurück", false);
         centerButton = createNavigationButton("", false);
         nextButton = createNavigationButton("Weiter →", true);
+
+        // Create stepper progress indicator
+        HBox stepper = createStepper();
+        root.setTop(stepper);
 
         // Create bottom navigation bar
         BorderPane navBar = createNavBar();
@@ -118,6 +125,95 @@ public class App extends Application {
             currentStep = nextStep;
             nextStep.activate(backButton, centerButton, nextButton);
         }
+    }
+
+    private HBox createStepper() {
+        HBox stepper = new HBox();
+        stepper.setPadding(new Insets(15, 20, 15, 20));
+        stepper.setAlignment(Pos.CENTER);
+        stepper.setSpacing(0);
+
+        // Step 1: Import
+        Circle step1Ring = new Circle(18);
+        step1Ring.setFill(javafx.scene.paint.Color.TRANSPARENT);
+        step1Ring.setStroke(javafx.scene.paint.Color.web("#8be9fd"));
+        step1Ring.setStrokeWidth(3);
+
+        Label step1Number = new Label("1");
+        step1Number.setStyle(
+            "-fx-text-fill: #8be9fd; -fx-font-size: 14px; -fx-font-weight: bold;"
+        );
+
+        StackPane step1NumberPane = new StackPane(step1Ring, step1Number);
+        step1NumberPane.setAlignment(Pos.CENTER);
+
+        Label step1Label = new Label("Import");
+        step1Label.setStyle(
+            "-fx-text-fill: #f8f8f2; -fx-font-size: 13px; -fx-font-weight: bold;"
+        );
+
+        VBox step1Box = new VBox(8, step1NumberPane, step1Label);
+        step1Box.setAlignment(Pos.CENTER);
+
+        // Line 1-2
+        Line line1 = new Line(0, 18, 80, 18);
+        line1.setStroke(javafx.scene.paint.Color.web("#6272a4"));
+        line1.setStrokeWidth(3);
+
+        // Step 2: Einstellungen
+        Circle step2Ring = new Circle(18);
+        step2Ring.setFill(javafx.scene.paint.Color.TRANSPARENT);
+        step2Ring.setStroke(javafx.scene.paint.Color.web("#8be9fd"));
+        step2Ring.setStrokeWidth(3);
+
+        Label step2Number = new Label("2");
+        step2Number.setStyle(
+            "-fx-text-fill: #8be9fd; -fx-font-size: 14px; -fx-font-weight: bold;"
+        );
+
+        StackPane step2NumberPane = new StackPane(step2Ring, step2Number);
+        step2NumberPane.setAlignment(Pos.CENTER);
+
+        Label step2Label = new Label("Einstellungen");
+        step2Label.setStyle(
+            "-fx-text-fill: #f8f8f2; -fx-font-size: 13px; -fx-font-weight: bold;"
+        );
+
+        VBox step2Box = new VBox(8, step2NumberPane, step2Label);
+        step2Box.setAlignment(Pos.CENTER);
+
+        // Line 2-3
+        Line line2 = new Line(0, 18, 80, 18);
+        line2.setStroke(javafx.scene.paint.Color.web("#6272a4"));
+        line2.setStrokeWidth(3);
+
+        // Step 3: Export
+        Circle step3Ring = new Circle(18);
+        step3Ring.setFill(javafx.scene.paint.Color.TRANSPARENT);
+        step3Ring.setStroke(javafx.scene.paint.Color.web("#8be9fd"));
+        step3Ring.setStrokeWidth(3);
+
+        Label step3Number = new Label("3");
+        step3Number.setStyle(
+            "-fx-text-fill: #8be9fd; -fx-font-size: 14px; -fx-font-weight: bold;"
+        );
+
+        StackPane step3NumberPane = new StackPane(step3Ring, step3Number);
+        step3NumberPane.setAlignment(Pos.CENTER);
+
+        Label step3Label = new Label("Export");
+        step3Label.setStyle(
+            "-fx-text-fill: #f8f8f2; -fx-font-size: 13px; -fx-font-weight: bold;"
+        );
+
+        VBox step3Box = new VBox(8, step3NumberPane, step3Label);
+        step3Box.setAlignment(Pos.CENTER);
+
+        stepper
+            .getChildren()
+            .addAll(step1Box, line1, step2Box, line2, step3Box);
+
+        return stepper;
     }
 
     public static void main(String[] args) {
