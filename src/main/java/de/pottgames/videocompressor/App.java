@@ -3,8 +3,12 @@
  */
 package de.pottgames.videocompressor;
 
-import atlantafx.base.theme.PrimerLight;
+import atlantafx.base.theme.Dracula;
 import atlantafx.base.theme.Styles;
+import de.pottgames.videocompressor.view.StepView;
+import de.pottgames.videocompressor.view.step.Step1View;
+import de.pottgames.videocompressor.view.step.Step2View;
+import de.pottgames.videocompressor.view.step.Step3View;
 import java.io.File;
 import javafx.application.Application;
 import javafx.collections.ListChangeListener;
@@ -15,10 +19,6 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
-import de.pottgames.videocompressor.view.StepView;
-import de.pottgames.videocompressor.view.step.Step1View;
-import de.pottgames.videocompressor.view.step.Step2View;
-import de.pottgames.videocompressor.view.step.Step3View;
 
 public class App extends Application {
 
@@ -36,7 +36,7 @@ public class App extends Application {
     @Override
     public void start(Stage stage) {
         Application.setUserAgentStylesheet(
-            new PrimerLight().getUserAgentStylesheet()
+            new Dracula().getUserAgentStylesheet()
         );
 
         // Initialize step views
