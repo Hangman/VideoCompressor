@@ -11,6 +11,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import org.example.engine.Engine;
 import org.example.view.StepView;
 import org.example.view.cell.FileListCell;
 
@@ -64,13 +65,7 @@ public class Step1View implements StepView {
             .addAll(
                 new FileChooser.ExtensionFilter(
                     "Video Files",
-                    "*.mp4",
-                    "*.avi",
-                    "*.mkv",
-                    "*.mov",
-                    "*.wmv",
-                    "*.flv",
-                    "*.webm"
+                    Engine.SUPPORTED_EXTENSION_PATTERNS.toArray(new String[0])
                 ),
                 new FileChooser.ExtensionFilter("All Files", "*.*")
             );
@@ -78,7 +73,10 @@ public class Step1View implements StepView {
             fileListView.getScene().getWindow()
         );
         if (selectedFiles != null) {
-            files.addAll(selectedFiles);
+            selectedFiles
+                .stream()
+                .filter(Engine::isCompatible)
+                .forEach(files::add);
         }
     }
 
@@ -94,7 +92,11 @@ public class Step1View implements StepView {
             javafx.scene.input.Dragboard dragboard = event.getDragboard();
             boolean success = false;
             if (dragboard.hasFiles()) {
-                files.addAll(dragboard.getFiles());
+                dragboard
+                    .getFiles()
+                    .stream()
+                    .filter(Engine::isCompatible)
+                    .forEach(files::add);
                 success = true;
             }
             event.setDropCompleted(success);
