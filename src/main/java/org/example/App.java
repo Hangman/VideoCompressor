@@ -3,7 +3,7 @@
  */
 package org.example;
 
-import atlantafx.base.theme.PrimerDark;
+import atlantafx.base.theme.Dracula;
 import java.io.File;
 import javafx.application.Application;
 import javafx.collections.ListChangeListener;
@@ -35,7 +35,7 @@ public class App extends Application {
     @Override
     public void start(Stage stage) {
         Application.setUserAgentStylesheet(
-            new PrimerDark().getUserAgentStylesheet()
+            new Dracula().getUserAgentStylesheet()
         );
 
         // Initialize step views
