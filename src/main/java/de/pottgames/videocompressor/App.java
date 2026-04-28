@@ -44,6 +44,15 @@ public class App extends Application {
         step2View = new Step2View();
         step3View = new Step3View();
 
+        // Register file list listener once to update next button visibility
+        step1View
+            .getFiles()
+            .addListener(
+                (javafx.collections.ListChangeListener<File>) c -> {
+                    nextButton.setVisible(!step1View.getFiles().isEmpty());
+                }
+            );
+
         // Initialize the root layout
         root = new BorderPane();
         root.setPadding(new Insets(0));
@@ -145,15 +154,8 @@ public class App extends Application {
         }
 
         if (currentStep == 1) {
-            // Enable next button only when files are added
-            step1View
-                .getFiles()
-                .addListener(
-                    (ListChangeListener<File>) c -> {
-                        nextButton.setDisable(step1View.getFiles().isEmpty());
-                    }
-                );
-            nextButton.setDisable(true); // Start disabled
+            // Ensure visibility reflects current file list state
+            nextButton.setVisible(!step1View.getFiles().isEmpty());
         }
     }
 
