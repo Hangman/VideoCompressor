@@ -175,7 +175,9 @@ public class Step2View implements StepView {
     /**
      * Custom list cell for displaying presets with visual indicators.
      */
-    private class PresetListCell extends javafx.scene.control.ListCell<Preset> {
+    private static class PresetListCell
+        extends javafx.scene.control.ListCell<Preset>
+    {
 
         private final VBox root;
         private final Label nameLabel;
