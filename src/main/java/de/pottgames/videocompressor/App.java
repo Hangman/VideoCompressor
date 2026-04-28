@@ -25,6 +25,10 @@ import javafx.stage.Stage;
 
 public class App extends Application {
 
+    // Fenstergröße
+    private static final int WINDOW_WIDTH = 900;
+    private static final int WINDOW_HEIGHT = 650;
+
     private StepView currentStep;
 
     private Step1View step1View;
@@ -82,9 +86,11 @@ public class App extends Application {
 
         switchStep(null, false);
 
-        Scene scene = new Scene(root, 900, 650);
+        Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
         stage.setTitle("VideoCompressor");
         stage.setScene(scene);
+        stage.setMinWidth(WINDOW_WIDTH);
+        stage.setMinHeight(WINDOW_HEIGHT);
         stage.show();
     }
 
