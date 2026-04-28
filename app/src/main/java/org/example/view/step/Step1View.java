@@ -1,0 +1,118 @@
+package org.example.view.step;
+
+import java.io.File;
+import java.util.List;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
+import org.example.view.StepView;
+import org.example.view.cell.FileListCell;
+
+/**
+ * Step 1 of the video compressor wizard: allows the user to add video files
+ * either by drag-and-drop or via a file chooser dialog.
+ */
+public class Step1View implements StepView {
+
+    private final ObservableList<File> files =
+        FXCollections.observableArrayList();
+    private final ListView<File> fileListView;
+    private final Label dropLabel;
+    private final VBox root;
+
+    public Step1View() {
+        fileListView = new ListView<>(files);
+        fileListView.setPrefHeight(200);
+        fileListView.setCellFactory(listView -> new FileListCell());
+
+        dropLabel = new Label(
+            "Drag & drop video files here\nor click the button below to browse"
+        );
+        dropLabel.setWrapText(true);
+        dropLabel.setStyle("-fx-text-fill: #999; -fx-font-size: 14px;");
+
+        Button addFilesButton = new Button("Add Files");
+        addFilesButton.setPrefWidth(200);
+        addFilesButton.setOnAction(e -> showFileChooser());
+
+        root = new VBox(10, dropLabel, fileListView, addFilesButton);
+        root.setPadding(new Insets(20));
+        VBox.setVgrow(fileListView, Priority.ALWAYS);
+
+        setupDragAndDrop();
+    }
+
+    @Override
+    public javafx.scene.Node getNode() {
+        return root;
+    }
+
+    public ObservableList<File> getFiles() {
+        return files;
+    }
+
+    private void showFileChooser() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Select Video Files");
+        fileChooser
+            .getExtensionFilters()
+            .addAll(
+                new FileChooser.ExtensionFilter(
+                    "Video Files",
+                    "*.mp4",
+                    "*.avi",
+                    "*.mkv",
+                    "*.mov",
+                    "*.wmv",
+                    "*.flv",
+                    "*.webm"
+                ),
+                new FileChooser.ExtensionFilter("All Files", "*.*")
+            );
+        List<File> selectedFiles = fileChooser.showOpenMultipleDialog(
+            fileListView.getScene().getWindow()
+        );
+        if (selectedFiles != null) {
+            files.addAll(selectedFiles);
+        }
+    }
+
+    private void setupDragAndDrop() {
+        root.setOnDragOver(event -> {
+            if (event.getDragboard().hasFiles()) {
+                event.acceptTransferModes(javafx.scene.input.TransferMode.COPY);
+            }
+            event.consume();
+        });
+
+        root.setOnDragDropped(event -> {
+            javafx.scene.input.Dragboard dragboard = event.getDragboard();
+            boolean success = false;
+            if (dragboard.hasFiles()) {
+                files.addAll(dragboard.getFiles());
+                success = true;
+            }
+            event.setDropCompleted(success);
+            event.consume();
+        });
+
+        // Style the drop area when dragging over
+        root.setOnDragEntered(event -> {
+            dropLabel.setStyle(
+                "-fx-text-fill: #0077cc; -fx-font-size: 14px; -fx-font-weight: bold;"
+            );
+            event.consume();
+        });
+
+        root.setOnDragExited(event -> {
+            dropLabel.setStyle("-fx-text-fill: #999; -fx-font-size: 14px;");
+            event.consume();
+        });
+    }
+}
