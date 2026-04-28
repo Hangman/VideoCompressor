@@ -1,5 +1,5 @@
 module org.example {
-// JavaFX modules
+    // JavaFX modules
     requires javafx.controls;
     requires javafx.fxml;
 
