@@ -136,12 +136,12 @@ public class App extends Application {
         // Step 1: Import
         Circle step1Ring = new Circle(18);
         step1Ring.setFill(javafx.scene.paint.Color.TRANSPARENT);
-        step1Ring.setStroke(javafx.scene.paint.Color.web("#8be9fd"));
+        step1Ring.setStroke(javafx.scene.paint.Color.web("#9580FFFF"));
         step1Ring.setStrokeWidth(3);
 
         Label step1Number = new Label("1");
         step1Number.setStyle(
-            "-fx-text-fill: #8be9fd; -fx-font-size: 14px; -fx-font-weight: bold;"
+            "-fx-text-fill: #9580FFFF; -fx-font-size: 18px; -fx-font-weight: bold;"
         );
 
         StackPane step1NumberPane = new StackPane(step1Ring, step1Number);
@@ -156,19 +156,19 @@ public class App extends Application {
         step1Box.setAlignment(Pos.CENTER);
 
         // Line 1-2
-        Line line1 = new Line(0, 18, 80, 18);
+        Line line1 = new Line(0, 18, 300, 18);
         line1.setStroke(javafx.scene.paint.Color.web("#6272a4"));
         line1.setStrokeWidth(3);
 
         // Step 2: Einstellungen
         Circle step2Ring = new Circle(18);
         step2Ring.setFill(javafx.scene.paint.Color.TRANSPARENT);
-        step2Ring.setStroke(javafx.scene.paint.Color.web("#8be9fd"));
+        step2Ring.setStroke(javafx.scene.paint.Color.web("#9580FFFF"));
         step2Ring.setStrokeWidth(3);
 
         Label step2Number = new Label("2");
         step2Number.setStyle(
-            "-fx-text-fill: #8be9fd; -fx-font-size: 14px; -fx-font-weight: bold;"
+            "-fx-text-fill: #9580FFFF; -fx-font-size: 18px; -fx-font-weight: bold;"
         );
 
         StackPane step2NumberPane = new StackPane(step2Ring, step2Number);
@@ -183,19 +183,19 @@ public class App extends Application {
         step2Box.setAlignment(Pos.CENTER);
 
         // Line 2-3
-        Line line2 = new Line(0, 18, 80, 18);
+        Line line2 = new Line(0, 18, 300, 18);
         line2.setStroke(javafx.scene.paint.Color.web("#6272a4"));
         line2.setStrokeWidth(3);
 
         // Step 3: Export
         Circle step3Ring = new Circle(18);
         step3Ring.setFill(javafx.scene.paint.Color.TRANSPARENT);
-        step3Ring.setStroke(javafx.scene.paint.Color.web("#8be9fd"));
+        step3Ring.setStroke(javafx.scene.paint.Color.web("#9580FFFF"));
         step3Ring.setStrokeWidth(3);
 
         Label step3Number = new Label("3");
         step3Number.setStyle(
-            "-fx-text-fill: #8be9fd; -fx-font-size: 14px; -fx-font-weight: bold;"
+            "-fx-text-fill: #9580FFFF; -fx-font-size: 18px; -fx-font-weight: bold;"
         );
 
         StackPane step3NumberPane = new StackPane(step3Ring, step3Number);
@@ -208,6 +208,10 @@ public class App extends Application {
 
         VBox step3Box = new VBox(8, step3NumberPane, step3Label);
         step3Box.setAlignment(Pos.CENTER);
+
+        // Add minimal horizontal padding between lines and circles
+        HBox.setMargin(line1, new Insets(0, 8, 0, 16));
+        HBox.setMargin(line2, new Insets(0, 16, 0, 8));
 
         stepper
             .getChildren()
