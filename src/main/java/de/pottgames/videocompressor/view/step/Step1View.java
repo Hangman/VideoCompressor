@@ -40,11 +40,7 @@ public class Step1View implements StepView {
         );
         dropLabel.setWrapText(true);
 
-        Button addFilesButton = new Button("Add Files");
-        addFilesButton.setPrefWidth(200);
-        addFilesButton.setOnAction(e -> showFileChooser());
-
-        root = new VBox(10, dropLabel, fileListView, addFilesButton);
+        root = new VBox(10, dropLabel, fileListView);
         root.setPadding(new Insets(20));
         VBox.setVgrow(fileListView, Priority.ALWAYS);
 
@@ -130,6 +126,7 @@ public class Step1View implements StepView {
         centerButton.setText("Dateien hinzufügen");
         centerButton.setVisible(true);
         centerButton.setDisable(false);
+        centerButton.setOnAction(e -> showFileChooser());
         backButton.setVisible(false);
         this.nextButton = nextButton;
         updateNextButtonState();
