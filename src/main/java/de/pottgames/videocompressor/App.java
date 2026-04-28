@@ -58,6 +58,10 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) {
+        System.out.println(
+            "Current working directory: " + System.getProperty("user.dir")
+        );
+
         Application.setUserAgentStylesheet(
             new Dracula().getUserAgentStylesheet()
         );
