@@ -36,6 +36,22 @@ public class App extends Application {
     private Button nextButton;
     private BorderPane root;
 
+    // Stepper UI elements
+    private Circle step1Ring;
+    private Label step1Number;
+    private Label step1Label;
+    private Circle step2Ring;
+    private Label step2Number;
+    private Label step2Label;
+    private Circle step3Ring;
+    private Label step3Number;
+    private Label step3Label;
+    private Line line1;
+    private Line line2;
+
+    // Active step index (1, 2, or 3)
+    private int activeStep = 1;
+
     @Override
     public void start(Stage stage) {
         Application.setUserAgentStylesheet(
@@ -124,6 +140,16 @@ public class App extends Application {
             this.root.setCenter(nextStep.getNode());
             currentStep = nextStep;
             nextStep.activate(backButton, centerButton, nextButton);
+
+            // Update active step for stepper indicator
+            if (nextStep == step1View) {
+                activeStep = 1;
+            } else if (nextStep == step2View) {
+                activeStep = 2;
+            } else if (nextStep == step3View) {
+                activeStep = 3;
+            }
+            updateStepperState();
         }
     }
 
@@ -134,12 +160,12 @@ public class App extends Application {
         stepper.setSpacing(0);
 
         // Step 1: Import
-        Circle step1Ring = new Circle(18);
+        step1Ring = new Circle(18);
         step1Ring.setFill(javafx.scene.paint.Color.TRANSPARENT);
         step1Ring.setStroke(javafx.scene.paint.Color.web("#9580FFFF"));
         step1Ring.setStrokeWidth(3);
 
-        Label step1Number = new Label("1");
+        step1Number = new Label("1");
         step1Number.setStyle(
             "-fx-text-fill: #9580FFFF; -fx-font-size: 18px; -fx-font-weight: bold;"
         );
@@ -147,7 +173,7 @@ public class App extends Application {
         StackPane step1NumberPane = new StackPane(step1Ring, step1Number);
         step1NumberPane.setAlignment(Pos.CENTER);
 
-        Label step1Label = new Label("Import");
+        step1Label = new Label("Import");
         step1Label.setStyle(
             "-fx-text-fill: #f8f8f2; -fx-font-size: 13px; -fx-font-weight: bold;"
         );
@@ -156,17 +182,17 @@ public class App extends Application {
         step1Box.setAlignment(Pos.CENTER);
 
         // Line 1-2
-        Line line1 = new Line(0, 18, 300, 18);
+        line1 = new Line(0, 18, 300, 18);
         line1.setStroke(javafx.scene.paint.Color.web("#6272a4"));
         line1.setStrokeWidth(3);
 
         // Step 2: Einstellungen
-        Circle step2Ring = new Circle(18);
+        step2Ring = new Circle(18);
         step2Ring.setFill(javafx.scene.paint.Color.TRANSPARENT);
         step2Ring.setStroke(javafx.scene.paint.Color.web("#9580FFFF"));
         step2Ring.setStrokeWidth(3);
 
-        Label step2Number = new Label("2");
+        step2Number = new Label("2");
         step2Number.setStyle(
             "-fx-text-fill: #9580FFFF; -fx-font-size: 18px; -fx-font-weight: bold;"
         );
@@ -174,7 +200,7 @@ public class App extends Application {
         StackPane step2NumberPane = new StackPane(step2Ring, step2Number);
         step2NumberPane.setAlignment(Pos.CENTER);
 
-        Label step2Label = new Label("Einstellungen");
+        step2Label = new Label("Einstellungen");
         step2Label.setStyle(
             "-fx-text-fill: #f8f8f2; -fx-font-size: 13px; -fx-font-weight: bold;"
         );
@@ -183,17 +209,17 @@ public class App extends Application {
         step2Box.setAlignment(Pos.CENTER);
 
         // Line 2-3
-        Line line2 = new Line(0, 18, 300, 18);
+        line2 = new Line(0, 18, 300, 18);
         line2.setStroke(javafx.scene.paint.Color.web("#6272a4"));
         line2.setStrokeWidth(3);
 
         // Step 3: Export
-        Circle step3Ring = new Circle(18);
+        step3Ring = new Circle(18);
         step3Ring.setFill(javafx.scene.paint.Color.TRANSPARENT);
         step3Ring.setStroke(javafx.scene.paint.Color.web("#9580FFFF"));
         step3Ring.setStrokeWidth(3);
 
-        Label step3Number = new Label("3");
+        step3Number = new Label("3");
         step3Number.setStyle(
             "-fx-text-fill: #9580FFFF; -fx-font-size: 18px; -fx-font-weight: bold;"
         );
@@ -201,7 +227,7 @@ public class App extends Application {
         StackPane step3NumberPane = new StackPane(step3Ring, step3Number);
         step3NumberPane.setAlignment(Pos.CENTER);
 
-        Label step3Label = new Label("Export");
+        step3Label = new Label("Export");
         step3Label.setStyle(
             "-fx-text-fill: #f8f8f2; -fx-font-size: 13px; -fx-font-weight: bold;"
         );
@@ -218,6 +244,116 @@ public class App extends Application {
             .addAll(step1Box, line1, step2Box, line2, step3Box);
 
         return stepper;
+    }
+
+    private void updateStepperState() {
+        // Active color
+        String activeRingColor = "#9580FFFF";
+        String activeLabelColor = "#f8f8f2";
+
+        // Dimmed color for inactive steps
+        String dimmedRingColor = "#6272a4";
+        String dimmedLabelColor = "#6272a4";
+
+        // Active line color
+        String activeLineColor = "#9580FFFF";
+        // Dimmed line color
+        String dimmedLineColor = "#4a5a8a";
+
+        // Update Step 1
+        if (activeStep >= 1) {
+            step1Ring.setStroke(javafx.scene.paint.Color.web(activeRingColor));
+            step1Number.setStyle(
+                "-fx-text-fill: " +
+                    activeRingColor +
+                    "; -fx-font-size: 18px; -fx-font-weight: bold;"
+            );
+            step1Label.setStyle(
+                "-fx-text-fill: " +
+                    activeLabelColor +
+                    "; -fx-font-size: 13px; -fx-font-weight: bold;"
+            );
+        } else {
+            step1Ring.setStroke(javafx.scene.paint.Color.web(dimmedRingColor));
+            step1Number.setStyle(
+                "-fx-text-fill: " +
+                    dimmedRingColor +
+                    "; -fx-font-size: 18px; -fx-font-weight: bold;"
+            );
+            step1Label.setStyle(
+                "-fx-text-fill: " +
+                    dimmedLabelColor +
+                    "; -fx-font-size: 13px; -fx-font-weight: bold;"
+            );
+        }
+
+        // Update Step 2
+        if (activeStep >= 2) {
+            step2Ring.setStroke(javafx.scene.paint.Color.web(activeRingColor));
+            step2Number.setStyle(
+                "-fx-text-fill: " +
+                    activeRingColor +
+                    "; -fx-font-size: 18px; -fx-font-weight: bold;"
+            );
+            step2Label.setStyle(
+                "-fx-text-fill: " +
+                    activeLabelColor +
+                    "; -fx-font-size: 13px; -fx-font-weight: bold;"
+            );
+        } else {
+            step2Ring.setStroke(javafx.scene.paint.Color.web(dimmedRingColor));
+            step2Number.setStyle(
+                "-fx-text-fill: " +
+                    dimmedRingColor +
+                    "; -fx-font-size: 18px; -fx-font-weight: bold;"
+            );
+            step2Label.setStyle(
+                "-fx-text-fill: " +
+                    dimmedLabelColor +
+                    "; -fx-font-size: 13px; -fx-font-weight: bold;"
+            );
+        }
+
+        // Update Step 3
+        if (activeStep >= 3) {
+            step3Ring.setStroke(javafx.scene.paint.Color.web(activeRingColor));
+            step3Number.setStyle(
+                "-fx-text-fill: " +
+                    activeRingColor +
+                    "; -fx-font-size: 18px; -fx-font-weight: bold;"
+            );
+            step3Label.setStyle(
+                "-fx-text-fill: " +
+                    activeLabelColor +
+                    "; -fx-font-size: 13px; -fx-font-weight: bold;"
+            );
+        } else {
+            step3Ring.setStroke(javafx.scene.paint.Color.web(dimmedRingColor));
+            step3Number.setStyle(
+                "-fx-text-fill: " +
+                    dimmedRingColor +
+                    "; -fx-font-size: 18px; -fx-font-weight: bold;"
+            );
+            step3Label.setStyle(
+                "-fx-text-fill: " +
+                    dimmedLabelColor +
+                    "; -fx-font-size: 13px; -fx-font-weight: bold;"
+            );
+        }
+
+        // Update Line 1 (between Step 1 and Step 2)
+        if (activeStep >= 2) {
+            line1.setStroke(javafx.scene.paint.Color.web(activeLineColor));
+        } else {
+            line1.setStroke(javafx.scene.paint.Color.web(dimmedLineColor));
+        }
+
+        // Update Line 2 (between Step 2 and Step 3)
+        if (activeStep >= 3) {
+            line2.setStroke(javafx.scene.paint.Color.web(activeLineColor));
+        } else {
+            line2.setStroke(javafx.scene.paint.Color.web(dimmedLineColor));
+        }
     }
 
     public static void main(String[] args) {
