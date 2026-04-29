@@ -26,8 +26,8 @@ import javafx.stage.Stage;
 public class App extends Application {
 
     // Fenstergröße
-    private static final int WINDOW_WIDTH = 900;
-    private static final int WINDOW_HEIGHT = 650;
+    private static final int WINDOW_WIDTH = 1020;
+    private static final int WINDOW_HEIGHT = 820;
 
     private StepView currentStep;
 
@@ -177,7 +177,7 @@ public class App extends Application {
 
         step1Number = new Label("1");
         step1Number.setStyle(
-            "-fx-text-fill: #9580FFFF; -fx-font-size: 18px; -fx-font-weight: bold;"
+            "-fx-text-fill: #9580FFFF; -fx-font-size: 20px; -fx-font-weight: bold;"
         );
 
         StackPane step1NumberPane = new StackPane(step1Ring, step1Number);
@@ -185,7 +185,7 @@ public class App extends Application {
 
         step1Label = new Label("Import");
         step1Label.setStyle(
-            "-fx-text-fill: #f8f8f2; -fx-font-size: 13px; -fx-font-weight: bold;"
+            "-fx-text-fill: #f8f8f2; -fx-font-size: 16px; -fx-font-weight: bold;"
         );
 
         VBox step1Box = new VBox(8, step1NumberPane, step1Label);
@@ -204,7 +204,7 @@ public class App extends Application {
 
         step2Number = new Label("2");
         step2Number.setStyle(
-            "-fx-text-fill: #9580FFFF; -fx-font-size: 18px; -fx-font-weight: bold;"
+            "-fx-text-fill: #9580FFFF; -fx-font-size: 20px; -fx-font-weight: bold;"
         );
 
         StackPane step2NumberPane = new StackPane(step2Ring, step2Number);
@@ -212,7 +212,7 @@ public class App extends Application {
 
         step2Label = new Label("Einstellungen");
         step2Label.setStyle(
-            "-fx-text-fill: #f8f8f2; -fx-font-size: 13px; -fx-font-weight: bold;"
+            "-fx-text-fill: #f8f8f2; -fx-font-size: 16px; -fx-font-weight: bold;"
         );
 
         VBox step2Box = new VBox(8, step2NumberPane, step2Label);
@@ -231,7 +231,7 @@ public class App extends Application {
 
         step3Number = new Label("3");
         step3Number.setStyle(
-            "-fx-text-fill: #9580FFFF; -fx-font-size: 18px; -fx-font-weight: bold;"
+            "-fx-text-fill: #9580FFFF; -fx-font-size: 20px; -fx-font-weight: bold;"
         );
 
         StackPane step3NumberPane = new StackPane(step3Ring, step3Number);
@@ -239,7 +239,7 @@ public class App extends Application {
 
         step3Label = new Label("Export");
         step3Label.setStyle(
-            "-fx-text-fill: #f8f8f2; -fx-font-size: 13px; -fx-font-weight: bold;"
+            "-fx-text-fill: #f8f8f2; -fx-font-size: 16px; -fx-font-weight: bold;"
         );
 
         VBox step3Box = new VBox(8, step3NumberPane, step3Label);
@@ -276,24 +276,24 @@ public class App extends Application {
             step1Number.setStyle(
                 "-fx-text-fill: " +
                     activeRingColor +
-                    "; -fx-font-size: 18px; -fx-font-weight: bold;"
+                    "; -fx-font-size: 20px; -fx-font-weight: bold;"
             );
             step1Label.setStyle(
                 "-fx-text-fill: " +
                     activeLabelColor +
-                    "; -fx-font-size: 13px; -fx-font-weight: bold;"
+                    "; -fx-font-size: 16px; -fx-font-weight: bold;"
             );
         } else {
             step1Ring.setStroke(javafx.scene.paint.Color.web(dimmedRingColor));
             step1Number.setStyle(
                 "-fx-text-fill: " +
                     dimmedRingColor +
-                    "; -fx-font-size: 18px; -fx-font-weight: bold;"
+                    "; -fx-font-size: 20px; -fx-font-weight: bold;"
             );
             step1Label.setStyle(
                 "-fx-text-fill: " +
                     dimmedLabelColor +
-                    "; -fx-font-size: 13px; -fx-font-weight: bold;"
+                    "; -fx-font-size: 16px; -fx-font-weight: bold;"
             );
         }
 
@@ -303,24 +303,24 @@ public class App extends Application {
             step2Number.setStyle(
                 "-fx-text-fill: " +
                     activeRingColor +
-                    "; -fx-font-size: 18px; -fx-font-weight: bold;"
+                    "; -fx-font-size: 20px; -fx-font-weight: bold;"
             );
             step2Label.setStyle(
                 "-fx-text-fill: " +
                     activeLabelColor +
-                    "; -fx-font-size: 13px; -fx-font-weight: bold;"
+                    "; -fx-font-size: 16px; -fx-font-weight: bold;"
             );
         } else {
             step2Ring.setStroke(javafx.scene.paint.Color.web(dimmedRingColor));
             step2Number.setStyle(
                 "-fx-text-fill: " +
                     dimmedRingColor +
-                    "; -fx-font-size: 18px; -fx-font-weight: bold;"
+                    "; -fx-font-size: 20px; -fx-font-weight: bold;"
             );
             step2Label.setStyle(
                 "-fx-text-fill: " +
                     dimmedLabelColor +
-                    "; -fx-font-size: 13px; -fx-font-weight: bold;"
+                    "; -fx-font-size: 16px; -fx-font-weight: bold;"
             );
         }
 
@@ -330,24 +330,24 @@ public class App extends Application {
             step3Number.setStyle(
                 "-fx-text-fill: " +
                     activeRingColor +
-                    "; -fx-font-size: 18px; -fx-font-weight: bold;"
+                    "; -fx-font-size: 20px; -fx-font-weight: bold;"
             );
             step3Label.setStyle(
                 "-fx-text-fill: " +
                     activeLabelColor +
-                    "; -fx-font-size: 13px; -fx-font-weight: bold;"
+                    "; -fx-font-size: 16px; -fx-font-weight: bold;"
             );
         } else {
             step3Ring.setStroke(javafx.scene.paint.Color.web(dimmedRingColor));
             step3Number.setStyle(
                 "-fx-text-fill: " +
                     dimmedRingColor +
-                    "; -fx-font-size: 18px; -fx-font-weight: bold;"
+                    "; -fx-font-size: 20px; -fx-font-weight: bold;"
             );
             step3Label.setStyle(
                 "-fx-text-fill: " +
                     dimmedLabelColor +
-                    "; -fx-font-size: 13px; -fx-font-weight: bold;"
+                    "; -fx-font-size: 16px; -fx-font-weight: bold;"
             );
         }
 
