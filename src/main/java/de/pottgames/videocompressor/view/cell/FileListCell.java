@@ -9,6 +9,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
+import javafx.scene.control.Separator;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -30,6 +31,7 @@ public class FileListCell extends ListCell<File> {
     private final HBox bottomRow;
 
     private final VBox root;
+    private final Separator separator;
 
     private CompletableFuture<ProbeInfo> probeFuture;
 
@@ -85,9 +87,17 @@ public class FileListCell extends ListCell<File> {
         );
         bottomRow.setAlignment(Pos.CENTER_LEFT);
 
-        // Root layout
-        root = new VBox(4, topRow, bottomRow);
-        root.setStyle("-fx-padding: 4;");
+        // Separator spacer
+        separator = new Separator();
+        separator.setStyle(
+            "-fx-background-color: transparent; -fx-padding: 6 0 6 0;"
+        );
+
+        // Root layout - card-like appearance
+        root = new VBox(4, topRow, separator, bottomRow);
+        root.setStyle(
+            "-fx-padding: 8 12 8 12; -fx-background-color: #343646; -fx-background-radius: 10;"
+        );
     }
 
     @Override
