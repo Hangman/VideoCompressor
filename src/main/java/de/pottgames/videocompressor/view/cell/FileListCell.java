@@ -98,6 +98,9 @@ public class FileListCell extends ListCell<File> {
         root.setStyle(
             "-fx-padding: 8 12 8 12; -fx-background-color: #343646; -fx-background-radius: 10;"
         );
+
+        // Set padding on the cell itself for spacing between entries
+        setPadding(new javafx.geometry.Insets(8, 8, 8, 8));
     }
 
     @Override

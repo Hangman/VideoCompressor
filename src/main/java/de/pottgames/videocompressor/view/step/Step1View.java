@@ -124,7 +124,7 @@ public class Step1View implements StepView {
         Button nextButton
     ) {
         activated = true;
-        centerButton.setText("Dateien hinzufügen");
+        centerButton.setText("Videos hinzufügen");
         centerButton.setVisible(true);
         centerButton.setDisable(false);
         centerButton.setOnAction(_ -> showFileChooser());
