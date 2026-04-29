@@ -11,32 +11,33 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 
 /**
  * Custom list cell for displaying video files with a remove button.
+ * Displays file name in the top row and probe information in the bottom row.
  */
 public class FileListCell extends ListCell<File> {
 
     private final Label nameLabel;
     private final Button removeButton;
-    private Button infoButton;
-    private final HBox root;
+    private final HBox topRow;
 
-    private ProbeInfo probeInfo;
+    private final Label resolutionFpsLabel;
+    private final Label bitrateLabel;
+    private final Label codecLabel;
+    private final Label fileSizeLabel;
+    private final HBox bottomRow;
+
+    private final VBox root;
+
     private CompletableFuture<ProbeInfo> probeFuture;
 
     public FileListCell() {
+        // Top row components
         nameLabel = new Label();
         nameLabel.setWrapText(true);
         nameLabel.setMaxWidth(Double.MAX_VALUE);
-
-        infoButton = new Button("ℹ");
-        infoButton.setVisible(false);
-        infoButton.setOnAction(_ -> {
-            if (probeInfo != null) {
-                System.out.println(probeInfo);
-            }
-        });
 
         removeButton = new Button("✕");
         removeButton.setOnAction(_ -> {
@@ -46,9 +47,39 @@ public class FileListCell extends ListCell<File> {
             }
         });
 
-        root = new HBox(8, nameLabel, infoButton, removeButton);
-        root.setAlignment(Pos.CENTER_LEFT);
+        topRow = new HBox(8, nameLabel, removeButton);
+        topRow.setAlignment(Pos.CENTER_LEFT);
         HBox.setHgrow(nameLabel, Priority.ALWAYS);
+
+        // Bottom row components - fixed size labels
+        resolutionFpsLabel = new Label();
+        resolutionFpsLabel.setMaxWidth(120);
+        resolutionFpsLabel.setMinWidth(120);
+
+        bitrateLabel = new Label();
+        bitrateLabel.setMaxWidth(80);
+        bitrateLabel.setMinWidth(80);
+
+        codecLabel = new Label();
+        codecLabel.setMaxWidth(80);
+        codecLabel.setMinWidth(80);
+
+        fileSizeLabel = new Label();
+        fileSizeLabel.setMaxWidth(80);
+        fileSizeLabel.setMinWidth(80);
+
+        bottomRow = new HBox(
+            8,
+            resolutionFpsLabel,
+            bitrateLabel,
+            codecLabel,
+            fileSizeLabel
+        );
+        bottomRow.setAlignment(Pos.CENTER_LEFT);
+
+        // Root layout
+        root = new VBox(4, topRow, bottomRow);
+        root.setStyle("-fx-padding: 4;");
     }
 
     @Override
@@ -61,10 +92,13 @@ public class FileListCell extends ListCell<File> {
         }
 
         if (empty || file == null) {
-            probeInfo = null;
-            infoButton.setVisible(false);
             setGraphic(null);
             setText(null);
+            // Reset labels
+            resolutionFpsLabel.setText("");
+            bitrateLabel.setText("");
+            codecLabel.setText("");
+            fileSizeLabel.setText("");
         } else {
             nameLabel.setText(file.getName());
             setGraphic(root);
@@ -78,11 +112,21 @@ public class FileListCell extends ListCell<File> {
                 }
                 Platform.runLater(() -> {
                     if (probeFuture == currentFuture) {
-                        probeInfo = info;
-                        infoButton.setVisible(true);
+                        updateProbeInfoLabels(info);
                     }
                 });
             });
         }
+    }
+
+    private void updateProbeInfoLabels(ProbeInfo info) {
+        resolutionFpsLabel.setText(info.getResolutionFpsString());
+        bitrateLabel.setText(
+            String.format("%.0f kbit/s", info.bitrate() / 1000.0)
+        );
+        codecLabel.setText(info.codec());
+        fileSizeLabel.setText(
+            String.format("%.1f MiB", info.fileSize() / (1024.0 * 1024.0))
+        );
     }
 }
