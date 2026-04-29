@@ -84,7 +84,7 @@ public class Ffprobe {
             // Find video stream
             JsonNode videoStream = null;
             for (JsonNode stream : streams) {
-                if ("video".equals(stream.get("codec_type").asText())) {
+                if ("video".equals(stream.get("codec_type").asString())) {
                     videoStream = stream;
                     break;
                 }
@@ -107,7 +107,7 @@ public class Ffprobe {
             // Extract FPS
             int fps = 0;
             if (videoStream.has("r_frame_rate")) {
-                String frameRate = videoStream.get("r_frame_rate").asText();
+                String frameRate = videoStream.get("r_frame_rate").asString();
                 if (frameRate.contains("/")) {
                     String[] parts = frameRate.split("/");
                     double numerator = Double.parseDouble(parts[0]);
@@ -126,12 +126,12 @@ public class Ffprobe {
 
             // Extract duration
             double duration = formatNode.has("duration")
-                ? Double.parseDouble(formatNode.get("duration").asText())
+                ? Double.parseDouble(formatNode.get("duration").asString())
                 : 0.0;
 
             // Extract codec
             String codec = videoStream.has("codec_name")
-                ? videoStream.get("codec_name").asText()
+                ? videoStream.get("codec_name").asString()
                 : "unknown";
 
             // File size
