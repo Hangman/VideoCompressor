@@ -5,6 +5,7 @@ import de.pottgames.videocompressor.engine.ProbeInfo;
 import java.io.File;
 import java.util.concurrent.CompletableFuture;
 import javafx.application.Platform;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -43,6 +44,10 @@ public class FileListCell extends ListCell<File> {
         nameLabel.setStyle("-fx-font-size: 15px;");
 
         removeButton = new Button("✕");
+        removeButton.setStyle(
+            "-fx-background-color: #ff9580; -fx-text-fill: #0f0f13; -fx-font-size: 20px; -fx-font-weight: bold;"
+        );
+        removeButton.setPadding(new Insets(0, 8, 0, 8));
         removeButton.setOnAction(_ -> {
             int index = getIndex();
             if (index >= 0 && index < getListView().getItems().size()) {
@@ -100,7 +105,7 @@ public class FileListCell extends ListCell<File> {
         );
 
         // Set padding on the cell itself for spacing between entries
-        setPadding(new javafx.geometry.Insets(8, 8, 8, 8));
+        setPadding(new Insets(8, 8, 8, 8));
     }
 
     @Override
