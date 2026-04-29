@@ -38,6 +38,7 @@ public class FileListCell extends ListCell<File> {
         nameLabel = new Label();
         nameLabel.setWrapText(true);
         nameLabel.setMaxWidth(Double.MAX_VALUE);
+        nameLabel.setStyle("-fx-font-size: 15px;");
 
         removeButton = new Button("✕");
         removeButton.setOnAction(_ -> {
