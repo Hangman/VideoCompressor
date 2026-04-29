@@ -34,6 +34,7 @@ public class Step1View implements StepView {
         fileListView = new ListView<>(files);
         fileListView.setPrefHeight(200);
         fileListView.setCellFactory(_ -> new FileListCell());
+        fileListView.setSelectionModel(null);
 
         dropLabel = new Label(
             "Drag & drop video files here\nor click the button below to browse"
