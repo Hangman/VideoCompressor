@@ -24,6 +24,7 @@
         <!-- Dependency versions -->
         <atlantafx.version>2.1.0</atlantafx.version>
         <junit.version>6.0.1</junit.version>
+        <jackson.version>2.18.0</jackson.version>
     </properties>
 
     <dependencies>
@@ -59,6 +60,13 @@
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- Jackson for JSON parsing -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -70,7 +78,10 @@
                 <version>3.13.0</version>
                 <configuration>
                     <release>25</release>
-
+                    <compilerArgs>
+                        <arg>--module-path</arg>
+                        <arg>${project.build.directory}/modules</arg>
+                    </compilerArgs>
                 </configuration>
             </plugin>
 

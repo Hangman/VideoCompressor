@@ -9,7 +9,11 @@ module de.pottgames.videocompressor {
     // Standard Java modules
     requires java.desktop;
     requires java.logging;
-	requires javafx.base;
+    requires javafx.base;
+    // Jackson automatic modules for JSON parsing
+    requires com.fasterxml.jackson.databind;
+    requires com.fasterxml.jackson.core;
+    requires com.fasterxml.jackson.annotation;
 
     // Export packages for application use
     exports de.pottgames.videocompressor;

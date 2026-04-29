@@ -2,6 +2,9 @@
 ffmpeg-master-latest-linux64-lgpl/
 ffmpeg/
 
+# Test Files
+trash/
+
 # Maven
 target/
 pom.xml.tag
