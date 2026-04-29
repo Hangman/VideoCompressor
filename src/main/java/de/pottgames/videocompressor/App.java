@@ -25,7 +25,7 @@ import javafx.stage.Stage;
 
 public class App extends Application {
 
-    // Fenstergröße
+    // Window size
     private static final int WINDOW_WIDTH = 1020;
     private static final int WINDOW_HEIGHT = 820;
 

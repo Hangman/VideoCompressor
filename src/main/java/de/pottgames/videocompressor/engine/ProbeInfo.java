@@ -36,7 +36,7 @@ public record ProbeInfo(
         double ratio = (double) resolutionWidth / resolutionHeight;
         double invRatio = (double) resolutionHeight / resolutionWidth;
 
-        // Prüfe auf 16:9 ODER 9:16 (Toleranz 0.02 ist okay)
+        // Check for 16:9 OR 9:16 (tolerance of 0.02 is acceptable)
         boolean isStandardRatio =
             Math.abs(ratio - 16.0 / 9.0) < 0.02 ||
             Math.abs(invRatio - 16.0 / 9.0) < 0.02;
@@ -45,8 +45,8 @@ public record ProbeInfo(
             return resolutionWidth + "x" + resolutionHeight;
         }
 
-        // Bestimme das Label basierend auf der kürzeren Seite bei Standard-Ratios
-        // (Oder strikt nach Höhe, wenn du dem Standard treu bleiben willst)
+        // Determine the label based on the shorter side for standard ratios
+        // (Or strictly by height if you want to stick to the standard)
         int referenceHeight = (resolutionHeight > resolutionWidth)
             ? resolutionWidth
             : resolutionHeight;
