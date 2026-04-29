@@ -51,22 +51,29 @@ public class FileListCell extends ListCell<File> {
         topRow.setAlignment(Pos.CENTER_LEFT);
         HBox.setHgrow(nameLabel, Priority.ALWAYS);
 
-        // Bottom row components - fixed size labels
+        // Bottom row components - fixed size labels with Dracula tag styling
+        String tagStyle =
+            "-fx-background-color: #44475a; -fx-text-fill: #f8f8f2; -fx-background-radius: 8; -fx-padding: 4 8 4 8; -fx-font-size: 11px;";
+
         resolutionFpsLabel = new Label();
         resolutionFpsLabel.setMaxWidth(120);
         resolutionFpsLabel.setMinWidth(120);
+        resolutionFpsLabel.setStyle(tagStyle);
 
         bitrateLabel = new Label();
         bitrateLabel.setMaxWidth(80);
         bitrateLabel.setMinWidth(80);
+        bitrateLabel.setStyle(tagStyle);
 
         codecLabel = new Label();
         codecLabel.setMaxWidth(80);
         codecLabel.setMinWidth(80);
+        codecLabel.setStyle(tagStyle);
 
         fileSizeLabel = new Label();
         fileSizeLabel.setMaxWidth(80);
         fileSizeLabel.setMinWidth(80);
+        fileSizeLabel.setStyle(tagStyle);
 
         bottomRow = new HBox(
             8,
