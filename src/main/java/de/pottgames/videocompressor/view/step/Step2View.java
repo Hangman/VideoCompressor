@@ -17,8 +17,6 @@ import javafx.scene.layout.VBox;
  */
 public class Step2View implements StepView {
 
-    private boolean activated = false;
-
     public enum Preset {
         HIGH_QUALITY(
             "High Quality",
@@ -105,11 +103,11 @@ public class Step2View implements StepView {
 
         presetListView = new ListView<>(presets);
         presetListView.setPrefHeight(250);
-        presetListView.setCellFactory(listView -> new PresetListCell());
+        presetListView.setCellFactory(_ -> new PresetListCell());
         presetListView
             .getSelectionModel()
             .selectedItemProperty()
-            .addListener((obs, oldVal, newVal) -> {
+            .addListener((_, _, newVal) -> {
                 if (newVal != null) {
                     selectedPreset = newVal;
                     updateDetailPane(newVal);
@@ -221,11 +219,10 @@ public class Step2View implements StepView {
         nextButton.setVisible(false);
         nextButton.setDisable(false);
         centerButton.setVisible(false);
-        activated = true;
     }
 
     @Override
     public void deactivate() {
-        activated = false;
+        
     }
 }

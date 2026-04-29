@@ -18,8 +18,8 @@ import javafx.scene.layout.Priority;
 public class FileListCell extends ListCell<File> {
 
     private final Label nameLabel;
-    private final Button infoButton;
     private final Button removeButton;
+    private Button infoButton;
     private final HBox root;
 
     private ProbeInfo probeInfo;
@@ -32,14 +32,14 @@ public class FileListCell extends ListCell<File> {
 
         infoButton = new Button("ℹ");
         infoButton.setVisible(false);
-        infoButton.setOnAction(e -> {
+        infoButton.setOnAction(_ -> {
             if (probeInfo != null) {
                 System.out.println(probeInfo);
             }
         });
 
         removeButton = new Button("✕");
-        removeButton.setOnAction(e -> {
+        removeButton.setOnAction(_ -> {
             int index = getIndex();
             if (index >= 0 && index < getListView().getItems().size()) {
                 getListView().getItems().remove(index);

@@ -10,9 +10,9 @@ module de.pottgames.videocompressor {
     requires java.desktop;
     requires java.logging;
     requires javafx.base;
-    // Jackson automatic modules for JSON parsing
-    requires com.fasterxml.jackson.databind;
-    requires com.fasterxml.jackson.core;
+    // Jackson 3.x automatic modules for JSON parsing
+    requires tools.jackson.databind;
+    requires tools.jackson.core;
     requires com.fasterxml.jackson.annotation;
 
     // Export packages for application use

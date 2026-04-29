@@ -28,39 +28,31 @@ public record ProbeInfo(
     }
 
     /**
-     * Returns an abbreviated resolution string for standard 16:9 formats,
+     * Returns an abbreviated resolution string for standard 16:9 formats (horizontal & vertical),
      * or "widthxheight" for non-standard aspect ratios.
-     * Follows UHD/DCI 4K distinction per technical specification.
      */
     private String getAbbreviatedResolution() {
         double ratio = (double) resolutionWidth / resolutionHeight;
         double invRatio = (double) resolutionHeight / resolutionWidth;
+        
+        // Check for 16:9 (approx. 1.77) or 9:16 (approx. 0.56)
+        boolean isStandard16x9 = Math.abs(ratio - 16.0 / 9.0) < 0.02;
+        boolean isVertical16x9 = Math.abs(invRatio - 16.0 / 9.0) < 0.02;
 
-        // Check for 16:9 OR 9:16 (tolerance of 0.02 is acceptable)
-        boolean isStandardRatio =
-            Math.abs(ratio - 16.0 / 9.0) < 0.02 ||
-            Math.abs(invRatio - 16.0 / 9.0) < 0.02;
-
-        if (!isStandardRatio) {
+        if (!isStandard16x9 && !isVertical16x9) {
             return resolutionWidth + "x" + resolutionHeight;
         }
 
-        // Determine the label based on the shorter side for standard ratios
-        // (Or strictly by height if you want to stick to the standard)
-        int referenceHeight = (resolutionHeight > resolutionWidth)
-            ? resolutionWidth
-            : resolutionHeight;
-        String suffix = (resolutionHeight > resolutionWidth)
-            ? " (Vertical)"
-            : "";
+        // Use the smaller dimension to determine the "p" label
+        int pValue = Math.min(resolutionWidth, resolutionHeight);
+        String suffix = isVertical16x9 ? " (Vertical)" : "";
 
-        return switch (resolutionHeight) {
+        return switch (pValue) {
             case 720 -> "720p" + suffix;
             case 1080 -> "1080p" + suffix;
             case 1440 -> "1440p" + suffix;
-            case 2160 -> (resolutionWidth == 3840 || resolutionHeight == 3840)
-                ? "4K" + suffix
-                : "2160p" + suffix;
+            case 2160 -> "4K" + suffix;
+            case 4320 -> "8K" + suffix;
             default -> resolutionWidth + "x" + resolutionHeight;
         };
     }

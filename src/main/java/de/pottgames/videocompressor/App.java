@@ -107,12 +107,12 @@ public class App extends Application {
         if (primary) {
             button.setStyle("-fx-cursor: hand;");
             button.getStyleClass().add(Styles.ACCENT);
-            button.setOnMouseEntered(e -> button.setStyle("-fx-cursor: hand;"));
-            button.setOnMouseExited(e -> button.setStyle("-fx-cursor: hand;"));
+            button.setOnMouseEntered(_ -> button.setStyle("-fx-cursor: hand;"));
+            button.setOnMouseExited(_ -> button.setStyle("-fx-cursor: hand;"));
         } else {
             button.setStyle("-fx-cursor: hand;");
-            button.setOnMouseEntered(e -> button.setStyle("-fx-cursor: hand;"));
-            button.setOnMouseExited(e -> button.setStyle("-fx-cursor: hand;"));
+            button.setOnMouseEntered(_ -> button.setStyle("-fx-cursor: hand;"));
+            button.setOnMouseExited(_ -> button.setStyle("-fx-cursor: hand;"));
         }
 
         return button;
@@ -126,8 +126,8 @@ public class App extends Application {
         navBar.setRight(nextButton);
 
         // Button click handlers
-        backButton.setOnAction(e -> switchStep(currentStep, true));
-        nextButton.setOnAction(e -> switchStep(currentStep, false));
+        backButton.setOnAction(_ -> switchStep(currentStep, true));
+        nextButton.setOnAction(_ -> switchStep(currentStep, false));
 
         return navBar;
     }

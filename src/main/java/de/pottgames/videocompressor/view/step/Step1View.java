@@ -33,7 +33,7 @@ public class Step1View implements StepView {
     public Step1View() {
         fileListView = new ListView<>(files);
         fileListView.setPrefHeight(200);
-        fileListView.setCellFactory(listView -> new FileListCell());
+        fileListView.setCellFactory(_ -> new FileListCell());
 
         dropLabel = new Label(
             "Drag & drop video files here\nor click the button below to browse"
@@ -126,7 +126,7 @@ public class Step1View implements StepView {
         centerButton.setText("Dateien hinzufügen");
         centerButton.setVisible(true);
         centerButton.setDisable(false);
-        centerButton.setOnAction(e -> showFileChooser());
+        centerButton.setOnAction(_ -> showFileChooser());
         backButton.setVisible(false);
         this.nextButton = nextButton;
         updateNextButtonState();

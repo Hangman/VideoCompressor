@@ -5,12 +5,10 @@ import java.util.function.Consumer;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.*;
-import javafx.scene.text.Font;
 
 /**
  * Step 3 of the video compressor wizard: displays the processing progress,
@@ -41,11 +39,11 @@ public class Step3View implements StepView {
 
         startButton = new Button("Start Processing");
         startButton.setStyle("-fx-padding: 8 24;");
-        startButton.setOnAction(e -> onStartClicked());
+        startButton.setOnAction(_ -> onStartClicked());
 
         cancelButton = new Button("Cancel");
         cancelButton.setStyle("-fx-padding: 8 24;");
-        cancelButton.setOnAction(e -> onCancelClicked());
+        cancelButton.setOnAction(_ -> onCancelClicked());
         cancelButton.setVisible(false);
 
         HBox buttonBox = new HBox(12, startButton, cancelButton);
