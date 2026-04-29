@@ -26,8 +26,8 @@ import javafx.stage.Stage;
 public class App extends Application {
 
     // Window size
-    private static final int WINDOW_WIDTH = 1020;
-    private static final int WINDOW_HEIGHT = 820;
+    private static final int WINDOW_WIDTH = 900;
+    private static final int WINDOW_HEIGHT = 620;
 
     private StepView currentStep;
 
@@ -100,7 +100,7 @@ public class App extends Application {
 
     private Button createNavigationButton(String text, boolean primary) {
         Button button = new Button(text);
-        button.setMinWidth(160);
+        button.setMinWidth(200);
         button.setMaxWidth(200);
         button.setPadding(new Insets(10, 16, 10, 16));
 
