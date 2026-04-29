@@ -61,6 +61,13 @@ public class Step1View implements StepView {
         return files;
     }
 
+    private boolean isDuplicate(File file) {
+        String absolutePath = file.getAbsolutePath();
+        return files
+            .stream()
+            .anyMatch(f -> f.getAbsolutePath().equals(absolutePath));
+    }
+
     private void showFileChooser() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Select Video Files");
@@ -80,6 +87,7 @@ public class Step1View implements StepView {
             selectedFiles
                 .stream()
                 .filter(Engine::isCompatible)
+                .filter(file -> !isDuplicate(file))
                 .forEach(files::add);
         }
     }
@@ -100,6 +108,7 @@ public class Step1View implements StepView {
                     .getFiles()
                     .stream()
                     .filter(Engine::isCompatible)
+                    .filter(file -> !isDuplicate(file))
                     .forEach(files::add);
                 success = true;
             }
