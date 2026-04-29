@@ -1,5 +1,6 @@
 package de.pottgames.videocompressor.view.cell;
 
+import atlantafx.base.theme.Styles;
 import de.pottgames.videocompressor.engine.Ffprobe;
 import de.pottgames.videocompressor.engine.ProbeInfo;
 import java.io.File;
@@ -41,12 +42,13 @@ public class FileListCell extends ListCell<File> {
         nameLabel = new Label();
         nameLabel.setWrapText(true);
         nameLabel.setMaxWidth(Double.MAX_VALUE);
-        nameLabel.setStyle("-fx-font-size: 15px;");
+        nameLabel.getStyleClass().addAll(Styles.TEXT_BOLD);
 
         removeButton = new Button("✕");
-        removeButton.setStyle(
-            "-fx-background-color: #ff9580; -fx-text-fill: #0f0f13; -fx-font-size: 20px; -fx-font-weight: bold;"
-        );
+        removeButton.setStyle("-fx-cursor: hand;");
+        removeButton
+            .getStyleClass()
+            .addAll(Styles.TITLE_3, Styles.TEXT_BOLD, Styles.DANGER);
         removeButton.setPadding(new Insets(0, 8, 0, 8));
         removeButton.setOnAction(_ -> {
             int index = getIndex();
@@ -61,27 +63,31 @@ public class FileListCell extends ListCell<File> {
 
         // Bottom row components - fixed size labels with Dracula tag styling
         String tagStyle =
-            "-fx-background-color: #44475a; -fx-text-fill: #f8f8f2; -fx-background-radius: 8; -fx-padding: 4 8 4 8; -fx-font-size: 11px;";
+            "-fx-background-color: #44475a; -fx-text-fill: #f8f8f2; -fx-background-radius: 8; -fx-padding: 4 8 4 8;";
 
         resolutionFpsLabel = new Label();
         resolutionFpsLabel.setMaxWidth(120);
         resolutionFpsLabel.setMinWidth(120);
         resolutionFpsLabel.setStyle(tagStyle);
+        resolutionFpsLabel.getStyleClass().addAll(Styles.TEXT_SMALL);
 
         bitrateLabel = new Label();
         bitrateLabel.setMaxWidth(80);
         bitrateLabel.setMinWidth(80);
         bitrateLabel.setStyle(tagStyle);
+        bitrateLabel.getStyleClass().addAll(Styles.TEXT_SMALL);
 
         codecLabel = new Label();
         codecLabel.setMaxWidth(80);
         codecLabel.setMinWidth(80);
         codecLabel.setStyle(tagStyle);
+        codecLabel.getStyleClass().addAll(Styles.TEXT_SMALL);
 
         fileSizeLabel = new Label();
         fileSizeLabel.setMaxWidth(80);
         fileSizeLabel.setMinWidth(80);
         fileSizeLabel.setStyle(tagStyle);
+        fileSizeLabel.getStyleClass().addAll(Styles.TEXT_SMALL);
 
         bottomRow = new HBox(
             8,
@@ -99,7 +105,7 @@ public class FileListCell extends ListCell<File> {
         );
 
         // Root layout - card-like appearance
-        root = new VBox(4, topRow, separator, bottomRow);
+        root = new VBox(2, topRow, separator, bottomRow);
         root.setStyle(
             "-fx-padding: 8 12 8 12; -fx-background-color: #343646; -fx-background-radius: 10;"
         );
