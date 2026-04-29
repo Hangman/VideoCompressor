@@ -1,6 +1,6 @@
 module de.pottgames.videocompressor {
 // JavaFX modules
-    requires javafx.controls;
+    requires transitive javafx.controls;
     requires javafx.fxml;
 
     // Atlantafx Base for styling
