@@ -1,6 +1,8 @@
 package de.pottgames.videocompressor.engine;
 
-import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Properties;
 
 /**
@@ -21,34 +23,31 @@ public record Preset(
     String ffmpegPreset,
     String tune
 ) {
+    private static final Path DEFAULT_PRESET_PATH = Path.of(
+        "presets",
+        "default.properties"
+    );
+
     public static Preset getDefault() {
         Properties props = new Properties();
-        try (
-            InputStream is = Preset.class.getClassLoader().getResourceAsStream(
-                "presets/default.properties"
-            )
-        ) {
-            if (is == null) {
-                // Fallback: try loading from file system (outside resources)
-                java.io.File file = new java.io.File(
-                    "presets/default.properties"
-                );
-                if (file.exists()) {
-                    try (InputStream fis = new java.io.FileInputStream(file)) {
-                        props.load(fis);
-                    }
-                } else {
-                    throw new RuntimeException(
-                        "Could not find presets/default.properties"
-                    );
-                }
-            } else {
-                props.load(is);
-            }
+        try {
+            props.load(
+                Files.newBufferedReader(
+                    DEFAULT_PRESET_PATH,
+                    StandardCharsets.UTF_8
+                )
+            );
         } catch (java.io.IOException e) {
-            throw new RuntimeException("Failed to load default preset", e);
+            throw new RuntimeException(
+                "Failed to load default preset from " + DEFAULT_PRESET_PATH,
+                e
+            );
         }
 
+        return fromProperties(props);
+    }
+
+    private static Preset fromProperties(Properties props) {
         return new Preset(
             props.getProperty("preset.name", "Default"),
             props.getProperty("preset.description", ""),
