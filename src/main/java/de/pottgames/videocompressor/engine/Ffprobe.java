@@ -124,6 +124,20 @@ public class Ffprobe {
                 ? formatNode.get("bit_rate").asInt()
                 : 0;
 
+            // Extract audio bitrate
+            int audioBitrate = 0;
+            for (JsonNode stream : streams) {
+                String codecType = stream.has("codec_type")
+                    ? stream.get("codec_type").asString()
+                    : null;
+                if ("audio".equals(codecType)) {
+                    if (stream.has("bit_rate")) {
+                        audioBitrate = stream.get("bit_rate").asInt();
+                    }
+                    break;
+                }
+            }
+
             // Extract duration
             double duration = formatNode.has("duration")
                 ? Double.parseDouble(formatNode.get("duration").asString())
@@ -143,6 +157,7 @@ public class Ffprobe {
                 height,
                 fps,
                 bitrate,
+                audioBitrate,
                 duration,
                 codec,
                 fileSize

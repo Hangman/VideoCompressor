@@ -11,6 +11,7 @@ public record ProbeInfo(
     int resolutionHeight,
     int fps,
     int bitrate,
+    int audioBitrate,
     double duration,
     String codec,
     long fileSize
