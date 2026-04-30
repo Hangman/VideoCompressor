@@ -34,7 +34,7 @@ public record ProbeInfo(
     private String getAbbreviatedResolution() {
         double ratio = (double) resolutionWidth / resolutionHeight;
         double invRatio = (double) resolutionHeight / resolutionWidth;
-        
+
         // Check for 16:9 (approx. 1.77) or 9:16 (approx. 0.56)
         boolean isStandard16x9 = Math.abs(ratio - 16.0 / 9.0) < 0.02;
         boolean isVertical16x9 = Math.abs(invRatio - 16.0 / 9.0) < 0.02;
@@ -55,5 +55,25 @@ public record ProbeInfo(
             case 4320 -> "8K" + suffix;
             default -> resolutionWidth + "x" + resolutionHeight;
         };
+    }
+
+    /**
+     * Formats the duration in seconds to a human-readable string.
+     *
+     * @return formatted string like "1:23:45" or "45:12" or "12.5s"
+     */
+    public String formatDuration() {
+        long totalSeconds = Math.round(duration);
+        long hours = totalSeconds / 3600;
+        long minutes = (totalSeconds % 3600) / 60;
+        long seconds = totalSeconds % 60;
+
+        if (hours > 0) {
+            return String.format("%d:%02d:%02d", hours, minutes, seconds);
+        } else if (minutes > 0) {
+            return String.format("%d:%02d", minutes, seconds);
+        } else {
+            return String.format("%.1fs", duration);
+        }
     }
 }

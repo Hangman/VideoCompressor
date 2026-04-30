@@ -30,6 +30,7 @@ public class FileListCell extends ListCell<File> {
     private final Label bitrateLabel;
     private final Label codecLabel;
     private final Label fileSizeLabel;
+    private final Label durationLabel;
     private final HBox bottomRow;
 
     private final VBox root;
@@ -44,11 +45,11 @@ public class FileListCell extends ListCell<File> {
         nameLabel.setMaxWidth(Double.MAX_VALUE);
         nameLabel.getStyleClass().addAll(Styles.TEXT_BOLD);
 
-        removeButton = new Button("✕");
+        removeButton = new Button("X");
         removeButton.setStyle("-fx-cursor: hand;");
         removeButton
             .getStyleClass()
-            .addAll(Styles.TITLE_3, Styles.TEXT_BOLD, Styles.DANGER);
+            .addAll(Styles.TITLE_4, Styles.TEXT_BOLD, Styles.DANGER);
         removeButton.setPadding(new Insets(0, 8, 0, 8));
         removeButton.setOnAction(_ -> {
             int index = getIndex();
@@ -83,6 +84,12 @@ public class FileListCell extends ListCell<File> {
         codecLabel.setStyle(tagStyle);
         codecLabel.getStyleClass().addAll(Styles.TEXT_SMALL);
 
+        durationLabel = new Label();
+        durationLabel.setMaxWidth(80);
+        durationLabel.setMinWidth(80);
+        durationLabel.setStyle(tagStyle);
+        durationLabel.getStyleClass().addAll(Styles.TEXT_SMALL);
+
         fileSizeLabel = new Label();
         fileSizeLabel.setMaxWidth(80);
         fileSizeLabel.setMinWidth(80);
@@ -94,6 +101,7 @@ public class FileListCell extends ListCell<File> {
             resolutionFpsLabel,
             bitrateLabel,
             codecLabel,
+            durationLabel,
             fileSizeLabel
         );
         bottomRow.setAlignment(Pos.CENTER_LEFT);
@@ -131,6 +139,7 @@ public class FileListCell extends ListCell<File> {
             bitrateLabel.setText("");
             codecLabel.setText("");
             fileSizeLabel.setText("");
+            durationLabel.setText("");
         } else {
             nameLabel.setText(file.getName());
             setGraphic(root);
@@ -160,5 +169,6 @@ public class FileListCell extends ListCell<File> {
         fileSizeLabel.setText(
             String.format("%.1f MiB", info.fileSize() / (1024.0 * 1024.0))
         );
+        durationLabel.setText(info.formatDuration());
     }
 }
