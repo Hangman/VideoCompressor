@@ -55,6 +55,12 @@ public class FileListCell extends ListCell<File> {
         Image storageImage = new Image(
             getClass().getResourceAsStream("/database_icon_monochrome.png")
         );
+        Image codecImage = new Image(
+            getClass().getResourceAsStream("/codec_icon_monochrome.png")
+        );
+        Image bitrateImage = new Image(
+            getClass().getResourceAsStream("/bitrate_icon_monochrome.png")
+        );
 
         // Top row components
         nameLabel = new Label();
@@ -64,9 +70,7 @@ public class FileListCell extends ListCell<File> {
 
         removeButton = new Button("X");
         removeButton.setStyle("-fx-cursor: hand;");
-        removeButton
-            .getStyleClass()
-            .addAll(Styles.TITLE_4, Styles.TEXT_BOLD, Styles.DANGER);
+        removeButton.getStyleClass().addAll(Styles.TITLE_4, Styles.TEXT_BOLD);
         removeButton.setPadding(new Insets(0, 8, 0, 8));
         removeButton.setOnAction(_ -> {
             int index = getIndex();
@@ -88,19 +92,19 @@ public class FileListCell extends ListCell<File> {
             .get(resolutionFpsBadge.getChildren().size() - 1);
 
         // Bitrate badge
-        bitrateBadge = createBadge(80, null);
+        bitrateBadge = createBadge(100, bitrateImage);
         bitrateText = (Label) bitrateBadge
             .getChildren()
             .get(bitrateBadge.getChildren().size() - 1);
 
         // Codec badge
-        codecBadge = createBadge(80, null);
+        codecBadge = createBadge(80, codecImage);
         codecText = (Label) codecBadge
             .getChildren()
             .get(codecBadge.getChildren().size() - 1);
 
         // Duration badge
-        durationBadge = createBadge(80, clockImage);
+        durationBadge = createBadge(100, clockImage);
         durationText = (Label) durationBadge
             .getChildren()
             .get(durationBadge.getChildren().size() - 1);
