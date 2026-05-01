@@ -55,6 +55,7 @@ public class Step2View implements StepView {
     // Assigned in build methods called from constructor, so not final.
     private VBox root = null;
     private ChoiceBox<Preset> presetChoiceBox = null;
+    private Label presetDescriptionLabel = null;
 
     // (expandButton entfernt – Detailbereich jetzt immer sichtbar und scrollbar)
 
@@ -197,6 +198,14 @@ public class Step2View implements StepView {
             }
         );
 
+        // Description label shown to the right of the dropdown
+        presetDescriptionLabel = new Label();
+        presetDescriptionLabel
+            .getStyleClass()
+            .addAll(Styles.TEXT_SMALL, Styles.TEXT_SUBTLE);
+        presetDescriptionLabel.setWrapText(true);
+        presetDescriptionLabel.setMaxWidth(320);
+
         // On preset change, update selectedPreset and repopulate controls
         presetChoiceBox
             .getSelectionModel()
@@ -208,7 +217,10 @@ public class Step2View implements StepView {
                 }
             });
 
-        selector.getChildren().addAll(label, presetChoiceBox);
+        selector
+            .getChildren()
+            .addAll(label, presetChoiceBox, presetDescriptionLabel);
+        HBox.setHgrow(presetDescriptionLabel, Priority.ALWAYS);
         return selector;
     }
 
@@ -593,6 +605,15 @@ public class Step2View implements StepView {
     private void populateControls() {
         if (selectedPreset == null) {
             return;
+        }
+
+        // Update preset description label
+        String desc = selectedPreset.description();
+        if (desc != null && !desc.isEmpty()) {
+            presetDescriptionLabel.setText(desc);
+            presetDescriptionLabel.setOpacity(1.0);
+        } else {
+            presetDescriptionLabel.setOpacity(0.0);
         }
 
         codecBox.getSelectionModel().select(selectedPreset.codec());
