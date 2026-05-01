@@ -5,12 +5,14 @@ import de.pottgames.videocompressor.engine.AudioCodec;
 import de.pottgames.videocompressor.engine.Engine;
 import de.pottgames.videocompressor.engine.FfmpegPreset;
 import de.pottgames.videocompressor.engine.Preset;
+import de.pottgames.videocompressor.engine.Preset.ValidationResult;
 import de.pottgames.videocompressor.engine.Tune;
 import de.pottgames.videocompressor.engine.VideoCodec;
 import de.pottgames.videocompressor.engine.VideoContainer;
 import de.pottgames.videocompressor.view.StepView;
 import java.util.List;
 import java.util.Objects;
+import javafx.animation.PauseTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -28,6 +30,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 
 /**
  * Step 2 of the video compressor wizard: allows the user to select a preset
@@ -35,6 +38,9 @@ import javafx.scene.layout.VBox;
  *
  * The preset card is the visual focal point. Detailed parameter edits are
  * shown in a scrollable section below.
+ *
+ * A live validation panel shows real-time feedback (debounced) as the user
+ * tweaks settings, colour-coded green / amber / red.
  *
  * This view starts in a disabled state until the Engine is initialized
  * asynchronously. Once {@link #setEngine(Engine)} is called, the UI is
@@ -46,6 +52,12 @@ public class Step2View implements StepView {
 
     private static final String C_COMMENT = "#6272a4";
     private static final String C_FG = "#f8f8f2";
+
+    // ── Validation UI colors ─────────────────────────────────────────────
+
+    private static final String C_VALID = "#50fa7b"; // Green
+    private static final String C_WARNING = "#f1fa8c"; // Yellow/Amber
+    private static final String C_ERROR = "#ff5555"; // Red
 
     // ── Engine state ────────────────────────────────────────────────────
     private Engine engine;
@@ -63,7 +75,11 @@ public class Step2View implements StepView {
     private ChoiceBox<Preset> presetChoiceBox = null;
     private Label presetDescriptionLabel = null;
 
-    // (expandButton entfernt – Detailbereich jetzt immer sichtbar und scrollbar)
+    // ── Validation UI ────────────────────────────────────────────────────
+    private VBox validationPanel = null;
+    private Label validationIconLabel = null;
+    private Label validationLabel = null;
+    private PauseTransition validationDebounce = null;
 
     // ── Detail controls (bound to selected preset values) ────────────────
     // Initialized inline with null; actual instances are created in build methods
@@ -87,6 +103,10 @@ public class Step2View implements StepView {
     private ChoiceBox<FfmpegPreset> ffmpegPresetBox = null;
     private ChoiceBox<Tune> tuneBox = null;
 
+    // ─────────────────────────────────────────────────────────────────────
+    //  Constructor
+    // ─────────────────────────────────────────────────────────────────────
+
     public Step2View() {
         // ── Build UI ───────────────────────────────────────────────────
         root = new VBox(16);
@@ -95,15 +115,22 @@ public class Step2View implements StepView {
         // Preset selector dropdown
         HBox presetSelector = buildPresetSelector();
 
+        // Validation feedback panel
+        VBox validation = buildValidationPanel();
+
         // Tabbed detail section
         Node detailSection = buildDetailSection();
 
-        root.getChildren().addAll(presetSelector, detailSection);
+        root.getChildren().addAll(presetSelector, validation, detailSection);
         VBox.setVgrow(detailSection, Priority.ALWAYS);
 
         // Initially disable all interactive controls until engine is ready
         setControlsEnabled(false);
     }
+
+    // ─────────────────────────────────────────────────────────────────────
+    //  Engine initialization
+    // ─────────────────────────────────────────────────────────────────────
 
     /**
      * Called by the App when the Engine has finished initializing asynchronously.
@@ -133,6 +160,9 @@ public class Step2View implements StepView {
 
         // Enable all controls now that data is loaded
         setControlsEnabled(true);
+
+        // Wire up validation listeners after controls are enabled
+        setupValidationListeners();
     }
 
     /**
@@ -159,6 +189,185 @@ public class Step2View implements StepView {
         keepSourceAudioCheck.setDisable(disable);
         ffmpegPresetBox.setDisable(disable);
         tuneBox.setDisable(disable);
+    }
+
+    // ─────────────────────────────────────────────────────────────────────
+    //  Validation
+    // ─────────────────────────────────────────────────────────────────────
+
+    /**
+     * Builds a compact validation feedback panel that shows the current
+     * preset validity status with color-coded icon and message.
+     */
+    private VBox buildValidationPanel() {
+        validationPanel = new VBox(4);
+        validationPanel.setPadding(new Insets(8, 12, 8, 12));
+        validationPanel.setStyle(
+            "-fx-background-color: rgba(0,0,0,0.15); " +
+                "-fx-background-radius: 6; " +
+                "-fx-border-radius: 6;"
+        );
+        validationPanel.setVisible(false); // Hidden until engine is ready
+
+        // Icon + status line inside an HBox
+        HBox iconRow = new HBox(8);
+        iconRow.setAlignment(Pos.CENTER_LEFT);
+
+        validationIconLabel = new Label();
+        validationIconLabel.setStyle("-fx-font-size: 16px;");
+
+        validationLabel = new Label();
+        validationLabel.setWrapText(true);
+        validationLabel.setMaxWidth(500);
+
+        iconRow.getChildren().addAll(validationIconLabel, validationLabel);
+        validationPanel.getChildren().add(iconRow);
+
+        // Build debounce timer (rearms on each trigger)
+        validationDebounce = new PauseTransition(Duration.millis(400));
+        validationDebounce.setOnFinished(_evt -> {
+            Preset preview = getModifiedPreset();
+            if (preview != null) {
+                ValidationResult result = preview.validate();
+                showValidationResult(result);
+            }
+        });
+
+        return validationPanel;
+    }
+
+    /**
+     * Attaches listeners to all editable controls so that any change
+     * restarts the debounce timer and re-validates the preset.
+     */
+    private void setupValidationListeners() {
+        validationPanel.setVisible(true);
+
+        // TextFields: listen to text property changes
+        for (TextField tf : List.of(
+            crfField,
+            resWidthField,
+            resHeightField,
+            fpsField,
+            maxFileSizeField,
+            audioBitrateField
+        )) {
+            tf
+                .textProperty()
+                .addListener((_, _, _) -> {
+                    validationDebounce.stop();
+                    validationDebounce.playFromStart();
+                });
+        }
+
+        // CheckBoxes: listen to selected property changes
+        for (CheckBox cb : List.of(
+            keepSourceResCheck,
+            keepSourceAudioCheck,
+            audioNormalizeCheck,
+            mixToMonoCheck,
+            fastStartCheck
+        )) {
+            cb
+                .selectedProperty()
+                .addListener((_, _, _) -> {
+                    validationDebounce.stop();
+                    validationDebounce.playFromStart();
+                });
+        }
+
+        // ChoiceBoxes: listen to selected item changes
+        for (ChoiceBox<?> cb : List.of(
+            codecBox,
+            containerBox,
+            audioCodecBox,
+            ffmpegPresetBox,
+            tuneBox
+        )) {
+            cb
+                .getSelectionModel()
+                .selectedItemProperty()
+                .addListener((_, _, _) -> {
+                    validationDebounce.stop();
+                    validationDebounce.playFromStart();
+                });
+        }
+
+        // Initial validation run
+        validationDebounce.stop();
+        validationDebounce.playFromStart();
+    }
+
+    /**
+     * Renders the validation result into the UI panel with appropriate
+     * color coding: green (valid), amber (warnings only), red (errors).
+     */
+    private void showValidationResult(ValidationResult result) {
+        if (result.valid() && result.warnings().isEmpty()) {
+            // Fully valid — green checkmark
+            validationIconLabel.setText("\u2714"); // ✓
+            validationIconLabel.setStyle(
+                "-fx-font-size: 16px; -fx-text-fill: " + C_VALID + ";"
+            );
+            validationLabel.setText("Konfiguration ist valide.");
+            validationLabel.setStyle("-fx-text-fill: " + C_VALID + ";");
+            validationPanel.setStyle(
+                "-fx-background-color: rgba(80,250,123,0.08); " +
+                    "-fx-background-radius: 6; -fx-border-radius: 6; " +
+                    "-fx-border-color: " +
+                    C_VALID +
+                    "; -fx-border-width: 1;"
+            );
+        } else if (result.valid()) {
+            // Valid but has warnings — amber
+            validationIconLabel.setText("\u26A0"); // ⚠
+            validationIconLabel.setStyle(
+                "-fx-font-size: 16px; -fx-text-fill: " + C_WARNING + ";"
+            );
+            int wCount = result.warnings().size();
+            validationLabel.setText(
+                wCount +
+                    " Hin" +
+                    (wCount == 1 ? "weis" : "weise") +
+                    " — " +
+                    String.join(" ", result.warnings())
+            );
+            validationLabel.setStyle("-fx-text-fill: " + C_WARNING + ";");
+            validationPanel.setStyle(
+                "-fx-background-color: rgba(241,250,140,0.08); " +
+                    "-fx-background-radius: 6; -fx-border-radius: 6; " +
+                    "-fx-border-color: " +
+                    C_WARNING +
+                    "; -fx-border-width: 1;"
+            );
+        } else {
+            // Has errors — red
+            validationIconLabel.setText("\u2717"); // ✗
+            validationIconLabel.setStyle(
+                "-fx-font-size: 16px; -fx-text-fill: " + C_ERROR + ";"
+            );
+            int eCount = result.errors().size();
+            int wCount = result.warnings().size();
+            String msg = eCount + " Fehler";
+            if (wCount > 0) {
+                msg +=
+                    " und " +
+                    wCount +
+                    " Hin" +
+                    (wCount == 1 ? "weis" : "weise");
+            }
+            validationLabel.setText(
+                msg + " — " + String.join(" ", result.errors())
+            );
+            validationLabel.setStyle("-fx-text-fill: " + C_ERROR + ";");
+            validationPanel.setStyle(
+                "-fx-background-color: rgba(255,85,85,0.08); " +
+                    "-fx-background-radius: 6; -fx-border-radius: 6; " +
+                    "-fx-border-color: " +
+                    C_ERROR +
+                    "; -fx-border-width: 1;"
+            );
+        }
     }
 
     // ─────────────────────────────────────────────────────────────────────
@@ -206,6 +415,9 @@ public class Step2View implements StepView {
                 if (newPreset != null) {
                     selectedPreset = newPreset;
                     populateControls();
+                    // Re-trigger validation for the new preset values
+                    validationDebounce.stop();
+                    validationDebounce.playFromStart();
                 }
             });
 
@@ -217,7 +429,7 @@ public class Step2View implements StepView {
     }
 
     // ─────────────────────────────────────────────────────────────────────
-    //  Expandable detail section
+    //  Detail section (tabbed)
     // ─────────────────────────────────────────────────────────────────────
 
     private TabPane buildDetailSection() {
@@ -291,7 +503,7 @@ public class Step2View implements StepView {
         resWidthField.setPrefColumnCount(5);
         resWidthField.setStyle("-fx-prompt-text-fill: " + C_COMMENT + ";");
 
-        Label xLabel = new Label("×");
+        Label xLabel = new Label("\u00D7");
         xLabel.setStyle("-fx-text-fill: " + C_COMMENT + ";");
         xLabel.setAlignment(Pos.CENTER);
 
@@ -304,8 +516,8 @@ public class Step2View implements StepView {
 
         resolutionRow = (HBox) buildSettingRow(
             "Auflösung",
-            "Breite × Höhe in Pixel",
-            "1920 × 1080",
+            "Breite \u00D7 Höhe in Pixel",
+            "1920 \u00D7 1080",
             resBox
         );
 
@@ -640,6 +852,10 @@ public class Step2View implements StepView {
     //  Read current control values back into a new Preset
     // ─────────────────────────────────────────────────────────────────────
 
+    /**
+     * Reads the current values from all UI controls and assembles them
+     * into a new Preset. This is a mutable copy that reflects user edits.
+     */
     public Preset getModifiedPreset() {
         if (selectedPreset == null) {
             return null;
