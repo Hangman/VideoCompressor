@@ -20,6 +20,7 @@ public record Preset(
     int maxFileSize,
     int audioBitrate,
     boolean audioNormalize,
+    boolean mixToMono,
     boolean fastStart,
     String ffmpegPreset,
     String tune
@@ -69,6 +70,9 @@ public record Preset(
             Integer.parseInt(props.getProperty("preset.audioBitrate", "192")),
             Boolean.parseBoolean(
                 props.getProperty("preset.audioNormalize", "false")
+            ),
+            Boolean.parseBoolean(
+                props.getProperty("preset.mixToMono", "false")
             ),
             Boolean.parseBoolean(
                 props.getProperty("preset.fastStart", "false")

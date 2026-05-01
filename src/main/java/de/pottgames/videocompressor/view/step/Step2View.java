@@ -15,9 +15,9 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Separator;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -38,13 +38,8 @@ public class Step2View implements StepView {
 
     // ── Color constants (Dracula palette) ────────────────────────────────
 
-    private static final String C_CURRENT = "#343646";
     private static final String C_COMMENT = "#6272a4";
     private static final String C_FG = "#f8f8f2";
-    private static final String C_PURPLE = "#bd93f9";
-
-    private static final String C_CYAN = "#8be9fd";
-    private static final String C_ORANGE = "#ffb86c";
 
     // ── Engine state ────────────────────────────────────────────────────
     private Engine engine;
@@ -60,7 +55,7 @@ public class Step2View implements StepView {
     // Assigned in build methods called from constructor, so not final.
     private VBox root = null;
     private ChoiceBox<Preset> presetChoiceBox = null;
-    private VBox detailPanel = null;
+
     // (expandButton entfernt – Detailbereich jetzt immer sichtbar und scrollbar)
 
     // ── Detail controls (bound to selected preset values) ────────────────
@@ -74,6 +69,7 @@ public class Step2View implements StepView {
     private TextField maxFileSizeField = null;
     private TextField audioBitrateField = null;
     private CheckBox audioNormalizeCheck = null;
+    private CheckBox mixToMonoCheck = null;
     private CheckBox fastStartCheck = null;
     private CheckBox keepSourceResCheck = null;
     private HBox resolutionRow = null;
@@ -88,14 +84,10 @@ public class Step2View implements StepView {
         // Preset selector dropdown
         HBox presetSelector = buildPresetSelector();
 
-        // Separator before expandable section
-        Separator separator = new Separator();
-        separator.setStyle("-fx-divider-color: " + C_COMMENT + ";");
+        // Tabbed detail section
+        Node detailSection = buildDetailSection();
 
-        // Expandable detail section
-        VBox detailSection = buildDetailSection();
-
-        root.getChildren().addAll(presetSelector, separator, detailSection);
+        root.getChildren().addAll(presetSelector, detailSection);
         VBox.setVgrow(detailSection, Priority.ALWAYS);
 
         // Initially disable all interactive controls until engine is ready
@@ -145,6 +137,7 @@ public class Step2View implements StepView {
         maxFileSizeField.setDisable(true);
         audioBitrateField.setDisable(true);
         audioNormalizeCheck.setDisable(true);
+        mixToMonoCheck.setDisable(true);
         fastStartCheck.setDisable(true);
         keepSourceResCheck.setDisable(true);
         ffmpegPresetBox.setDisable(true);
@@ -164,6 +157,7 @@ public class Step2View implements StepView {
         maxFileSizeField.setDisable(false);
         audioBitrateField.setDisable(false);
         audioNormalizeCheck.setDisable(false);
+        mixToMonoCheck.setDisable(false);
         fastStartCheck.setDisable(false);
         keepSourceResCheck.setDisable(false);
         ffmpegPresetBox.setDisable(false);
@@ -218,18 +212,29 @@ public class Step2View implements StepView {
     //  Expandable detail section
     // ─────────────────────────────────────────────────────────────────────
 
-    private VBox buildDetailSection() {
-        // Detail panel – immer sichtbar, in ScrollPane eingebettet
-        detailPanel = new VBox(16);
-        detailPanel.setPadding(new Insets(8, 12, 8, 12));
-
+    private TabPane buildDetailSection() {
         // Build the individual editor rows
-        buildVideoSettingsGroup();
-        buildAudioSettingsGroup();
-        buildOutputSettingsGroup();
+        VBox videoContent = buildVideoSettingsGroup();
+        VBox audioContent = buildAudioSettingsGroup();
+        VBox outputContent = buildOutputSettingsGroup();
 
-        // Scrollbar um den Detailbereich, falls er größer als der Parent ist
-        ScrollPane scrollPane = new ScrollPane(detailPanel);
+        // Wrap each section in its own ScrollPane
+        ScrollPane videoScroll = wrapInScrollPane(videoContent);
+        ScrollPane audioScroll = wrapInScrollPane(audioContent);
+        ScrollPane outputScroll = wrapInScrollPane(outputContent);
+
+        Tab videoTab = new Tab("Video", videoScroll);
+        Tab audioTab = new Tab("Audio", audioScroll);
+        Tab outputTab = new Tab("Output", outputScroll);
+
+        TabPane tabPane = new TabPane(videoTab, audioTab, outputTab);
+        tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
+        tabPane.setStyle("-fx-tab-max-width: 120;");
+        return tabPane;
+    }
+
+    private ScrollPane wrapInScrollPane(VBox content) {
+        ScrollPane scrollPane = new ScrollPane(content);
         scrollPane.setFitToWidth(true);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.setStyle(
@@ -237,33 +242,18 @@ public class Step2View implements StepView {
                 "-fx-border-color: " +
                 C_COMMENT +
                 "; " +
-                "-fx-border-width: 1; " +
-                "-fx-border-radius: 4;"
+                "-fx-border-width: 1; "
         );
-
-        VBox section = new VBox(4, scrollPane);
-        section.setAlignment(Pos.CENTER_LEFT);
-        VBox.setVgrow(scrollPane, Priority.ALWAYS);
-        return section;
+        return scrollPane;
     }
 
     // ─────────────────────────────────────────────────────────────────────
     //  Video settings group
     // ─────────────────────────────────────────────────────────────────────
 
-    private void buildVideoSettingsGroup() {
-        VBox group = new VBox(8);
-        group.setPadding(new Insets(8, 12, 8, 12));
-        group.setStyle(
-            "-fx-background-color: " +
-                C_CURRENT +
-                "; " +
-                "-fx-background-radius: 10;"
-        );
-
-        Label groupTitle = new Label("Video");
-        groupTitle.getStyleClass().addAll(Styles.TITLE_4, Styles.TEXT_BOLD);
-        groupTitle.setStyle("-fx-text-fill: " + C_PURPLE + ";");
+    private VBox buildVideoSettingsGroup() {
+        VBox group = new VBox(10);
+        group.setPadding(new Insets(10));
 
         // Codec
         codecBox = new ChoiceBox<>(
@@ -282,10 +272,7 @@ public class Step2View implements StepView {
         );
         group
             .getChildren()
-            .addAll(
-                groupTitle,
-                buildSettingRow("Codec", "Video-Codec", "libx264", codecBox)
-            );
+            .add(buildSettingRow("Codec", "Video-Codec", "libx264", codecBox));
 
         // CRF
         crfField = new TextField();
@@ -415,33 +402,22 @@ public class Step2View implements StepView {
                 )
             );
 
-        detailPanel.getChildren().add(group);
+        return group;
     }
 
     // ─────────────────────────────────────────────────────────────────────
     //  Audio settings group
     // ─────────────────────────────────────────────────────────────────────
 
-    private void buildAudioSettingsGroup() {
-        VBox group = new VBox(8);
-        group.setPadding(new Insets(8, 12, 8, 12));
-        group.setStyle(
-            "-fx-background-color: " +
-                C_CURRENT +
-                "; " +
-                "-fx-background-radius: 10;"
-        );
-
-        Label groupTitle = new Label("Audio");
-        groupTitle.getStyleClass().addAll(Styles.TITLE_4, Styles.TEXT_BOLD);
-        groupTitle.setStyle("-fx-text-fill: " + C_CYAN + ";");
+    private VBox buildAudioSettingsGroup() {
+        VBox group = new VBox(10);
+        group.setPadding(new Insets(10));
 
         // Audio bitrate
         audioBitrateField = new TextField();
         group
             .getChildren()
-            .addAll(
-                groupTitle,
+            .add(
                 buildSettingRow(
                     "Audio Bitrate",
                     "in kbps",
@@ -469,26 +445,35 @@ public class Step2View implements StepView {
                 )
             );
 
-        detailPanel.getChildren().add(group);
+        // Mix to mono
+        mixToMonoCheck = new CheckBox();
+        HBox monoBox = new HBox(8);
+        monoBox.getChildren().add(mixToMonoCheck);
+        Label monoLabel = new Label("Zu MONO heruntermischen");
+        monoLabel.setStyle("-fx-text-fill: " + C_FG + ";");
+        monoBox.getChildren().add(monoLabel);
+
+        group
+            .getChildren()
+            .add(
+                buildSettingRow(
+                    "Mono-Mixdown",
+                    "Audiokanäle zu einem MONO-Kanal mischen",
+                    "",
+                    monoBox
+                )
+            );
+
+        return group;
     }
 
     // ─────────────────────────────────────────────────────────────────────
     //  Output settings group
     // ─────────────────────────────────────────────────────────────────────
 
-    private void buildOutputSettingsGroup() {
-        VBox group = new VBox(8);
-        group.setPadding(new Insets(8, 12, 8, 12));
-        group.setStyle(
-            "-fx-background-color: " +
-                C_CURRENT +
-                "; " +
-                "-fx-background-radius: 10;"
-        );
-
-        Label groupTitle = new Label("Ausgabe");
-        groupTitle.getStyleClass().addAll(Styles.TITLE_4, Styles.TEXT_BOLD);
-        groupTitle.setStyle("-fx-text-fill: " + C_ORANGE + ";");
+    private VBox buildOutputSettingsGroup() {
+        VBox group = new VBox(10);
+        group.setPadding(new Insets(10));
 
         // Max file size
         maxFileSizeField = new TextField();
@@ -522,7 +507,7 @@ public class Step2View implements StepView {
                 )
             );
 
-        detailPanel.getChildren().add(group);
+        return group;
     }
 
     // ─────────────────────────────────────────────────────────────────────
@@ -550,8 +535,7 @@ public class Step2View implements StepView {
         Label hint = new Label(tooltip);
         hint.setMinWidth(240);
         hint.setMaxWidth(240);
-        hint.setStyle("-fx-text-fill: " + C_COMMENT + ";");
-        hint.getStyleClass().addAll(Styles.TEXT_SMALL);
+        hint.getStyleClass().addAll(Styles.TEXT_SMALL, Styles.TEXT_SUBTLE);
 
         // Control
         if (control instanceof TextField tf) {
@@ -588,6 +572,7 @@ public class Step2View implements StepView {
             String.valueOf(selectedPreset.audioBitrate())
         );
         audioNormalizeCheck.setSelected(selectedPreset.audioNormalize());
+        mixToMonoCheck.setSelected(selectedPreset.mixToMono());
         fastStartCheck.setSelected(selectedPreset.fastStart());
         ffmpegPresetBox
             .getSelectionModel()
@@ -618,6 +603,7 @@ public class Step2View implements StepView {
             safeInt(maxFileSizeField, selectedPreset.maxFileSize()),
             safeInt(audioBitrateField, selectedPreset.audioBitrate()),
             audioNormalizeCheck.isSelected(),
+            mixToMonoCheck.isSelected(),
             fastStartCheck.isSelected(),
             ffmpegPresetBox.getValue() != null
                 ? ffmpegPresetBox.getValue()
