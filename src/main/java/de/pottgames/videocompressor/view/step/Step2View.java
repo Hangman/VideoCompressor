@@ -115,13 +115,13 @@ public class Step2View implements StepView {
         // Preset selector dropdown
         HBox presetSelector = buildPresetSelector();
 
-        // Validation feedback panel
-        VBox validation = buildValidationPanel();
-
         // Tabbed detail section
         Node detailSection = buildDetailSection();
 
-        root.getChildren().addAll(presetSelector, validation, detailSection);
+        // Validation feedback panel
+        VBox validation = buildValidationPanel();
+
+        root.getChildren().addAll(presetSelector, detailSection, validation);
         VBox.setVgrow(detailSection, Priority.ALWAYS);
 
         // Initially disable all interactive controls until engine is ready
