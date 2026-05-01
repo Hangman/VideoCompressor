@@ -19,6 +19,7 @@ public record Preset(
     int fps,
     int maxFileSize,
     boolean keepSourceAudio,
+    AudioCodec audioCodec,
     int audioBitrate,
     boolean audioNormalize,
     boolean mixToMono,
@@ -56,7 +57,7 @@ public record Preset(
             props.getProperty("preset.name", "Default"),
             props.getProperty("preset.description", ""),
             VideoCodec.fromFfmpegName(
-                props.getProperty("preset.codec", "libx264")
+                props.getProperty("preset.videoCodec", "libx264")
             ),
             Integer.parseInt(props.getProperty("preset.crf", "23")),
             Boolean.parseBoolean(
@@ -72,6 +73,9 @@ public record Preset(
             Integer.parseInt(props.getProperty("preset.maxFileSize", "0")),
             Boolean.parseBoolean(
                 props.getProperty("preset.keepSourceAudio", "true")
+            ),
+            AudioCodec.fromFfmpegName(
+                props.getProperty("preset.audioCodec", "aac")
             ),
             Integer.parseInt(props.getProperty("preset.audioBitrate", "192")),
             Boolean.parseBoolean(
