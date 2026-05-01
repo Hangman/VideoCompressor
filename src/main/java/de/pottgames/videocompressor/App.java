@@ -17,6 +17,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -104,6 +105,15 @@ public class App extends Application {
 
         Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
         stage.setTitle("VideoCompressor");
+        stage
+            .getIcons()
+            .add(new Image(App.class.getResourceAsStream("/logo_128.png")));
+        stage
+            .getIcons()
+            .add(new Image(App.class.getResourceAsStream("/logo_64.png")));
+        stage
+            .getIcons()
+            .add(new Image(App.class.getResourceAsStream("/logo_32.png")));
         stage.setScene(scene);
         stage.setMinWidth(WINDOW_WIDTH);
         stage.setMinHeight(WINDOW_HEIGHT);
