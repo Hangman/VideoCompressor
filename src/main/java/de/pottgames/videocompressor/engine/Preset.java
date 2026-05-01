@@ -18,6 +18,7 @@ public record Preset(
     int resolutionHeight,
     int fps,
     int maxFileSize,
+    boolean keepSourceAudio,
     int audioBitrate,
     boolean audioNormalize,
     boolean mixToMono,
@@ -67,6 +68,9 @@ public record Preset(
             ),
             Integer.parseInt(props.getProperty("preset.fps", "30")),
             Integer.parseInt(props.getProperty("preset.maxFileSize", "0")),
+            Boolean.parseBoolean(
+                props.getProperty("preset.keepSourceAudio", "true")
+            ),
             Integer.parseInt(props.getProperty("preset.audioBitrate", "192")),
             Boolean.parseBoolean(
                 props.getProperty("preset.audioNormalize", "false")

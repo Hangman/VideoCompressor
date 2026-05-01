@@ -72,6 +72,8 @@ public class Step2View implements StepView {
     private CheckBox mixToMonoCheck = null;
     private CheckBox fastStartCheck = null;
     private CheckBox keepSourceResCheck = null;
+    private CheckBox keepSourceAudioCheck = null;
+    private VBox audioRow = null;
     private HBox resolutionRow = null;
     private ChoiceBox<String> ffmpegPresetBox = null;
     private ChoiceBox<String> tuneBox = null;
@@ -140,6 +142,7 @@ public class Step2View implements StepView {
         mixToMonoCheck.setDisable(true);
         fastStartCheck.setDisable(true);
         keepSourceResCheck.setDisable(true);
+        keepSourceAudioCheck.setDisable(true);
         ffmpegPresetBox.setDisable(true);
         tuneBox.setDisable(true);
     }
@@ -160,6 +163,7 @@ public class Step2View implements StepView {
         mixToMonoCheck.setDisable(false);
         fastStartCheck.setDisable(false);
         keepSourceResCheck.setDisable(false);
+        keepSourceAudioCheck.setDisable(false);
         ffmpegPresetBox.setDisable(false);
         tuneBox.setDisable(false);
     }
@@ -413,9 +417,23 @@ public class Step2View implements StepView {
         VBox group = new VBox(10);
         group.setPadding(new Insets(10));
 
+        // Keep source audio checkbox
+        keepSourceAudioCheck = new CheckBox();
+        HBox keepAudioCheckBox = new HBox(8);
+        keepAudioCheckBox.getChildren().add(keepSourceAudioCheck);
+        Label keepAudioCheckLabel = new Label("Quellaudio beibehalten");
+        keepAudioCheckLabel.setStyle("-fx-text-fill: " + C_FG + ";");
+        keepAudioCheckBox.getChildren().add(keepAudioCheckLabel);
+        keepSourceAudioCheck.setTooltip(
+            new Tooltip("Nutzt das ursprüngliche Audio des Quellvideos")
+        );
+
+        // Container for audio settings that can be disabled
+        audioRow = new VBox(10);
+
         // Audio bitrate
         audioBitrateField = new TextField();
-        group
+        audioRow
             .getChildren()
             .add(
                 buildSettingRow(
@@ -434,7 +452,7 @@ public class Step2View implements StepView {
         checkLabel.setStyle("-fx-text-fill: " + C_FG + ";");
         checkBox.getChildren().add(checkLabel);
 
-        group
+        audioRow
             .getChildren()
             .add(
                 buildSettingRow(
@@ -453,7 +471,7 @@ public class Step2View implements StepView {
         monoLabel.setStyle("-fx-text-fill: " + C_FG + ";");
         monoBox.getChildren().add(monoLabel);
 
-        group
+        audioRow
             .getChildren()
             .add(
                 buildSettingRow(
@@ -462,6 +480,25 @@ public class Step2View implements StepView {
                     "",
                     monoBox
                 )
+            );
+
+        // Disable audio settings when keepSourceAudio is checked
+        keepSourceAudioCheck
+            .selectedProperty()
+            .addListener((obs, wasSelected, isSelected) -> {
+                audioRow.setDisable(isSelected);
+            });
+
+        group
+            .getChildren()
+            .addAll(
+                buildSettingRow(
+                    "Quellaudio",
+                    "Behält das ursprüngliche Audio bei",
+                    "",
+                    keepAudioCheckBox
+                ),
+                audioRow
             );
 
         return group;
@@ -568,6 +605,8 @@ public class Step2View implements StepView {
         );
         fpsField.setText(String.valueOf(selectedPreset.fps()));
         maxFileSizeField.setText(String.valueOf(selectedPreset.maxFileSize()));
+        keepSourceAudioCheck.setSelected(selectedPreset.keepSourceAudio());
+        audioRow.setDisable(selectedPreset.keepSourceAudio());
         audioBitrateField.setText(
             String.valueOf(selectedPreset.audioBitrate())
         );
@@ -601,6 +640,7 @@ public class Step2View implements StepView {
             safeInt(resHeightField, selectedPreset.resolutionHeight()),
             safeInt(fpsField, selectedPreset.fps()),
             safeInt(maxFileSizeField, selectedPreset.maxFileSize()),
+            keepSourceAudioCheck.isSelected(),
             safeInt(audioBitrateField, selectedPreset.audioBitrate()),
             audioNormalizeCheck.isSelected(),
             mixToMonoCheck.isSelected(),
