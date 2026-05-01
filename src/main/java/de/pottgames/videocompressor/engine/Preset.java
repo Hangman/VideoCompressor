@@ -11,7 +11,7 @@ import java.util.Properties;
 public record Preset(
     String name,
     String description,
-    String codec,
+    VideoCodec videoCodec,
     int crf,
     boolean keepSourceResolution,
     int resolutionWidth,
@@ -55,7 +55,9 @@ public record Preset(
         return new Preset(
             props.getProperty("preset.name", "Default"),
             props.getProperty("preset.description", ""),
-            props.getProperty("preset.codec", "libx264"),
+            VideoCodec.fromFfmpegName(
+                props.getProperty("preset.codec", "libx264")
+            ),
             Integer.parseInt(props.getProperty("preset.crf", "23")),
             Boolean.parseBoolean(
                 props.getProperty("preset.keepSourceResolution", "false")

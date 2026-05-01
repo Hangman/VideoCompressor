@@ -3,6 +3,7 @@ package de.pottgames.videocompressor.view.step;
 import atlantafx.base.theme.Styles;
 import de.pottgames.videocompressor.engine.Engine;
 import de.pottgames.videocompressor.engine.Preset;
+import de.pottgames.videocompressor.engine.VideoCodec;
 import de.pottgames.videocompressor.view.StepView;
 import java.util.List;
 import javafx.collections.FXCollections;
@@ -62,7 +63,7 @@ public class Step2View implements StepView {
     // ── Detail controls (bound to selected preset values) ────────────────
     // Initialized inline with null; actual instances are created in build methods
     // called from the constructor.
-    private ChoiceBox<String> codecBox = null;
+    private ChoiceBox<VideoCodec> codecBox = null;
     private TextField crfField = null;
     private TextField resWidthField = null;
     private TextField resHeightField = null;
@@ -273,18 +274,7 @@ public class Step2View implements StepView {
 
         // Codec
         codecBox = new ChoiceBox<>(
-            javafx.collections.FXCollections.observableList(
-                List.of(
-                    "libx264",
-                    "libx265",
-                    "libsvtav1",
-                    "libvpx-vp9",
-                    "mpeg4",
-                    "mpeg2video",
-                    "libtheora",
-                    "rawvideo"
-                )
-            )
+            FXCollections.observableArrayList(VideoCodec.values())
         );
         group
             .getChildren()
@@ -616,7 +606,7 @@ public class Step2View implements StepView {
             presetDescriptionLabel.setOpacity(0.0);
         }
 
-        codecBox.getSelectionModel().select(selectedPreset.codec());
+        codecBox.getSelectionModel().select(selectedPreset.videoCodec());
         crfField.setText(String.valueOf(selectedPreset.crf()));
         keepSourceResCheck.setSelected(selectedPreset.keepSourceResolution());
         resolutionRow.setDisable(selectedPreset.keepSourceResolution());
@@ -654,7 +644,7 @@ public class Step2View implements StepView {
             selectedPreset.description(),
             codecBox.getValue() != null
                 ? codecBox.getValue()
-                : selectedPreset.codec(),
+                : selectedPreset.videoCodec(),
             safeInt(crfField, selectedPreset.crf()),
             keepSourceResCheck.isSelected(),
             safeInt(resWidthField, selectedPreset.resolutionWidth()),
