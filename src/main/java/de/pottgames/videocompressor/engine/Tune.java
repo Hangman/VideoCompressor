@@ -58,6 +58,26 @@ public enum Tune {
         );
     }
 
+    /**
+     * Looks up a Tune by a case-insensitive name match.
+     * Tries matching against both the FFmpeg name and the human-readable name.
+     *
+     * @param name the tune identifier to match
+     * @return the matching Tune
+     * @throws IllegalArgumentException if no tune matches the given name
+     */
+    public static Tune fromName(String name) {
+        for (Tune tune : values()) {
+            if (
+                tune.ffmpegName.equalsIgnoreCase(name) ||
+                tune.humanName.equalsIgnoreCase(name)
+            ) {
+                return tune;
+            }
+        }
+        throw new IllegalArgumentException("Unknown tune name: " + name);
+    }
+
     @Override
     public String toString() {
         return humanName;

@@ -57,7 +57,7 @@ public record Preset(
         return new Preset(
             props.getProperty("preset.name", "Default"),
             props.getProperty("preset.description", ""),
-            VideoCodec.fromFfmpegName(
+            VideoCodec.fromName(
                 props.getProperty("preset.videoCodec", "libx264")
             ),
             Integer.parseInt(props.getProperty("preset.crf", "23")),
@@ -78,9 +78,7 @@ public record Preset(
             Boolean.parseBoolean(
                 props.getProperty("preset.keepSourceAudio", "true")
             ),
-            AudioCodec.fromFfmpegName(
-                props.getProperty("preset.audioCodec", "aac")
-            ),
+            AudioCodec.fromName(props.getProperty("preset.audioCodec", "aac")),
             Integer.parseInt(props.getProperty("preset.audioBitrate", "192")),
             Boolean.parseBoolean(
                 props.getProperty("preset.audioNormalize", "false")
@@ -91,10 +89,10 @@ public record Preset(
             Boolean.parseBoolean(
                 props.getProperty("preset.fastStart", "false")
             ),
-            FfmpegPreset.fromFfmpegName(
+            FfmpegPreset.fromName(
                 props.getProperty("preset.ffmpegPreset", "medium")
             ),
-            Tune.fromFfmpegName(props.getProperty("preset.tune", "none"))
+            Tune.fromName(props.getProperty("preset.tune", "none"))
         );
     }
 

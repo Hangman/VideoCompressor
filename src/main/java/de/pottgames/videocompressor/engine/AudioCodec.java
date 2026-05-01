@@ -53,6 +53,26 @@ public enum AudioCodec {
         );
     }
 
+    /**
+     * Looks up an AudioCodec by a case-insensitive name match.
+     * Tries matching against both the FFmpeg name and the human-readable name.
+     *
+     * @param name the codec identifier to match
+     * @return the matching AudioCodec
+     * @throws IllegalArgumentException if no codec matches the given name
+     */
+    public static AudioCodec fromName(String name) {
+        for (AudioCodec codec : values()) {
+            if (
+                codec.ffmpegName.equalsIgnoreCase(name) ||
+                codec.humanName.equalsIgnoreCase(name)
+            ) {
+                return codec;
+            }
+        }
+        throw new IllegalArgumentException("Unknown codec name: " + name);
+    }
+
     @Override
     public String toString() {
         return humanName;

@@ -54,6 +54,26 @@ public enum VideoCodec {
         );
     }
 
+    /**
+     * Looks up a VideoCodec by a case-insensitive name match.
+     * Tries matching against both the FFmpeg name and the human-readable name.
+     *
+     * @param name the codec identifier to match
+     * @return the matching VideoCodec
+     * @throws IllegalArgumentException if no codec matches the given name
+     */
+    public static VideoCodec fromName(String name) {
+        for (VideoCodec codec : values()) {
+            if (
+                codec.ffmpegName.equalsIgnoreCase(name) ||
+                codec.humanName.equalsIgnoreCase(name)
+            ) {
+                return codec;
+            }
+        }
+        throw new IllegalArgumentException("Unknown codec name: " + name);
+    }
+
     @Override
     public String toString() {
         return humanName;

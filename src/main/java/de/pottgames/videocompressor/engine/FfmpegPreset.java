@@ -59,6 +59,27 @@ public enum FfmpegPreset {
         return MEDIUM;
     }
 
+    /**
+     * Looks up an FfmpegPreset by a case-insensitive name match.
+     * Tries matching against both the FFmpeg name and the human-readable name.
+     * Falls back to MEDIUM for unknown values (e.g. numeric SVT-AV1 presets).
+     *
+     * @param name the preset identifier to match
+     * @return the matching FfmpegPreset, or MEDIUM as fallback
+     */
+    public static FfmpegPreset fromName(String name) {
+        for (FfmpegPreset preset : values()) {
+            if (
+                preset.ffmpegName.equalsIgnoreCase(name) ||
+                preset.humanName.equalsIgnoreCase(name)
+            ) {
+                return preset;
+            }
+        }
+        // Fallback for unknown or numeric presets (e.g. SVT-AV1 uses 0–13)
+        return MEDIUM;
+    }
+
     @Override
     public String toString() {
         return humanName;
