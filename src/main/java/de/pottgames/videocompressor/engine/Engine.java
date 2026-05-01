@@ -163,7 +163,20 @@ public class Engine {
                 loadedPresets = stream
                     .filter(Files::isRegularFile)
                     .filter(p -> p.toString().endsWith(".properties"))
-                    .map(Preset::fromFile)
+                    .map(p -> {
+                        try {
+                            return Preset.fromFile(p);
+                        } catch (Exception e) {
+                            System.out.println(
+                                "[Engine] Warning: Failed to load preset from " +
+                                    p.getFileName() +
+                                    ": " +
+                                    e.getMessage()
+                            );
+                            return null;
+                        }
+                    })
+                    .filter(java.util.Objects::nonNull)
                     .collect(Collectors.toList());
             } catch (java.io.IOException e) {
                 throw new RuntimeException(
