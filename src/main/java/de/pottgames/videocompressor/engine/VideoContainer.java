@@ -5,16 +5,18 @@ package de.pottgames.videocompressor.engine;
  * Each container provides its FFmpeg CLI identifier and a human-readable name.
  */
 public enum VideoContainer {
-    MP4("mp4", "MP4"),
-    MKV("matroska", "MKV"),
-    WEBM("webm", "WebM");
+    MP4("mp4", "MP4", "mp4"),
+    MKV("matroska", "MKV", "mkv"),
+    WEBM("webm", "WebM", "webm");
 
     private final String ffmpegName;
     private final String humanName;
+    private final String extension;
 
-    VideoContainer(String ffmpegName, String humanName) {
+    VideoContainer(String ffmpegName, String humanName, String extension) {
         this.ffmpegName = ffmpegName;
         this.humanName = humanName;
+        this.extension = extension;
     }
 
     /**
@@ -33,6 +35,15 @@ public enum VideoContainer {
      */
     public String getHumanName() {
         return humanName;
+    }
+
+    /**
+     * Returns the common file extension for this container format.
+     *
+     * @return the file extension, e.g. ".mp4"
+     */
+    public String getExtension() {
+        return extension;
     }
 
     /**
