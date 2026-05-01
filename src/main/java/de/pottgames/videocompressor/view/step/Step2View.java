@@ -10,6 +10,7 @@ import de.pottgames.videocompressor.engine.VideoCodec;
 import de.pottgames.videocompressor.engine.VideoContainer;
 import de.pottgames.videocompressor.view.StepView;
 import java.util.List;
+import java.util.Objects;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -101,7 +102,7 @@ public class Step2View implements StepView {
         VBox.setVgrow(detailSection, Priority.ALWAYS);
 
         // Initially disable all interactive controls until engine is ready
-        disableAllControls();
+        setControlsEnabled(false);
     }
 
     /**
@@ -131,53 +132,33 @@ public class Step2View implements StepView {
         }
 
         // Enable all controls now that data is loaded
-        enableAllControls();
+        setControlsEnabled(true);
     }
 
     /**
-     * Disables all interactive UI controls until the engine is ready.
+     * Enables or disables all interactive UI controls.
+     *
+     * @param enabled {@code true} to enable, {@code false} to disable
      */
-    private void disableAllControls() {
-        presetChoiceBox.setDisable(true);
-        codecBox.setDisable(true);
-        crfField.setDisable(true);
-        resWidthField.setDisable(true);
-        resHeightField.setDisable(true);
-        fpsField.setDisable(true);
-        maxFileSizeField.setDisable(true);
-        containerBox.setDisable(true);
-        audioCodecBox.setDisable(true);
-        audioBitrateField.setDisable(true);
-        audioNormalizeCheck.setDisable(true);
-        mixToMonoCheck.setDisable(true);
-        fastStartCheck.setDisable(true);
-        keepSourceResCheck.setDisable(true);
-        keepSourceAudioCheck.setDisable(true);
-        ffmpegPresetBox.setDisable(true);
-        tuneBox.setDisable(true);
-    }
-
-    /**
-     * Enables all interactive UI controls after the engine is ready.
-     */
-    private void enableAllControls() {
-        presetChoiceBox.setDisable(false);
-        codecBox.setDisable(false);
-        crfField.setDisable(false);
-        resWidthField.setDisable(false);
-        resHeightField.setDisable(false);
-        fpsField.setDisable(false);
-        maxFileSizeField.setDisable(false);
-        containerBox.setDisable(false);
-        audioCodecBox.setDisable(false);
-        audioBitrateField.setDisable(false);
-        audioNormalizeCheck.setDisable(false);
-        mixToMonoCheck.setDisable(false);
-        fastStartCheck.setDisable(false);
-        keepSourceResCheck.setDisable(false);
-        keepSourceAudioCheck.setDisable(false);
-        ffmpegPresetBox.setDisable(false);
-        tuneBox.setDisable(false);
+    private void setControlsEnabled(boolean enabled) {
+        boolean disable = !enabled;
+        presetChoiceBox.setDisable(disable);
+        codecBox.setDisable(disable);
+        crfField.setDisable(disable);
+        resWidthField.setDisable(disable);
+        resHeightField.setDisable(disable);
+        fpsField.setDisable(disable);
+        maxFileSizeField.setDisable(disable);
+        containerBox.setDisable(disable);
+        audioCodecBox.setDisable(disable);
+        audioBitrateField.setDisable(disable);
+        audioNormalizeCheck.setDisable(disable);
+        mixToMonoCheck.setDisable(disable);
+        fastStartCheck.setDisable(disable);
+        keepSourceResCheck.setDisable(disable);
+        keepSourceAudioCheck.setDisable(disable);
+        ffmpegPresetBox.setDisable(disable);
+        tuneBox.setDisable(disable);
     }
 
     // ─────────────────────────────────────────────────────────────────────
@@ -330,11 +311,10 @@ public class Step2View implements StepView {
 
         // Keep source resolution checkbox - own row with label and description
         keepSourceResCheck = new CheckBox();
-        HBox keepResCheckBox = new HBox(8);
-        keepResCheckBox.getChildren().add(keepSourceResCheck);
-        Label keepResCheckLabel = new Label("Quellaufösung beibehalten");
-        keepResCheckLabel.setStyle("-fx-text-fill: " + C_FG + ";");
-        keepResCheckBox.getChildren().add(keepResCheckLabel);
+        HBox keepResCheckBox = buildCheckBoxRow(
+            keepSourceResCheck,
+            "Quellaufösung beibehalten"
+        );
         keepSourceResCheck.setTooltip(
             new Tooltip("Nutzt die ursprüngliche Auflösung des Quellvideos")
         );
@@ -407,11 +387,10 @@ public class Step2View implements StepView {
 
         // Keep source audio checkbox
         keepSourceAudioCheck = new CheckBox();
-        HBox keepAudioCheckBox = new HBox(8);
-        keepAudioCheckBox.getChildren().add(keepSourceAudioCheck);
-        Label keepAudioCheckLabel = new Label("Quellaudio beibehalten");
-        keepAudioCheckLabel.setStyle("-fx-text-fill: " + C_FG + ";");
-        keepAudioCheckBox.getChildren().add(keepAudioCheckLabel);
+        HBox keepAudioCheckBox = buildCheckBoxRow(
+            keepSourceAudioCheck,
+            "Quellaudio beibehalten"
+        );
         keepSourceAudioCheck.setTooltip(
             new Tooltip("Nutzt das ursprüngliche Audio des Quellvideos")
         );
@@ -449,11 +428,10 @@ public class Step2View implements StepView {
 
         // Audio normalize
         audioNormalizeCheck = new CheckBox();
-        HBox checkBox = new HBox(8);
-        checkBox.getChildren().add(audioNormalizeCheck);
-        Label checkLabel = new Label("Lautstärke normalisieren (EBU R128)");
-        checkLabel.setStyle("-fx-text-fill: " + C_FG + ";");
-        checkBox.getChildren().add(checkLabel);
+        HBox checkBox = buildCheckBoxRow(
+            audioNormalizeCheck,
+            "Lautstärke normalisieren (EBU R128)"
+        );
 
         audioRow
             .getChildren()
@@ -468,11 +446,10 @@ public class Step2View implements StepView {
 
         // Mix to mono
         mixToMonoCheck = new CheckBox();
-        HBox monoBox = new HBox(8);
-        monoBox.getChildren().add(mixToMonoCheck);
-        Label monoLabel = new Label("Zu MONO heruntermischen");
-        monoLabel.setStyle("-fx-text-fill: " + C_FG + ";");
-        monoBox.getChildren().add(monoLabel);
+        HBox monoBox = buildCheckBoxRow(
+            mixToMonoCheck,
+            "Zu MONO heruntermischen"
+        );
 
         audioRow
             .getChildren()
@@ -545,11 +522,10 @@ public class Step2View implements StepView {
 
         // Fast start
         fastStartCheck = new CheckBox();
-        HBox checkBox = new HBox(8);
-        checkBox.getChildren().add(fastStartCheck);
-        Label checkLabel = new Label("Fast Start (Moov atom voranstellen)");
-        checkLabel.setStyle("-fx-text-fill: " + C_FG + ";");
-        checkBox.getChildren().add(checkLabel);
+        HBox checkBox = buildCheckBoxRow(
+            fastStartCheck,
+            "Fast Start (Moov atom voranstellen)"
+        );
 
         group
             .getChildren()
@@ -568,6 +544,18 @@ public class Step2View implements StepView {
     // ─────────────────────────────────────────────────────────────────────
     //  Helper – build a single setting row
     // ─────────────────────────────────────────────────────────────────────
+
+    /**
+     * Builds an HBox containing a CheckBox and a styled label next to it.
+     */
+    private HBox buildCheckBoxRow(CheckBox checkBox, String labelText) {
+        HBox box = new HBox(8);
+        box.getChildren().add(checkBox);
+        Label label = new Label(labelText);
+        label.setStyle("-fx-text-fill: " + C_FG + ";");
+        box.getChildren().add(label);
+        return box;
+    }
 
     private HBox buildSettingRow(
         String name,
@@ -660,32 +648,37 @@ public class Step2View implements StepView {
         return new Preset(
             selectedPreset.name(),
             selectedPreset.description(),
-            codecBox.getValue() != null
-                ? codecBox.getValue()
-                : selectedPreset.videoCodec(),
+            Objects.requireNonNullElse(
+                codecBox.getValue(),
+                selectedPreset.videoCodec()
+            ),
             safeInt(crfField, selectedPreset.crf()),
             keepSourceResCheck.isSelected(),
             safeInt(resWidthField, selectedPreset.resolutionWidth()),
             safeInt(resHeightField, selectedPreset.resolutionHeight()),
             safeDouble(fpsField, selectedPreset.fps()),
-            containerBox.getValue() != null
-                ? containerBox.getValue()
-                : selectedPreset.container(),
+            Objects.requireNonNullElse(
+                containerBox.getValue(),
+                selectedPreset.container()
+            ),
             safeInt(maxFileSizeField, selectedPreset.maxFileSize()),
             keepSourceAudioCheck.isSelected(),
-            audioCodecBox.getValue() != null
-                ? audioCodecBox.getValue()
-                : selectedPreset.audioCodec(),
+            Objects.requireNonNullElse(
+                audioCodecBox.getValue(),
+                selectedPreset.audioCodec()
+            ),
             safeInt(audioBitrateField, selectedPreset.audioBitrate()),
             audioNormalizeCheck.isSelected(),
             mixToMonoCheck.isSelected(),
             fastStartCheck.isSelected(),
-            ffmpegPresetBox.getValue() != null
-                ? ffmpegPresetBox.getValue()
-                : selectedPreset.ffmpegPreset(),
-            tuneBox.getValue() != null
-                ? tuneBox.getValue()
-                : selectedPreset.tune()
+            Objects.requireNonNullElse(
+                ffmpegPresetBox.getValue(),
+                selectedPreset.ffmpegPreset()
+            ),
+            Objects.requireNonNullElse(
+                tuneBox.getValue(),
+                selectedPreset.tune()
+            )
         );
     }
 
