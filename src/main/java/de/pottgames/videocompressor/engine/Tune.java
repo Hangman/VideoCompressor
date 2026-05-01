@@ -9,8 +9,8 @@ public enum Tune {
     NONE("none", "Keine"),
     FILM("film", "Film"),
     ANIMATION("animation", "Animation"),
-    GRAIN("grain", "Kornstruktur"),
-    STILLIMAGE("stillimage", "Stillbild"),
+    GRAIN("grain", "Filmkörnung"),
+    STILLIMAGE("stillimage", "Standbild"),
     FASTDECODE("fastdecode", "Schnelles Decodieren"),
     ZEROLATENCY("zerolatency", "Keine Latenz");
 
