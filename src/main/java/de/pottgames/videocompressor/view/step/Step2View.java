@@ -3,7 +3,9 @@ package de.pottgames.videocompressor.view.step;
 import atlantafx.base.theme.Styles;
 import de.pottgames.videocompressor.engine.AudioCodec;
 import de.pottgames.videocompressor.engine.Engine;
+import de.pottgames.videocompressor.engine.FfmpegPreset;
 import de.pottgames.videocompressor.engine.Preset;
+import de.pottgames.videocompressor.engine.Tune;
 import de.pottgames.videocompressor.engine.VideoCodec;
 import de.pottgames.videocompressor.view.StepView;
 import java.util.List;
@@ -79,8 +81,8 @@ public class Step2View implements StepView {
     private ChoiceBox<AudioCodec> audioCodecBox = null;
     private VBox audioRow = null;
     private HBox resolutionRow = null;
-    private ChoiceBox<String> ffmpegPresetBox = null;
-    private ChoiceBox<String> tuneBox = null;
+    private ChoiceBox<FfmpegPreset> ffmpegPresetBox = null;
+    private ChoiceBox<Tune> tuneBox = null;
 
     public Step2View() {
         // ── Build UI ───────────────────────────────────────────────────
@@ -360,19 +362,7 @@ public class Step2View implements StepView {
 
         // FFmpeg preset
         ffmpegPresetBox = new ChoiceBox<>(
-            javafx.collections.FXCollections.observableList(
-                List.of(
-                    "ultrafast",
-                    "superfast",
-                    "veryfast",
-                    "faster",
-                    "fast",
-                    "medium",
-                    "slow",
-                    "slower",
-                    "veryslow"
-                )
-            )
+            FXCollections.observableArrayList(FfmpegPreset.values())
         );
         group
             .getChildren()
@@ -387,19 +377,7 @@ public class Step2View implements StepView {
 
         // Tune
         tuneBox = new ChoiceBox<>(
-            javafx.collections.FXCollections.observableList(
-                List.of(
-                    "none",
-                    "film",
-                    "animation",
-                    "grain",
-                    "stillimage",
-                    "psnr",
-                    "ssim",
-                    "fastdecode",
-                    "zerolatency"
-                )
-            )
+            FXCollections.observableArrayList(Tune.values())
         );
         group
             .getChildren()

@@ -24,8 +24,8 @@ public record Preset(
     boolean audioNormalize,
     boolean mixToMono,
     boolean fastStart,
-    String ffmpegPreset,
-    String tune
+    FfmpegPreset ffmpegPreset,
+    Tune tune
 ) {
     public static final Path PRESET_FOLDER_PATH = Path.of("presets");
     private static final Path DEFAULT_PRESET_PATH = Path.of(
@@ -87,8 +87,10 @@ public record Preset(
             Boolean.parseBoolean(
                 props.getProperty("preset.fastStart", "false")
             ),
-            props.getProperty("preset.ffmpegPreset", "medium"),
-            props.getProperty("preset.tune", "none")
+            FfmpegPreset.fromFfmpegName(
+                props.getProperty("preset.ffmpegPreset", "medium")
+            ),
+            Tune.fromFfmpegName(props.getProperty("preset.tune", "none"))
         );
     }
 
