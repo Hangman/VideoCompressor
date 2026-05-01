@@ -245,30 +245,34 @@ public record Preset(
         }
 
         // --- Audio-Bitrate ---
-        if (audioBitrate <= 0) {
-            errors.add(
-                "Audio-Bitrate muss größer als 0 sein (ist " +
-                    audioBitrate +
-                    ")."
-            );
-        } else if (audioBitrate > 9999) {
-            errors.add(
-                "Audio-Bitrate " + audioBitrate + " kbit/s ist unüblich hoch."
-            );
-        } else {
-            if (!mixToMono && audioBitrate < 64) {
-                warnings.add(
+        if (!keepSourceAudio) {
+            if (audioBitrate <= 0) {
+                errors.add(
+                    "Audio-Bitrate muss größer als 0 sein (ist " +
+                        audioBitrate +
+                        ")."
+                );
+            } else if (audioBitrate > 9999) {
+                errors.add(
                     "Audio-Bitrate " +
                         audioBitrate +
-                        " kbit/s ist für Stereo sehr niedrig."
+                        " kbit/s ist unüblich hoch."
                 );
-            }
-            if (mixToMono && audioBitrate < 32) {
-                warnings.add(
-                    "Audio-Bitrate " +
-                        audioBitrate +
-                        " kbit/s ist für Mono sehr niedrig."
-                );
+            } else {
+                if (!mixToMono && audioBitrate < 64) {
+                    warnings.add(
+                        "Audio-Bitrate " +
+                            audioBitrate +
+                            " kbit/s ist für Stereo sehr niedrig."
+                    );
+                }
+                if (mixToMono && audioBitrate < 32) {
+                    warnings.add(
+                        "Audio-Bitrate " +
+                            audioBitrate +
+                            " kbit/s ist für Mono sehr niedrig."
+                    );
+                }
             }
         }
 
@@ -285,6 +289,7 @@ public record Preset(
 
         // --- Audio-Normalisierung mit Opus/Vorbis ---
         if (
+            !keepSourceAudio &&
             audioNormalize &&
             (audioCodec == AudioCodec.OPUS || audioCodec == AudioCodec.VORBIS)
         ) {
