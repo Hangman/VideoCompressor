@@ -1,6 +1,7 @@
 package de.pottgames.videocompressor.view.step;
 
 import atlantafx.base.theme.Styles;
+import de.pottgames.videocompressor.engine.AudioCodec;
 import de.pottgames.videocompressor.engine.Engine;
 import de.pottgames.videocompressor.engine.Preset;
 import de.pottgames.videocompressor.engine.VideoCodec;
@@ -75,6 +76,7 @@ public class Step2View implements StepView {
     private CheckBox fastStartCheck = null;
     private CheckBox keepSourceResCheck = null;
     private CheckBox keepSourceAudioCheck = null;
+    private ChoiceBox<AudioCodec> audioCodecBox = null;
     private VBox audioRow = null;
     private HBox resolutionRow = null;
     private ChoiceBox<String> ffmpegPresetBox = null;
@@ -139,6 +141,7 @@ public class Step2View implements StepView {
         resHeightField.setDisable(true);
         fpsField.setDisable(true);
         maxFileSizeField.setDisable(true);
+        audioCodecBox.setDisable(true);
         audioBitrateField.setDisable(true);
         audioNormalizeCheck.setDisable(true);
         mixToMonoCheck.setDisable(true);
@@ -160,6 +163,7 @@ public class Step2View implements StepView {
         resHeightField.setDisable(false);
         fpsField.setDisable(false);
         maxFileSizeField.setDisable(false);
+        audioCodecBox.setDisable(false);
         audioBitrateField.setDisable(false);
         audioNormalizeCheck.setDisable(false);
         mixToMonoCheck.setDisable(false);
@@ -433,6 +437,21 @@ public class Step2View implements StepView {
         // Container for audio settings that can be disabled
         audioRow = new VBox(10);
 
+        // Audio codec
+        audioCodecBox = new ChoiceBox<>(
+            FXCollections.observableArrayList(AudioCodec.values())
+        );
+        audioRow
+            .getChildren()
+            .add(
+                buildSettingRow(
+                    "Audio Codec",
+                    "Audio-Codec",
+                    "AAC",
+                    audioCodecBox
+                )
+            );
+
         // Audio bitrate
         audioBitrateField = new TextField();
         audioRow
@@ -618,6 +637,7 @@ public class Step2View implements StepView {
         maxFileSizeField.setText(String.valueOf(selectedPreset.maxFileSize()));
         keepSourceAudioCheck.setSelected(selectedPreset.keepSourceAudio());
         audioRow.setDisable(selectedPreset.keepSourceAudio());
+        audioCodecBox.getSelectionModel().select(selectedPreset.audioCodec());
         audioBitrateField.setText(
             String.valueOf(selectedPreset.audioBitrate())
         );
@@ -652,6 +672,9 @@ public class Step2View implements StepView {
             safeInt(fpsField, selectedPreset.fps()),
             safeInt(maxFileSizeField, selectedPreset.maxFileSize()),
             keepSourceAudioCheck.isSelected(),
+            audioCodecBox.getValue() != null
+                ? audioCodecBox.getValue()
+                : selectedPreset.audioCodec(),
             safeInt(audioBitrateField, selectedPreset.audioBitrate()),
             audioNormalizeCheck.isSelected(),
             mixToMonoCheck.isSelected(),
