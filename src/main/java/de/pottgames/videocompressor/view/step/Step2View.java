@@ -647,7 +647,7 @@ public class Step2View implements StepView {
             keepSourceResCheck.isSelected(),
             safeInt(resWidthField, selectedPreset.resolutionWidth()),
             safeInt(resHeightField, selectedPreset.resolutionHeight()),
-            safeInt(fpsField, selectedPreset.fps()),
+            safeDouble(fpsField, selectedPreset.fps()),
             safeInt(maxFileSizeField, selectedPreset.maxFileSize()),
             keepSourceAudioCheck.isSelected(),
             audioCodecBox.getValue() != null
@@ -669,6 +669,14 @@ public class Step2View implements StepView {
     private int safeInt(TextField field, int fallback) {
         try {
             return Integer.parseInt(field.getText().trim());
+        } catch (NumberFormatException e) {
+            return fallback;
+        }
+    }
+
+    private double safeDouble(TextField field, double fallback) {
+        try {
+            return Double.parseDouble(field.getText().trim());
         } catch (NumberFormatException e) {
             return fallback;
         }

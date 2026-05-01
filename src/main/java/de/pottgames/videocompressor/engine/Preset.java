@@ -16,7 +16,7 @@ public record Preset(
     boolean keepSourceResolution,
     int resolutionWidth,
     int resolutionHeight,
-    int fps,
+    double fps,
     int maxFileSize,
     boolean keepSourceAudio,
     AudioCodec audioCodec,
@@ -69,7 +69,7 @@ public record Preset(
             Integer.parseInt(
                 props.getProperty("preset.resolutionHeight", "1080")
             ),
-            Integer.parseInt(props.getProperty("preset.fps", "30")),
+            Double.parseDouble(props.getProperty("preset.fps", "30")),
             Integer.parseInt(props.getProperty("preset.maxFileSize", "0")),
             Boolean.parseBoolean(
                 props.getProperty("preset.keepSourceAudio", "true")
