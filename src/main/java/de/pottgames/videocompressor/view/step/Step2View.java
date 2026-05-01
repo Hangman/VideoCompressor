@@ -7,6 +7,7 @@ import de.pottgames.videocompressor.engine.FfmpegPreset;
 import de.pottgames.videocompressor.engine.Preset;
 import de.pottgames.videocompressor.engine.Tune;
 import de.pottgames.videocompressor.engine.VideoCodec;
+import de.pottgames.videocompressor.engine.VideoContainer;
 import de.pottgames.videocompressor.view.StepView;
 import java.util.List;
 import javafx.collections.FXCollections;
@@ -79,6 +80,7 @@ public class Step2View implements StepView {
     private CheckBox keepSourceResCheck = null;
     private CheckBox keepSourceAudioCheck = null;
     private ChoiceBox<AudioCodec> audioCodecBox = null;
+    private ChoiceBox<VideoContainer> containerBox = null;
     private VBox audioRow = null;
     private HBox resolutionRow = null;
     private ChoiceBox<FfmpegPreset> ffmpegPresetBox = null;
@@ -143,6 +145,7 @@ public class Step2View implements StepView {
         resHeightField.setDisable(true);
         fpsField.setDisable(true);
         maxFileSizeField.setDisable(true);
+        containerBox.setDisable(true);
         audioCodecBox.setDisable(true);
         audioBitrateField.setDisable(true);
         audioNormalizeCheck.setDisable(true);
@@ -165,6 +168,7 @@ public class Step2View implements StepView {
         resHeightField.setDisable(false);
         fpsField.setDisable(false);
         maxFileSizeField.setDisable(false);
+        containerBox.setDisable(false);
         audioCodecBox.setDisable(false);
         audioBitrateField.setDisable(false);
         audioNormalizeCheck.setDisable(false);
@@ -511,6 +515,21 @@ public class Step2View implements StepView {
         VBox group = new VBox(10);
         group.setPadding(new Insets(10));
 
+        // Container format
+        containerBox = new ChoiceBox<>(
+            FXCollections.observableArrayList(VideoContainer.values())
+        );
+        group
+            .getChildren()
+            .add(
+                buildSettingRow(
+                    "Container",
+                    "Ausgabe-Containerformat",
+                    "mp4",
+                    containerBox
+                )
+            );
+
         // Max file size
         maxFileSizeField = new TextField();
         group
@@ -621,6 +640,7 @@ public class Step2View implements StepView {
         );
         audioNormalizeCheck.setSelected(selectedPreset.audioNormalize());
         mixToMonoCheck.setSelected(selectedPreset.mixToMono());
+        containerBox.getSelectionModel().select(selectedPreset.container());
         fastStartCheck.setSelected(selectedPreset.fastStart());
         ffmpegPresetBox
             .getSelectionModel()
@@ -648,6 +668,9 @@ public class Step2View implements StepView {
             safeInt(resWidthField, selectedPreset.resolutionWidth()),
             safeInt(resHeightField, selectedPreset.resolutionHeight()),
             safeDouble(fpsField, selectedPreset.fps()),
+            containerBox.getValue() != null
+                ? containerBox.getValue()
+                : selectedPreset.container(),
             safeInt(maxFileSizeField, selectedPreset.maxFileSize()),
             keepSourceAudioCheck.isSelected(),
             audioCodecBox.getValue() != null

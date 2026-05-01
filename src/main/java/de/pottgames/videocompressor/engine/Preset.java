@@ -17,6 +17,7 @@ public record Preset(
     int resolutionWidth,
     int resolutionHeight,
     double fps,
+    VideoContainer container,
     int maxFileSize,
     boolean keepSourceAudio,
     AudioCodec audioCodec,
@@ -70,6 +71,9 @@ public record Preset(
                 props.getProperty("preset.resolutionHeight", "1080")
             ),
             Double.parseDouble(props.getProperty("preset.fps", "30")),
+            VideoContainer.fromName(
+                props.getProperty("preset.container", "mp4")
+            ),
             Integer.parseInt(props.getProperty("preset.maxFileSize", "0")),
             Boolean.parseBoolean(
                 props.getProperty("preset.keepSourceAudio", "true")
