@@ -5,11 +5,13 @@ package de.pottgames.videocompressor;
 
 import atlantafx.base.theme.Dracula;
 import atlantafx.base.theme.Styles;
+import de.pottgames.videocompressor.engine.Engine;
 import de.pottgames.videocompressor.view.StepView;
 import de.pottgames.videocompressor.view.step.Step1View;
 import de.pottgames.videocompressor.view.step.Step2View;
 import de.pottgames.videocompressor.view.step.Step3View;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -27,13 +29,16 @@ public class App extends Application {
 
     // Window size
     private static final int WINDOW_WIDTH = 900;
-    private static final int WINDOW_HEIGHT = 620;
+    private static final int WINDOW_HEIGHT = 800;
 
     private StepView currentStep;
 
     private Step1View step1View;
     private Step2View step2View;
     private Step3View step3View;
+
+    // Engine instance (initialized asynchronously at startup)
+    private Engine engine;
 
     private Button backButton;
     private Button centerButton;
@@ -70,6 +75,13 @@ public class App extends Application {
         step1View = new Step1View();
         step2View = new Step2View();
         step3View = new Step3View();
+
+        // Asynchronously initialize the engine (loads presets, validates FFMPEG, etc.)
+        Engine.initialize().thenAccept(engine -> {
+            this.engine = engine;
+            // Update Step2View with loaded presets on the JavaFX Application Thread
+            Platform.runLater(() -> step2View.setEngine(engine));
+        });
 
         // Initialize the root layout
         root = new BorderPane();

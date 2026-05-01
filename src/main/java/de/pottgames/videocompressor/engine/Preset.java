@@ -13,6 +13,7 @@ public record Preset(
     String description,
     String codec,
     int crf,
+    boolean keepSourceResolution,
     int resolutionWidth,
     int resolutionHeight,
     int fps,
@@ -23,6 +24,7 @@ public record Preset(
     String ffmpegPreset,
     String tune
 ) {
+    public static final Path PRESET_FOLDER_PATH = Path.of("presets");
     private static final Path DEFAULT_PRESET_PATH = Path.of(
         "presets",
         "default.properties"
@@ -53,6 +55,9 @@ public record Preset(
             props.getProperty("preset.description", ""),
             props.getProperty("preset.codec", "libx264"),
             Integer.parseInt(props.getProperty("preset.crf", "23")),
+            Boolean.parseBoolean(
+                props.getProperty("preset.keepSourceResolution", "false")
+            ),
             Integer.parseInt(
                 props.getProperty("preset.resolutionWidth", "1920")
             ),
@@ -71,5 +76,21 @@ public record Preset(
             props.getProperty("preset.ffmpegPreset", "medium"),
             props.getProperty("preset.tune", "none")
         );
+    }
+
+    /**
+     * Loads a preset from a .properties file.
+     *
+     * @param path the path to the properties file
+     * @return the loaded Preset
+     */
+    public static Preset fromFile(Path path) {
+        Properties props = new Properties();
+        try {
+            props.load(Files.newBufferedReader(path, StandardCharsets.UTF_8));
+        } catch (java.io.IOException e) {
+            throw new RuntimeException("Failed to load preset from " + path, e);
+        }
+        return fromProperties(props);
     }
 }

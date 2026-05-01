@@ -1,15 +1,22 @@
 package de.pottgames.videocompressor.engine;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 /**
  * Central engine for video processing configuration and validation.
- * Defines supported video formats and provides compatibility checks.
+ * Manages preset loading and provides access to FFMPEG tool paths.
+ *
+ * Initialize asynchronously via {@link #initialize()} before use.
  */
 public class Engine {
+
+    // ── Static utility members (unchanged) ──────────────────────────────
 
     private static final String FFMPEG_EXECUTABLE =
         "ffmpeg" + getExecutableExtension();
@@ -72,7 +79,6 @@ public class Engine {
         }
 
         // Return the relative path even if it doesn't exist yet
-        // This allows the application to fail gracefully with a clear error message
         return relativePath.toAbsolutePath();
     }
 
@@ -112,7 +118,7 @@ public class Engine {
 
     /**
      * Checks whether the given file is a compatible video file
-     * that FFMPEG (full) can process.
+     * that FFMPEG can process.
      *
      * @param file the file to check
      * @return {@code true} if the file has a supported extension
@@ -128,5 +134,81 @@ public class Engine {
         }
         String extension = name.substring(dotIndex + 1).toLowerCase();
         return SUPPORTED_EXTENSIONS.contains(extension);
+    }
+
+    // ── Instance state ──────────────────────────────────────────────────
+
+    private final List<Preset> presets;
+    private final boolean initialized;
+
+    private Engine(List<Preset> presets, boolean initialized) {
+        this.presets = presets;
+        this.initialized = initialized;
+    }
+
+    // ── Async initialization ────────────────────────────────────────────
+
+    /**
+     * Asynchronously initializes the engine by loading all preset
+     * configuration files from the presets folder.
+     *
+     * @return a CompletableFuture that completes with the initialized Engine instance
+     */
+    public static CompletableFuture<Engine> initialize() {
+        return CompletableFuture.supplyAsync(() -> {
+            System.out.println("[Engine] Loading presets...");
+
+            List<Preset> loadedPresets;
+            try (var stream = Files.list(Preset.PRESET_FOLDER_PATH)) {
+                loadedPresets = stream
+                    .filter(Files::isRegularFile)
+                    .filter(p -> p.toString().endsWith(".properties"))
+                    .map(Preset::fromFile)
+                    .collect(Collectors.toList());
+            } catch (java.io.IOException e) {
+                throw new RuntimeException(
+                    "Failed to read presets folder: " +
+                        Preset.PRESET_FOLDER_PATH,
+                    e
+                );
+            }
+
+            if (loadedPresets.isEmpty()) {
+                System.out.println(
+                    "[Engine] Warning: No preset files found. Using empty list."
+                );
+            } else {
+                System.out.println(
+                    "[Engine] Loaded " + loadedPresets.size() + " preset(s)."
+                );
+            }
+
+            return new Engine(List.copyOf(loadedPresets), true);
+        });
+    }
+
+    // ── Instance accessors ──────────────────────────────────────────────
+
+    /**
+     * @return {@code true} if this engine instance has been fully initialized
+     */
+    public boolean isInitialized() {
+        return initialized;
+    }
+
+    /**
+     * @return an unmodifiable list of all loaded presets
+     */
+    public List<Preset> getPresets() {
+        return presets;
+    }
+
+    /**
+     * Returns the first preset (default) if available.
+     *
+     * @return the default preset or {@code null} if no presets were loaded
+     */
+    public Preset getDefaultPreset() {
+        return presets.isEmpty() ? null : presets.get(0);
     }
 }
