@@ -9,10 +9,13 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.layout.Priority;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 
@@ -26,8 +29,10 @@ public class Step1View implements StepView {
         FXCollections.observableArrayList();
     private final ListView<File> fileListView;
     private final Label dropLabel;
-    private final VBox root;
+    private final StackPane root;
     private Button nextButton;
+    private ImageView logoView;
+    private VBox placeholderVBox;
     private boolean activated = false;
 
     public Step1View() {
@@ -41,14 +46,30 @@ public class Step1View implements StepView {
         );
         dropLabel.setWrapText(true);
 
-        root = new VBox(10, dropLabel, fileListView);
+        // Logo shown when no videos have been added yet
+        Image logoImage = new Image(
+            getClass().getResourceAsStream("/logo_466.png")
+        );
+        logoView = new ImageView(logoImage);
+        logoView.setFitHeight(300);
+        logoView.setFitWidth(300);
+        logoView.setPreserveRatio(true);
+
+        // Placeholder VBox containing logo and drop label, hidden when files are added
+        placeholderVBox = new VBox(10, logoView, dropLabel);
+        placeholderVBox.setAlignment(Pos.CENTER);
+
+        // Overlay placeholder inside the ListView area using a StackPane
+        root = new StackPane(fileListView, placeholderVBox);
         root.setPadding(new Insets(20));
-        VBox.setVgrow(fileListView, Priority.ALWAYS);
 
         setupDragAndDrop();
 
         files.addListener(
-            (ListChangeListener<File>) _ -> updateNextButtonState()
+            (ListChangeListener<File>) _ -> {
+                updateLogoVisibility();
+                updateNextButtonState();
+            }
         );
     }
 
@@ -133,13 +154,17 @@ public class Step1View implements StepView {
         Button nextButton
     ) {
         activated = true;
-        centerButton.setText("Videos hinzufügen");
+        centerButton.setText("Videos importieren");
         centerButton.setVisible(true);
         centerButton.setDisable(false);
         centerButton.setOnAction(_ -> showFileChooser());
         backButton.setVisible(false);
         this.nextButton = nextButton;
         updateNextButtonState();
+    }
+
+    private void updateLogoVisibility() {
+        placeholderVBox.setVisible(files.isEmpty());
     }
 
     private void updateNextButtonState() {
