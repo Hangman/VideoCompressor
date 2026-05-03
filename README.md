@@ -8,22 +8,11 @@
 
 ## What is this?
 
-A desktop application for compressing videos using FFmpeg. Built with **Java** and **JavaFX**, it provides a graphical interface to apply compression presets and manage video encoding workflows.
-
-## Tech Stack
-
-- **Java 25** with **JavaFX**
-- **FFmpeg** as the underlying video engine
-- **Maven** for build management
-- **AtlantFX** for UI theming
-- **Jackson** for configuration parsing
-
-## Presets
-
-Compression presets (AV1, VP9, social media, etc.) are defined in [`presets/`](presets/).
+A desktop application for compressing videos using FFmpeg. Built with **Java** and **JavaFX** (yep it's true), it provides a graphical interface to apply compression presets and manage video encoding workflows.
 
 ---
 
 ## ⚠️ Disclaimer
 
-This is a personal/experimental project. Things may break, change, or disappear entirely. If you're curious, feel free to look around — but don't rely on anything just yet.
+This is a personal/experimental project. Things may break, change, or disappear entirely. If you're curious, feel free to look around — but don't rely on anything just yet.  
+The project currently expects a portable version of FFmpeg (full gpl version) in a subfolder called 'ffmpeg', this is subject to change in the future.
