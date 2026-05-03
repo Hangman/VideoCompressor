@@ -273,7 +273,7 @@ public class App extends Application {
         line3.setStroke(javafx.scene.paint.Color.web("#6272a4"));
         line3.setStrokeWidth(3);
 
-        // Step 4: Ergebnisse
+        // Step 4: Ergebnis
         step4Ring = new Circle(18);
         step4Ring.setFill(javafx.scene.paint.Color.TRANSPARENT);
         step4Ring.setStroke(javafx.scene.paint.Color.web("#9580FFFF"));
@@ -286,7 +286,7 @@ public class App extends Application {
         StackPane step4NumberPane = new StackPane(step4Ring, step4Number);
         step4NumberPane.setAlignment(Pos.CENTER);
 
-        step4Label = new Label("Ergebnisse");
+        step4Label = new Label("Ergebnis");
         step4Label.setStyle("-fx-text-fill: #f8f8f2; -fx-font-size: 16px;");
         step4Label.getStyleClass().addAll(Styles.TEXT_BOLD);
 
