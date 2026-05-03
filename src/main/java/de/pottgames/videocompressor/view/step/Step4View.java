@@ -10,6 +10,7 @@ import de.pottgames.videocompressor.engine.VideoJobStatus.Status;
 import de.pottgames.videocompressor.view.StepView;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import javafx.application.Platform;
@@ -147,59 +148,64 @@ public class Step4View implements StepView {
             return;
         }
 
-        // Collect all files to probe: source files (already have ProbeInfo) + output files
-        // We need to probe the output files asynchronously
-        List<CompletableFuture<ProbeInfo>> outputProbeFutures =
-            new ArrayList<>();
-        for (VideoJob job : jobs) {
-            File outputFile = job.outputFile();
-            if (outputFile != null && outputFile.exists()) {
-                outputProbeFutures.add(Ffprobe.probeAsync(outputFile));
-            } else {
-                // File doesn't exist - create a failed future
-                outputProbeFutures.add(
-                    CompletableFuture.failedFuture(
-                        new RuntimeException(
-                            "Ausgabedatei existiert nicht: " +
-                                (outputFile != null
-                                    ? outputFile.getAbsolutePath()
-                                    : "null")
-                        )
-                    )
-                );
-            }
-        }
+        // Probe output files sequentially to avoid parallel I/O load.
+        // Each probe waits for the previous one to finish.
+        // Results are collected in a list; null is stored on failure.
+        List<ProbeInfo> outputProbes = new ArrayList<>(
+            Collections.nCopies(jobs.size(), null)
+        );
+        final int totalFiles = jobs.size();
 
-        // Combine all futures
-        CompletableFuture<Void> allProbes = CompletableFuture.allOf(
-            outputProbeFutures.toArray(new CompletableFuture[0])
+        // Start with a completed future holding null (no previous result)
+        CompletableFuture<ProbeInfo> chain = CompletableFuture.completedFuture(
+            null
         );
 
-        // Track progress
-        int totalFiles = outputProbeFutures.size();
-        int[] completedCount = { 0 };
+        for (int i = 0; i < jobs.size(); i++) {
+            final int index = i;
+            final VideoJob job = jobs.get(i);
 
-        for (CompletableFuture<ProbeInfo> future : outputProbeFutures) {
-            future.whenComplete((info, ex) -> {
-                completedCount[0]++;
-                double progress = (double) completedCount[0] / totalFiles;
-                Platform.runLater(() -> {
-                    progressIndicator.setProgress(progress);
-                    loadingLabel.setText(
-                        "Ergebnisse werden geladen... (" +
-                            completedCount[0] +
-                            "/" +
-                            totalFiles +
-                            ")"
-                    );
+            // Chain: wait for previous probe, then probe this file
+            chain = chain
+                .thenCompose(ignored -> {
+                    File outputFile = job.outputFile();
+                    if (outputFile != null && outputFile.exists()) {
+                        return Ffprobe.probeAsync(outputFile);
+                    }
+                    // File doesn't exist - return null so the chain continues
+                    return CompletableFuture.completedFuture((ProbeInfo) null);
+                })
+                .handle((info, ex) -> {
+                    // handle() catches exceptions from probeAsync and always
+                    // returns a value, so the sequential chain never breaks.
+                    if (ex != null) {
+                        outputProbes.set(index, null);
+                    } else {
+                        outputProbes.set(index, info);
+                    }
+
+                    // Update progress UI after each sequential probe
+                    double progress = (double) (index + 1) / totalFiles;
+                    Platform.runLater(() -> {
+                        progressIndicator.setProgress(progress);
+                        loadingLabel.setText(
+                            "Ergebnisse werden geladen... (" +
+                                (index + 1) +
+                                "/" +
+                                totalFiles +
+                                ")"
+                        );
+                    });
+
+                    // Always return info (or null) so the chain continues
+                    return info;
                 });
-            });
         }
 
-        // When all probes are done, build the comparison UI
-        allProbes.thenRun(() -> {
+        // When the entire sequential chain is done, build the comparison UI
+        chain.whenComplete((ignored, ex) -> {
             Platform.runLater(() -> {
-                buildComparisonUI(state, jobs, outputProbeFutures);
+                buildComparisonUI(state, jobs, outputProbes);
                 loadingPanel.setVisible(false);
                 scrollPane.setVisible(true);
             });
@@ -208,11 +214,12 @@ public class Step4View implements StepView {
 
     /**
      * Builds the comparison UI with all probe results.
+     * The outputProbes list contains resolved ProbeInfo objects or null on failure.
      */
     private void buildComparisonUI(
         WizardState state,
         List<VideoJob> jobs,
-        List<CompletableFuture<ProbeInfo>> outputProbeFutures
+        List<ProbeInfo> outputProbes
     ) {
         resultsContent.getChildren().clear();
 
@@ -258,14 +265,12 @@ public class Step4View implements StepView {
             VideoJob job = jobs.get(i);
             ProbeInfo sourceInfo = job.sourceInfo();
 
-            // Try to get the output probe info
-            ProbeInfo outputInfo = null;
-            String outputProbeError = null;
-            try {
-                outputInfo = outputProbeFutures.get(i).join();
-            } catch (Exception ex) {
-                outputProbeError = ex.getMessage();
-            }
+            // Directly use the resolved probe info (null indicates failure)
+            ProbeInfo outputInfo = outputProbes.get(i);
+            String outputProbeError =
+                outputInfo == null
+                    ? "Konnte Ausgabedatei nicht analysieren"
+                    : null;
 
             VBox card = createComparisonCard(
                 i + 1,
@@ -460,12 +465,12 @@ public class Step4View implements StepView {
         grid.add(outputHeader, 2, 0);
 
         // Separator line
-        Pane sep = new Pane();
-        sep.setPrefHeight(1);
-        sep.setStyle("-fx-background-color: " + C_COMMENT + ";");
-        grid.add(sep, 0, 1);
-        grid.add(sep, 1, 1);
-        grid.add(sep, 2, 1);
+        for (int col = 0; col < 3; col++) {
+            Pane sep = new Pane();
+            sep.setPrefHeight(1);
+            sep.setStyle("-fx-background-color: " + C_COMMENT + ";");
+            grid.add(sep, col, 1);
+        }
 
         int row = 2;
 
