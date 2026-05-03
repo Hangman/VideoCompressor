@@ -19,7 +19,6 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Paint;
 
 /**
  * Step 3 of the video compressor wizard: displays the processing progress,
@@ -29,8 +28,15 @@ public class Step3View implements StepView {
 
     // ── Color constants (Dracula palette) ────────────────────────────────
 
-    private static final String C_COMMENT = "#6272a4";
-    private static final String C_FG = "#f8f8f2";
+    private static final String C_COMMENT = "-color-fg-subtle";
+    private static final String C_FG = "-color-fg-default";
+    private static final String C_SUCCESS = "-color-success-5";
+    private static final String C_ERROR = "-color-danger-5";
+    // Dracula hex values for background/accent (CSS variables don't resolve
+    // in inline -fx-background-color / -fx-accent — JavaFX throws ClassCastException)
+    private static final String HEX_BG = "#21222c";
+    private static final String HEX_BG_PANEL = "#44475a";
+    private static final String HEX_ACCENT = "#bd93f9";
 
     // ── Layout ───────────────────────────────────────────────────────────
 
@@ -69,24 +75,32 @@ public class Step3View implements StepView {
         videoInfoPanel = new VBox(8);
         videoInfoPanel.setPadding(new Insets(12));
         videoInfoPanel.setStyle(
-            "-fx-background-color: #44475a; -fx-background-radius: 8;"
+            "-fx-background-color: " +
+                HEX_BG_PANEL +
+                "; -fx-background-radius: 8;"
         );
         videoInfoPanel.setAlignment(Pos.CENTER_LEFT);
 
         currentFileNameLabel = new Label("Kein Video ausgewählt");
-        currentFileNameLabel.setTextFill(Paint.valueOf(C_FG));
+        currentFileNameLabel.setStyle("-fx-text-fill: " + C_FG + ";");
 
         currentPassLabel = new Label("");
-        currentPassLabel.setTextFill(Paint.valueOf(C_COMMENT));
+        currentPassLabel.setStyle("-fx-text-fill: " + C_COMMENT + ";");
         //currentPassLabel.setVisible(false);
 
         progressBar = new ProgressBar(0);
         //progressBar.setVisible(false);
         progressBar.setMaxWidth(Double.MAX_VALUE);
         progressBar.setStyle(
-            "-fx-accent: #bd93f9; " +
-                "-fx-background-color: #44475a; " +
-                "-fx-control-inner-background: #44475a;"
+            "-fx-accent: " +
+                HEX_ACCENT +
+                "; " +
+                "-fx-background-color: " +
+                HEX_BG_PANEL +
+                "; " +
+                "-fx-control-inner-background: " +
+                HEX_BG_PANEL +
+                ";"
         );
 
         videoInfoPanel
@@ -99,9 +113,15 @@ public class Step3View implements StepView {
         logArea.setWrapText(true);
         logArea.setPrefHeight(200);
         logArea.setStyle(
-            "-fx-control-inner-background: #21222c; " +
-                "-fx-background-color: #21222c; " +
-                "-fx-text-fill: #f8f8f2; " +
+            "-fx-control-inner-background: " +
+                HEX_BG +
+                "; " +
+                "-fx-background-color: " +
+                HEX_BG +
+                "; " +
+                "-fx-text-fill: " +
+                C_FG +
+                "; " +
                 "-fx-font-family: monospace; " +
                 "-fx-font-size: 12px; " +
                 "-fx-background-radius: 4; " +
@@ -226,7 +246,9 @@ public class Step3View implements StepView {
                     updateProgressCounter(index + 1, total);
                     currentFileNameLabel.setText(sourceFile.getName());
                     currentPassLabel.setText("Encodierung läuft...");
-                    currentPassLabel.setTextFill(Paint.valueOf(C_COMMENT));
+                    currentPassLabel.setStyle(
+                        "-fx-text-fill: " + C_COMMENT + ";"
+                    );
                     currentPassLabel.setVisible(true);
                     progressBar.setVisible(true);
                     progressBar.setProgress(0);
@@ -282,7 +304,9 @@ public class Step3View implements StepView {
                     if (status.isSuccess()) {
                         appendLog("[" + jobNumber + "] ✓ Fertig: " + fileName);
                         currentPassLabel.setText("✓ Abgeschlossen");
-                        currentPassLabel.setTextFill(Paint.valueOf("#50fa7b"));
+                        currentPassLabel.setStyle(
+                            "-fx-text-fill: " + C_SUCCESS + ";"
+                        );
                     } else {
                         appendLog(
                             "[" +
@@ -293,7 +317,9 @@ public class Step3View implements StepView {
                                 status.getErrorMessage()
                         );
                         currentPassLabel.setText("✗ Fehlgeschlagen");
-                        currentPassLabel.setTextFill(Paint.valueOf("#ff5555"));
+                        currentPassLabel.setStyle(
+                            "-fx-text-fill: " + C_ERROR + ";"
+                        );
                     }
                 });
             }
@@ -314,7 +340,7 @@ public class Step3View implements StepView {
                             " fehlgeschlagen"
                     );
                     currentPassLabel.setVisible(true);
-                    currentPassLabel.setTextFill(Paint.valueOf(C_FG));
+                    currentPassLabel.setStyle("-fx-text-fill: " + C_FG + ";");
                     progressBar.setProgress(1.0);
 
                     appendLog("════════════════════════════════════════");

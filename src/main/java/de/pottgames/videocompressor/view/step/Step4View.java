@@ -35,18 +35,22 @@ import javafx.scene.text.TextAlignment;
  */
 public class Step4View implements StepView {
 
-    // ── Color constants (Dracula palette) ────────────────────────────────
+    // ── Color constants (CSS theme variables) ────────────────────────────
 
-    private static final String C_BG = "#282a36";
-    private static final String C_DARK_BG = "#1e1f29";
-    private static final String C_COMMENT = "#6272a4";
-    private static final String C_FG = "#f8f8f2";
-    private static final String C_GREEN = "#50fa7b";
-    private static final String C_RED = "#ff5555";
-    private static final String C_YELLOW = "#f1fa8c";
-    private static final String C_CYAN = "#8be9fd";
-    private static final String C_PURPLE = "#bd93f9";
-    private static final String C_ACCENT = "#9580ff";
+    private static final String C_COMMENT = "-color-fg-subtle";
+    private static final String C_FG = "-color-fg-default";
+    private static final String C_SUCCESS = "-color-success-5";
+    private static final String C_ERROR = "-color-danger-5";
+    private static final String C_WARNING = "-color-warning-5";
+
+    // Dracula hex values for background/accent (CSS variables don't resolve
+    // in inline -fx-background-color / -fx-accent — JavaFX throws ClassCastException)
+    private static final String HEX_BG = "#282a36";
+    private static final String HEX_DARK_BG = "#1e1f29";
+    private static final String HEX_COMMENT = "#6272a4";
+    private static final String HEX_ACCENT = "#9580ff";
+    private static final String HEX_CYAN = "#8be9fd";
+    private static final String HEX_PURPLE = "#bd93f9";
 
     // ── Layout ───────────────────────────────────────────────────────────
 
@@ -66,12 +70,7 @@ public class Step4View implements StepView {
         // ── Results content ──────────────────────────────────────────────
 
         summaryLabel = new Label();
-        summaryLabel.setStyle(
-            "-fx-text-fill: " +
-                C_CYAN +
-                "; -fx-font-size: 14px; -fx-alignment: center;"
-        );
-        summaryLabel.getStyleClass().addAll(Styles.TEXT_BOLD);
+        summaryLabel.getStyleClass().addAll(Styles.TITLE_4, Styles.ACCENT);
         summaryLabel.setTextAlignment(TextAlignment.CENTER);
 
         resultsContent = new VBox(12);
@@ -79,9 +78,7 @@ public class Step4View implements StepView {
 
         scrollPane = new ScrollPane(resultsContent);
         scrollPane.setFitToWidth(true);
-        //scrollPane.setStyle("-fx-background: transparent;");
         scrollPane.setPadding(new Insets(0));
-        //scrollPane.setBackground(Background.EMPTY);
 
         // ── Root layout ──────────────────────────────────────────────────
 
@@ -203,10 +200,11 @@ public class Step4View implements StepView {
         }
 
         // Update permanent summaryLabel
+        int numJobs = jobs.size();
         summaryLabel.setText(
             "Zusammenfassung: " +
-                jobs.size() +
-                " Datei(en) | " +
+                numJobs +
+                (numJobs > 1 ? " Dateien | " : " Datei | ") +
                 successCount +
                 " erfolgreich | " +
                 failedCount +
@@ -218,7 +216,7 @@ public class Step4View implements StepView {
         // Separator
         Pane separator = new Pane();
         separator.setPrefHeight(1);
-        separator.setStyle("-fx-background-color: " + C_COMMENT + ";");
+        separator.setStyle("-fx-background-color: " + HEX_COMMENT + ";");
         HBox.setHgrow(separator, Priority.ALWAYS);
         resultsContent.getChildren().add(separator);
 
@@ -258,7 +256,9 @@ public class Step4View implements StepView {
         VBox card = new VBox(8);
         card.setPadding(new Insets(12));
         card.setStyle(
-            "-fx-background-color: " + C_DARK_BG + "; -fx-background-radius: 8;"
+            "-fx-background-color: " +
+                HEX_DARK_BG +
+                "; -fx-background-radius: 8;"
         );
 
         // ── Card header with file names and status ───────────────────────
@@ -270,9 +270,9 @@ public class Step4View implements StepView {
         Label numberBadge = new Label(String.valueOf(jobNumber));
         numberBadge.setStyle(
             "-fx-background-color: " +
-                C_ACCENT +
+                HEX_ACCENT +
                 "; -fx-text-fill: " +
-                C_BG +
+                HEX_BG +
                 "; -fx-background-radius: 12; -fx-padding: 4 10; -fx-font-size: 12px;"
         );
         numberBadge.getStyleClass().addAll(Styles.TEXT_BOLD);
@@ -294,17 +294,17 @@ public class Step4View implements StepView {
         if (status.getStatus() == Status.COMPLETED) {
             statusIndicator.setText("✓");
             statusIndicator.setStyle(
-                "-fx-text-fill: " + C_GREEN + "; -fx-font-size: 16px;"
+                "-fx-text-fill: " + C_SUCCESS + "; -fx-font-size: 16px;"
             );
         } else if (status.getStatus() == Status.FAILED) {
             statusIndicator.setText("✗");
             statusIndicator.setStyle(
-                "-fx-text-fill: " + C_RED + "; -fx-font-size: 16px;"
+                "-fx-text-fill: " + C_ERROR + "; -fx-font-size: 16px;"
             );
         } else {
             statusIndicator.setText("—");
             statusIndicator.setStyle(
-                "-fx-text-fill: " + C_YELLOW + "; -fx-font-size: 16px;"
+                "-fx-text-fill: " + C_WARNING + "; -fx-font-size: 16px;"
             );
         }
 
@@ -321,7 +321,7 @@ public class Step4View implements StepView {
                 "Fehler beim Analysieren der Ausgabedatei: " + outputProbeError
             );
             errorLabel.setStyle(
-                "-fx-text-fill: " + C_RED + "; -fx-font-size: 12px;"
+                "-fx-text-fill: " + C_ERROR + "; -fx-font-size: 12px;"
             );
             errorLabel.setWrapText(true);
             card.getChildren().add(errorLabel);
@@ -366,16 +366,16 @@ public class Step4View implements StepView {
                         "Ersparnis: %.1f%%",
                         savingsPercent
                     );
-                    savingsColor = C_GREEN;
+                    savingsColor = C_SUCCESS;
                 } else if (savingsPercent < 0) {
                     savingsText = String.format(
                         "Größer um: %.1f%%",
                         Math.abs(savingsPercent)
                     );
-                    savingsColor = C_RED;
+                    savingsColor = C_ERROR;
                 } else {
                     savingsText = "Keine Änderung";
-                    savingsColor = C_YELLOW;
+                    savingsColor = C_WARNING;
                 }
 
                 Label savingsLabel = new Label(savingsText);
@@ -406,7 +406,7 @@ public class Step4View implements StepView {
         Label titleLabel = new Label(title);
         titleLabel.setStyle(
             "-fx-text-fill: " +
-                C_PURPLE +
+                HEX_PURPLE +
                 "; -fx-font-size: 13px; -fx-font-weight: bold;"
         );
         titleLabel.setAlignment(Pos.CENTER_LEFT);
@@ -430,7 +430,7 @@ public class Step4View implements StepView {
         for (int col = 0; col < 3; col++) {
             Pane sep = new Pane();
             sep.setPrefHeight(1);
-            sep.setStyle("-fx-background-color: " + C_COMMENT + ";");
+            sep.setStyle("-fx-background-color: " + HEX_COMMENT + ";");
             grid.add(sep, col, 1);
         }
 
@@ -540,7 +540,7 @@ public class Step4View implements StepView {
         // Output value (right column)
         Label outputLabel = new Label(outputValue);
         outputLabel.setStyle(
-            "-fx-text-fill: " + C_CYAN + "; -fx-font-size: 12px;"
+            "-fx-text-fill: " + HEX_CYAN + "; -fx-font-size: 12px;"
         );
         outputLabel.setAlignment(Pos.CENTER);
         grid.add(outputLabel, 2, row);
