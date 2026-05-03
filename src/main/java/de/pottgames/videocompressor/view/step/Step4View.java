@@ -18,7 +18,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.GridPane;
@@ -54,12 +53,6 @@ public class Step4View implements StepView {
 
     private final VBox root;
 
-    // ── Loading indicator ────────────────────────────────────────────────
-
-    private final VBox loadingPanel;
-    private final ProgressIndicator progressIndicator;
-    private final Label loadingLabel;
-
     // ── Results content ──────────────────────────────────────────────────
 
     private final ScrollPane scrollPane;
@@ -70,22 +63,6 @@ public class Step4View implements StepView {
         root = new VBox();
         root.setPadding(new Insets(20));
         root.setSpacing(16);
-
-        // ── Loading panel ────────────────────────────────────────────────
-
-        progressIndicator = new ProgressIndicator(0);
-        progressIndicator.setPrefSize(48, 48);
-
-        loadingLabel = new Label("Ergebnisse werden geladen...");
-        loadingLabel.setStyle(
-            "-fx-text-fill: " + C_FG + "; -fx-font-size: 16px;"
-        );
-        loadingLabel.getStyleClass().addAll(Styles.TEXT_BOLD);
-
-        loadingPanel = new VBox(16, progressIndicator, loadingLabel);
-        loadingPanel.setAlignment(Pos.CENTER);
-        loadingPanel.setPrefHeight(300);
-        loadingPanel.setVisible(false);
 
         // ── Results content ──────────────────────────────────────────────
 
@@ -99,18 +76,17 @@ public class Step4View implements StepView {
         summaryLabel.setTextAlignment(TextAlignment.CENTER);
 
         resultsContent = new VBox(12);
-        resultsContent.getChildren().add(summaryLabel);
         resultsContent.setPadding(new Insets(0, 4, 0, 4));
 
         scrollPane = new ScrollPane(resultsContent);
         scrollPane.setFitToWidth(true);
-        scrollPane.setStyle("-fx-background: transparent;");
+        //scrollPane.setStyle("-fx-background: transparent;");
         scrollPane.setPadding(new Insets(0));
-        scrollPane.setBackground(Background.EMPTY);
+        //scrollPane.setBackground(Background.EMPTY);
 
         // ── Root layout ──────────────────────────────────────────────────
 
-        root.getChildren().addAll(loadingPanel, scrollPane);
+        root.getChildren().addAll(summaryLabel, scrollPane);
         VBox.setVgrow(scrollPane, Priority.ALWAYS);
     }
 
@@ -125,25 +101,17 @@ public class Step4View implements StepView {
         nextButton.setVisible(false);
         nextButton.setDisable(true);
 
-        // Show loading panel, hide results
-        loadingPanel.setVisible(true);
-        scrollPane.setVisible(false);
+        // Show loading state in summary label
         resultsContent.getChildren().clear();
+        summaryLabel.setText("Ergebnisse werden geladen...");
 
         List<VideoJob> jobs = state.getPreparedJobs();
         if (jobs == null || jobs.isEmpty()) {
             // No jobs to display
             Platform.runLater(() -> {
-                loadingPanel.setVisible(false);
-                scrollPane.setVisible(true);
-                Label noDataLabel = new Label(
+                summaryLabel.setText(
                     "Keine Ergebnisse verfügbar. Bitte bearbeiten Sie zuerst Videos in Schritt 3."
                 );
-                noDataLabel.setStyle(
-                    "-fx-text-fill: " + C_YELLOW + "; -fx-font-size: 14px;"
-                );
-                noDataLabel.setWrapText(true);
-                resultsContent.getChildren().add(noDataLabel);
             });
             return;
         }
@@ -185,10 +153,8 @@ public class Step4View implements StepView {
                     }
 
                     // Update progress UI after each sequential probe
-                    double progress = (double) (index + 1) / totalFiles;
                     Platform.runLater(() -> {
-                        progressIndicator.setProgress(progress);
-                        loadingLabel.setText(
+                        summaryLabel.setText(
                             "Ergebnisse werden geladen... (" +
                                 (index + 1) +
                                 "/" +
@@ -206,8 +172,6 @@ public class Step4View implements StepView {
         chain.whenComplete((ignored, ex) -> {
             Platform.runLater(() -> {
                 buildComparisonUI(state, jobs, outputProbes);
-                loadingPanel.setVisible(false);
-                scrollPane.setVisible(true);
             });
         });
     }
@@ -239,7 +203,7 @@ public class Step4View implements StepView {
             }
         }
 
-        // Summary label
+        // Update permanent summaryLabel
         summaryLabel.setText(
             "Zusammenfassung: " +
                 jobs.size() +
@@ -251,7 +215,6 @@ public class Step4View implements StepView {
                 skippedCount +
                 " übersprungen"
         );
-        resultsContent.getChildren().add(summaryLabel);
 
         // Separator
         Pane separator = new Pane();
@@ -628,7 +591,7 @@ public class Step4View implements StepView {
     @Override
     public void deactivate(WizardState state) {
         resultsContent.getChildren().clear();
-        loadingPanel.setVisible(false);
+        summaryLabel.setText("");
         scrollPane.setVisible(false);
     }
 }
