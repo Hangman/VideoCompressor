@@ -19,7 +19,6 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
@@ -226,7 +225,7 @@ public class Step2View implements StepView {
 
         // Build debounce timer (rearms on each trigger)
         validationDebounce = new PauseTransition(Duration.millis(400));
-        validationDebounce.setOnFinished(_evt -> {
+        validationDebounce.setOnFinished(_ -> {
             Preset preview = getModifiedPreset();
             if (preview != null) {
                 ValidationResult result = preview.validate();
@@ -411,7 +410,7 @@ public class Step2View implements StepView {
         presetChoiceBox
             .getSelectionModel()
             .selectedItemProperty()
-            .addListener((_, __, newPreset) -> {
+            .addListener((_, _, newPreset) -> {
                 if (newPreset != null) {
                     selectedPreset = newPreset;
                     populateControls();
@@ -534,7 +533,7 @@ public class Step2View implements StepView {
         // Hide resolution row when keepSourceResolution is checked
         keepSourceResCheck
             .selectedProperty()
-            .addListener((obs, wasSelected, isSelected) -> {
+            .addListener((_, _, isSelected) -> {
                 resolutionRow.setDisable(isSelected);
             });
 
@@ -677,7 +676,7 @@ public class Step2View implements StepView {
         // Disable audio settings when keepSourceAudio is checked
         keepSourceAudioCheck
             .selectedProperty()
-            .addListener((obs, wasSelected, isSelected) -> {
+            .addListener((_, _, isSelected) -> {
                 audioRow.setDisable(isSelected);
             });
 

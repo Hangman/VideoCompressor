@@ -38,9 +38,6 @@ public class App extends Application {
     private Step2View step2View;
     private Step3View step3View;
 
-    // Engine instance (initialized asynchronously at startup)
-    private Engine engine;
-
     private WizardState state;
 
     private BorderPane root;
@@ -78,7 +75,6 @@ public class App extends Application {
 
         // Asynchronously initialize the engine (loads presets, validates FFMPEG, etc.)
         Engine.initialize().thenAccept(engine -> {
-            this.engine = engine;
             // Update Step2View with loaded presets on the JavaFX Application Thread
             Platform.runLater(() -> step2View.setEngine(engine));
         });

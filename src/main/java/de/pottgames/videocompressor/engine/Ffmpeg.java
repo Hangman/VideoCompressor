@@ -283,8 +283,9 @@ public class Ffmpeg {
      * (not to be confused with FFmpeg returning a non-zero exit code).
      */
     public static class FfmpegException extends RuntimeException {
+        private static final long serialVersionUID = 7315240434659431544L;
 
-        FfmpegException(String message) {
+		FfmpegException(String message) {
             super(message);
         }
 

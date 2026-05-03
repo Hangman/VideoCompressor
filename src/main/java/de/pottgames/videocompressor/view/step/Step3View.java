@@ -131,23 +131,6 @@ public class Step3View implements StepView {
     }
 
     /**
-     * Update the pass info display.
-     * If totalPasses is 1, the label is hidden (single-pass processing).
-     * @param currentPass The current pass number (1-based).
-     * @param totalPasses The total number of passes for this video.
-     */
-    private void updatePassInfo(int currentPass, int totalPasses) {
-        if (totalPasses <= 1) {
-            currentPassLabel.setVisible(false);
-        } else {
-            currentPassLabel.setText(
-                "Schritt " + currentPass + " von " + totalPasses
-            );
-            currentPassLabel.setVisible(true);
-        }
-    }
-
-    /**
      * Append a line to the log output.
      * @param message The message to append.
      */
