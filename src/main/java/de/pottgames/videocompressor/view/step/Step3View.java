@@ -373,21 +373,12 @@ public class Step3View implements StepView {
         centerButton.setVisible(true);
         centerButton.setDisable(false);
 
-        // Track whether we are in preparation or execution phase
-        boolean[] preparationDone = { false };
-
         centerButton.setOnAction(_ -> {
             backButton.setVisible(false);
 
-            // If preparation is done, start encoding
-            if (preparationDone[0]) {
-                startEncoding(preparedJobs, centerButton, backButton);
-                return;
-            }
-
             // Prevent double-clicking
             centerButton.setDisable(true);
-            centerButton.setText("Vorbereitung läuft...");
+            centerButton.setText("Bearbeitung läuft...");
 
             // Get data from state
             var files = state.getImportedFiles();
@@ -415,14 +406,12 @@ public class Step3View implements StepView {
                 .thenAccept(jobs -> {
                     Platform.runLater(() -> {
                         preparedJobs = jobs;
-                        preparationDone[0] = true;
                         appendLog(
                             "Vorbereitung abgeschlossen. " +
                                 jobs.size() +
-                                " Job(s) bereit."
+                                " Job(s) bereit. Starte Encodierung..."
                         );
-                        centerButton.setDisable(false);
-                        centerButton.setText("Verarbeitung starten");
+                        startEncoding(preparedJobs, centerButton, backButton);
                     });
                 })
                 .exceptionally(ex -> {
@@ -454,8 +443,6 @@ public class Step3View implements StepView {
             return;
         }
 
-        centerButton.setDisable(true);
-        centerButton.setText("Verarbeitung läuft...");
         appendLog("--- Starte Encodierung ---");
 
         JobProgressListener listener = createProgressListener();
@@ -469,7 +456,7 @@ public class Step3View implements StepView {
                             "FEHLER bei der Verarbeitung: " + ex.getMessage()
                         );
                     }
-                    centerButton.setDisable(false);
+                    centerButton.setVisible(false);
                     centerButton.setText("Fertig");
                     backButton.setVisible(true);
                 });
