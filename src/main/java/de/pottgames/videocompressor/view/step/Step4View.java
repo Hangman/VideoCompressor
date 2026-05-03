@@ -23,7 +23,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
 
 /**
@@ -39,17 +38,12 @@ public class Step4View implements StepView {
 
     private static final String C_COMMENT = "-color-fg-subtle";
     private static final String C_FG = "-color-fg-default";
-    private static final String C_SUCCESS = "-color-success-5";
-    private static final String C_ERROR = "-color-danger-5";
-    private static final String C_WARNING = "-color-warning-5";
 
     // Dracula palette
     private static final String HEX_BG = "#282a36";
-    private static final String HEX_DARK_BG = "#1e1f29";
     private static final String HEX_COMMENT = "#6272a4";
     private static final String HEX_ACCENT = "#9580ff";
     private static final String HEX_CYAN = "#8be9fd";
-    private static final String HEX_PURPLE = "#bd93f9";
     private static final String HEX_GREEN = "#50fa7b";
     private static final String HEX_RED = "#ff5555";
     private static final String HEX_ORANGE = "#ffb86c";
