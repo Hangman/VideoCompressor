@@ -159,7 +159,9 @@ public class Step3View implements StepView {
      * Creates a {@link JobProgressListener} that marshalls all callbacks
      * back to the JavaFX Application Thread for safe UI updates.
      */
-    private JobProgressListener createProgressListener() {
+    private JobProgressListener createProgressListener(
+        javafx.scene.control.Button nextButton
+    ) {
         return new JobProgressListener() {
             // ── Preparation phase ──────────────────────────────────────
 
@@ -324,6 +326,10 @@ public class Step3View implements StepView {
                             " fehlgeschlagen"
                     );
                     appendLog("════════════════════════════════════════");
+
+                    // Show the "Weiter" button to navigate to Step 4
+                    nextButton.setVisible(true);
+                    nextButton.setDisable(false);
                 });
             }
 
@@ -382,7 +388,7 @@ public class Step3View implements StepView {
             }
 
             // Create listener that marshalls callbacks to JavaFX thread
-            JobProgressListener listener = createProgressListener();
+            JobProgressListener listener = createProgressListener(nextButton);
 
             jobProcessor
                 .prepareJobs(files, preset, listener)
@@ -394,7 +400,12 @@ public class Step3View implements StepView {
                                 jobs.size() +
                                 " Job(s) bereit. Starte Encodierung..."
                         );
-                        startEncoding(preparedJobs, centerButton, backButton);
+                        startEncoding(
+                            preparedJobs,
+                            centerButton,
+                            backButton,
+                            nextButton
+                        );
                     });
                 })
                 .exceptionally(ex -> {
@@ -417,7 +428,8 @@ public class Step3View implements StepView {
     private void startEncoding(
         List<VideoJob> jobs,
         javafx.scene.control.Button centerButton,
-        javafx.scene.control.Button backButton
+        javafx.scene.control.Button backButton,
+        javafx.scene.control.Button nextButton
     ) {
         if (jobs == null || jobs.isEmpty()) {
             appendLog("FEHLER: Keine vorbereiteten Jobs gefunden!");
@@ -428,7 +440,7 @@ public class Step3View implements StepView {
 
         appendLog("--- Starte Encodierung ---");
 
-        JobProgressListener listener = createProgressListener();
+        JobProgressListener listener = createProgressListener(nextButton);
 
         jobProcessor
             .executeJobs(jobs, listener)
@@ -492,6 +504,7 @@ public class Step3View implements StepView {
 
     @Override
     public void deactivate(WizardState state) {
+        state.setPreparedJobs(preparedJobs);
         preparedJobs = null;
         state.getCenterButton().setDisable(false);
         state.getCenterButton().setText("");

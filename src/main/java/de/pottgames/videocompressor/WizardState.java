@@ -1,6 +1,7 @@
 package de.pottgames.videocompressor;
 
 import de.pottgames.videocompressor.engine.Preset;
+import de.pottgames.videocompressor.engine.VideoJob;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +21,12 @@ public class WizardState {
     private final List<File> importedFiles = new ArrayList<>();
 
     private Preset selectedPreset;
+
+    /**
+     * The prepared video jobs from Step 3, stored here so that
+     * Step 4 can access the source-to-output file mappings and their status.
+     */
+    private List<VideoJob> preparedJobs;
 
     public WizardState(
         Button backButton,
@@ -65,5 +72,21 @@ public class WizardState {
      */
     public void setSelectedPreset(Preset preset) {
         this.selectedPreset = preset;
+    }
+
+    /**
+     * Sets the prepared video jobs from Step 3.
+     * @param jobs the list of prepared jobs (may be null)
+     */
+    public void setPreparedJobs(List<VideoJob> jobs) {
+        this.preparedJobs = jobs;
+    }
+
+    /**
+     * Returns the prepared video jobs from Step 3.
+     * @return the list of jobs, or null if not yet set
+     */
+    public List<VideoJob> getPreparedJobs() {
+        return preparedJobs;
     }
 }

@@ -10,6 +10,7 @@ import de.pottgames.videocompressor.view.StepView;
 import de.pottgames.videocompressor.view.step.Step1View;
 import de.pottgames.videocompressor.view.step.Step2View;
 import de.pottgames.videocompressor.view.step.Step3View;
+import de.pottgames.videocompressor.view.step.Step4View;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -37,6 +38,7 @@ public class App extends Application {
     private Step1View step1View;
     private Step2View step2View;
     private Step3View step3View;
+    private Step4View step4View;
 
     private WizardState state;
 
@@ -52,8 +54,12 @@ public class App extends Application {
     private Circle step3Ring;
     private Label step3Number;
     private Label step3Label;
+    private Circle step4Ring;
+    private Label step4Number;
+    private Label step4Label;
     private Line line1;
     private Line line2;
+    private Line line3;
 
     // Active step index (1, 2, or 3)
     private int activeStep = 1;
@@ -72,6 +78,7 @@ public class App extends Application {
         step1View = new Step1View();
         step2View = new Step2View();
         step3View = new Step3View();
+        step4View = new Step4View();
 
         // Asynchronously initialize the engine (loads presets, validates FFMPEG, etc.)
         Engine.initialize().thenAccept(engine -> {
@@ -158,7 +165,9 @@ public class App extends Application {
         } else if (fromStep == step2View) {
             nextStep = goBack ? step1View : step3View;
         } else if (fromStep == step3View) {
-            nextStep = goBack ? step2View : step3View;
+            nextStep = goBack ? step2View : step4View;
+        } else if (fromStep == step4View) {
+            nextStep = goBack ? step3View : step4View;
         } else {
             nextStep = step1View;
         }
@@ -176,6 +185,8 @@ public class App extends Application {
                 activeStep = 2;
             } else if (nextStep == step3View) {
                 activeStep = 3;
+            } else if (nextStep == step4View) {
+                activeStep = 4;
             }
             updateStepperState();
         }
@@ -208,7 +219,7 @@ public class App extends Application {
         step1Box.setAlignment(Pos.CENTER);
 
         // Line 1-2
-        line1 = new Line(0, 18, 300, 18);
+        line1 = new Line(0, 18, 150, 18);
         line1.setStroke(javafx.scene.paint.Color.web("#6272a4"));
         line1.setStrokeWidth(3);
 
@@ -233,7 +244,7 @@ public class App extends Application {
         step2Box.setAlignment(Pos.CENTER);
 
         // Line 2-3
-        line2 = new Line(0, 18, 300, 18);
+        line2 = new Line(0, 18, 150, 18);
         line2.setStroke(javafx.scene.paint.Color.web("#6272a4"));
         line2.setStrokeWidth(3);
 
@@ -257,13 +268,47 @@ public class App extends Application {
         VBox step3Box = new VBox(8, step3NumberPane, step3Label);
         step3Box.setAlignment(Pos.CENTER);
 
+        // Line 3-4
+        line3 = new Line(0, 18, 150, 18);
+        line3.setStroke(javafx.scene.paint.Color.web("#6272a4"));
+        line3.setStrokeWidth(3);
+
+        // Step 4: Ergebnisse
+        step4Ring = new Circle(18);
+        step4Ring.setFill(javafx.scene.paint.Color.TRANSPARENT);
+        step4Ring.setStroke(javafx.scene.paint.Color.web("#9580FFFF"));
+        step4Ring.setStrokeWidth(3);
+
+        step4Number = new Label("4");
+        step4Number.setStyle("-fx-text-fill: #9580FFFF; -fx-font-size: 20px;");
+        step4Number.getStyleClass().addAll(Styles.TEXT_BOLD);
+
+        StackPane step4NumberPane = new StackPane(step4Ring, step4Number);
+        step4NumberPane.setAlignment(Pos.CENTER);
+
+        step4Label = new Label("Ergebnisse");
+        step4Label.setStyle("-fx-text-fill: #f8f8f2; -fx-font-size: 16px;");
+        step4Label.getStyleClass().addAll(Styles.TEXT_BOLD);
+
+        VBox step4Box = new VBox(8, step4NumberPane, step4Label);
+        step4Box.setAlignment(Pos.CENTER);
+
         // Add minimal horizontal padding between lines and circles
         HBox.setMargin(line1, new Insets(0, 8, 0, 16));
         HBox.setMargin(line2, new Insets(0, 16, 0, 8));
+        HBox.setMargin(line3, new Insets(0, 8, 0, 16));
 
         stepper
             .getChildren()
-            .addAll(step1Box, line1, step2Box, line2, step3Box);
+            .addAll(
+                step1Box,
+                line1,
+                step2Box,
+                line2,
+                step3Box,
+                line3,
+                step4Box
+            );
 
         return stepper;
     }
@@ -363,6 +408,36 @@ public class App extends Application {
             line2.setStroke(javafx.scene.paint.Color.web(activeLineColor));
         } else {
             line2.setStroke(javafx.scene.paint.Color.web(dimmedLineColor));
+        }
+
+        // Update Step 4
+        if (activeStep >= 4) {
+            step4Ring.setStroke(javafx.scene.paint.Color.web(activeRingColor));
+            step4Number.setStyle(
+                "-fx-text-fill: " + activeRingColor + "; -fx-font-size: 20px;"
+            );
+            step4Number.getStyleClass().addAll(Styles.TEXT_BOLD);
+            step4Label.setStyle(
+                "-fx-text-fill: " + activeLabelColor + "; -fx-font-size: 16px;"
+            );
+            step4Label.getStyleClass().addAll(Styles.TEXT_BOLD);
+        } else {
+            step4Ring.setStroke(javafx.scene.paint.Color.web(dimmedRingColor));
+            step4Number.setStyle(
+                "-fx-text-fill: " + dimmedRingColor + "; -fx-font-size: 20px;"
+            );
+            step4Number.getStyleClass().addAll(Styles.TEXT_BOLD);
+            step4Label.setStyle(
+                "-fx-text-fill: " + dimmedLabelColor + "; -fx-font-size: 16px;"
+            );
+            step4Label.getStyleClass().addAll(Styles.TEXT_BOLD);
+        }
+
+        // Update Line 3 (between Step 3 and Step 4)
+        if (activeStep >= 4) {
+            line3.setStroke(javafx.scene.paint.Color.web(activeLineColor));
+        } else {
+            line3.setStroke(javafx.scene.paint.Color.web(dimmedLineColor));
         }
     }
 
