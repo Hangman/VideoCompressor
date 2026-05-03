@@ -19,11 +19,11 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
 
 /**
@@ -31,7 +31,7 @@ import javafx.scene.text.TextAlignment;
  * of the imported (source) video files and the exported (output) video files.
  *
  * <p>On activation, this view asynchronously probes all source and output files
- * via ffprobe and presents the results in a structured comparison layout.</p>
+ * via ffprobe and presents the results in a modern before/after card layout.</p>
  */
 public class Step4View implements StepView {
 
@@ -43,14 +43,21 @@ public class Step4View implements StepView {
     private static final String C_ERROR = "-color-danger-5";
     private static final String C_WARNING = "-color-warning-5";
 
-    // Dracula hex values for background/accent (CSS variables don't resolve
-    // in inline -fx-background-color / -fx-accent — JavaFX throws ClassCastException)
+    // Dracula palette
     private static final String HEX_BG = "#282a36";
     private static final String HEX_DARK_BG = "#1e1f29";
     private static final String HEX_COMMENT = "#6272a4";
     private static final String HEX_ACCENT = "#9580ff";
     private static final String HEX_CYAN = "#8be9fd";
     private static final String HEX_PURPLE = "#bd93f9";
+    private static final String HEX_GREEN = "#50fa7b";
+    private static final String HEX_RED = "#ff5555";
+    private static final String HEX_ORANGE = "#ffb86c";
+    private static final String HEX_CARD_BG = "#2f3143";
+    private static final String HEX_PANEL_SOURCE = "#24263a";
+    private static final String HEX_PANEL_OUTPUT = "#1d2338";
+    private static final String HEX_BORDER = "#3b3d57";
+    private static final String HEX_DIVIDER = "#3a3c52";
 
     // ── Layout ───────────────────────────────────────────────────────────
 
@@ -64,23 +71,21 @@ public class Step4View implements StepView {
 
     public Step4View() {
         root = new VBox();
-        root.setPadding(new Insets(20));
-        root.setSpacing(16);
-
-        // ── Results content ──────────────────────────────────────────────
+        root.setPadding(new Insets(24));
+        root.setSpacing(20);
 
         summaryLabel = new Label();
         summaryLabel.getStyleClass().addAll(Styles.TITLE_4, Styles.ACCENT);
         summaryLabel.setTextAlignment(TextAlignment.CENTER);
+        summaryLabel.setPadding(new Insets(0, 0, 4, 0));
 
-        resultsContent = new VBox(12);
+        resultsContent = new VBox(16);
         resultsContent.setPadding(new Insets(0, 4, 0, 4));
 
         scrollPane = new ScrollPane(resultsContent);
         scrollPane.setFitToWidth(true);
         scrollPane.setPadding(new Insets(0));
-
-        // ── Root layout ──────────────────────────────────────────────────
+        scrollPane.setStyle("-fx-background: transparent;");
 
         root.getChildren().addAll(summaryLabel, scrollPane);
         VBox.setVgrow(scrollPane, Priority.ALWAYS);
@@ -97,13 +102,11 @@ public class Step4View implements StepView {
         nextButton.setVisible(false);
         nextButton.setDisable(true);
 
-        // Show loading state in summary label
         resultsContent.getChildren().clear();
         summaryLabel.setText("Ergebnisse werden geladen...");
 
         List<VideoJob> jobs = state.getPreparedJobs();
         if (jobs == null || jobs.isEmpty()) {
-            // No jobs to display
             Platform.runLater(() -> {
                 summaryLabel.setText(
                     "Keine Ergebnisse verfügbar. Bitte bearbeiten Sie zuerst Videos in Schritt 3."
@@ -112,15 +115,12 @@ public class Step4View implements StepView {
             return;
         }
 
-        // Probe output files sequentially to avoid parallel I/O load.
-        // Each probe waits for the previous one to finish.
-        // Results are collected in a list; null is stored on failure.
+        final int totalFiles = jobs.size();
+
         List<ProbeInfo> outputProbes = new ArrayList<>(
             Collections.nCopies(jobs.size(), null)
         );
-        final int totalFiles = jobs.size();
 
-        // Start with a completed future holding null (no previous result)
         CompletableFuture<ProbeInfo> chain = CompletableFuture.completedFuture(
             null
         );
@@ -129,26 +129,21 @@ public class Step4View implements StepView {
             final int index = i;
             final VideoJob job = jobs.get(i);
 
-            // Chain: wait for previous probe, then probe this file
             chain = chain
                 .thenCompose(ignored -> {
                     File outputFile = job.outputFile();
                     if (outputFile != null && outputFile.exists()) {
                         return Ffprobe.probeAsync(outputFile);
                     }
-                    // File doesn't exist - return null so the chain continues
                     return CompletableFuture.completedFuture((ProbeInfo) null);
                 })
                 .handle((info, ex) -> {
-                    // handle() catches exceptions from probeAsync and always
-                    // returns a value, so the sequential chain never breaks.
                     if (ex != null) {
                         outputProbes.set(index, null);
                     } else {
                         outputProbes.set(index, info);
                     }
 
-                    // Update progress UI after each sequential probe
                     Platform.runLater(() -> {
                         summaryLabel.setText(
                             "Ergebnisse werden geladen... (" +
@@ -159,12 +154,10 @@ public class Step4View implements StepView {
                         );
                     });
 
-                    // Always return info (or null) so the chain continues
                     return info;
                 });
         }
 
-        // When the entire sequential chain is done, build the comparison UI
         chain.whenComplete((ignored, ex) -> {
             Platform.runLater(() -> {
                 buildComparisonUI(state, jobs, outputProbes);
@@ -172,10 +165,8 @@ public class Step4View implements StepView {
         });
     }
 
-    /**
-     * Builds the comparison UI with all probe results.
-     * The outputProbes list contains resolved ProbeInfo objects or null on failure.
-     */
+    // ── UI Building ──────────────────────────────────────────────────────
+
     private void buildComparisonUI(
         WizardState state,
         List<VideoJob> jobs,
@@ -183,7 +174,6 @@ public class Step4View implements StepView {
     ) {
         resultsContent.getChildren().clear();
 
-        // Count success/fail
         int successCount = 0;
         int failedCount = 0;
         int skippedCount = 0;
@@ -199,33 +189,33 @@ public class Step4View implements StepView {
             }
         }
 
-        // Update permanent summaryLabel
         int numJobs = jobs.size();
         summaryLabel.setText(
             "Zusammenfassung: " +
                 numJobs +
-                (numJobs > 1 ? " Dateien | " : " Datei | ") +
+                (numJobs > 1 ? " Dateien" : " Datei") +
+                "  ·  " +
                 successCount +
-                " erfolgreich | " +
-                failedCount +
-                " fehlgeschlagen | " +
-                skippedCount +
-                " übersprungen"
+                " erfolgreich" +
+                (failedCount > 0
+                    ? "  ·  " + failedCount + " fehlgeschlagen"
+                    : "") +
+                (skippedCount > 0
+                    ? "  ·  " + skippedCount + " übersprungen"
+                    : "")
         );
 
-        // Separator
-        Pane separator = new Pane();
-        separator.setPrefHeight(1);
-        separator.setStyle("-fx-background-color: " + HEX_COMMENT + ";");
-        HBox.setHgrow(separator, Priority.ALWAYS);
-        resultsContent.getChildren().add(separator);
+        // Decorative separator under summary
+        Pane summarySep = new Pane();
+        summarySep.setPrefHeight(1);
+        summarySep.setStyle("-fx-background-color: " + HEX_DIVIDER + ";");
+        HBox.setHgrow(summarySep, Priority.ALWAYS);
+        resultsContent.getChildren().add(summarySep);
 
         // Build comparison card for each job
         for (int i = 0; i < jobs.size(); i++) {
             VideoJob job = jobs.get(i);
             ProbeInfo sourceInfo = job.sourceInfo();
-
-            // Directly use the resolved probe info (null indicates failure)
             ProbeInfo outputInfo = outputProbes.get(i);
             String outputProbeError =
                 outputInfo == null
@@ -243,9 +233,8 @@ public class Step4View implements StepView {
         }
     }
 
-    /**
-     * Creates a comparison card for a single source/output file pair.
-     */
+    // ── Card Factory ─────────────────────────────────────────────────────
+
     private VBox createComparisonCard(
         int jobNumber,
         ProbeInfo sourceInfo,
@@ -253,310 +242,497 @@ public class Step4View implements StepView {
         String outputProbeError,
         VideoJobStatus status
     ) {
-        VBox card = new VBox(8);
-        card.setPadding(new Insets(12));
+        VBox card = new VBox(16);
+        card.setPadding(new Insets(20));
         card.setStyle(
             "-fx-background-color: " +
-                HEX_DARK_BG +
-                "; -fx-background-radius: 8;"
+                HEX_CARD_BG +
+                ";" +
+                "-fx-background-radius: 14;" +
+                "-fx-border-color: " +
+                HEX_BORDER +
+                ";" +
+                "-fx-border-radius: 14;" +
+                "-fx-border-width: 1;"
         );
 
-        // ── Card header with file names and status ───────────────────────
-
-        HBox headerBox = new HBox(12);
-        headerBox.setAlignment(Pos.CENTER_LEFT);
-
-        // Job number badge
-        Label numberBadge = new Label(String.valueOf(jobNumber));
-        numberBadge.setStyle(
-            "-fx-background-color: " +
-                HEX_ACCENT +
-                "; -fx-text-fill: " +
-                HEX_BG +
-                "; -fx-background-radius: 12; -fx-padding: 4 10; -fx-font-size: 12px;"
-        );
-        numberBadge.getStyleClass().addAll(Styles.TEXT_BOLD);
-
-        // File name mapping
-        Label fileNameLabel = new Label();
-        String sourceName =
-            sourceInfo != null ? sourceInfo.file().getName() : "Unknown";
-        String outputName =
-            outputInfo != null ? outputInfo.file().getName() : "Unknown";
-        fileNameLabel.setText(sourceName + "  →  " + outputName);
-        fileNameLabel.setStyle(
-            "-fx-text-fill: " + C_FG + "; -fx-font-size: 13px;"
-        );
-        fileNameLabel.getStyleClass().addAll(Styles.TEXT_BOLD);
-
-        // Status indicator
-        Label statusIndicator = new Label();
-        if (status.getStatus() == Status.COMPLETED) {
-            statusIndicator.setText("✓");
-            statusIndicator.setStyle(
-                "-fx-text-fill: " + C_SUCCESS + "; -fx-font-size: 16px;"
-            );
-        } else if (status.getStatus() == Status.FAILED) {
-            statusIndicator.setText("✗");
-            statusIndicator.setStyle(
-                "-fx-text-fill: " + C_ERROR + "; -fx-font-size: 16px;"
-            );
-        } else {
-            statusIndicator.setText("—");
-            statusIndicator.setStyle(
-                "-fx-text-fill: " + C_WARNING + "; -fx-font-size: 16px;"
-            );
-        }
-
-        HBox.setHgrow(fileNameLabel, Priority.ALWAYS);
-        headerBox
-            .getChildren()
-            .addAll(numberBadge, fileNameLabel, statusIndicator);
+        // ── Header: badge + filename + status pill ──────────────────────
+        HBox headerBox = buildHeader(jobNumber, sourceInfo, outputInfo, status);
         card.getChildren().add(headerBox);
 
-        // ── Error message if output probing failed ───────────────────────
-
+        // ── Error fallback ──────────────────────────────────────────────
         if (outputProbeError != null) {
-            Label errorLabel = new Label(
-                "Fehler beim Analysieren der Ausgabedatei: " + outputProbeError
-            );
+            Label errorLabel = new Label("⚠  " + outputProbeError);
             errorLabel.setStyle(
-                "-fx-text-fill: " + C_ERROR + "; -fx-font-size: 12px;"
+                "-fx-text-fill: " +
+                    HEX_ORANGE +
+                    ";" +
+                    "-fx-font-size: 13px;" +
+                    "-fx-padding: 8 12;"
             );
             errorLabel.setWrapText(true);
             card.getChildren().add(errorLabel);
 
-            // Show source info only
             if (sourceInfo != null) {
-                GridPane sourceOnlyGrid = createComparisonGrid(
+                VBox sourcePanel = buildSinglePanel(
                     "Quelldatei",
                     sourceInfo,
                     null
                 );
-                card.getChildren().add(sourceOnlyGrid);
+                card.getChildren().add(sourcePanel);
             }
             return card;
         }
 
-        // ── Comparison grid ──────────────────────────────────────────────
-
+        // ── Savings banner (prominent) ──────────────────────────────────
         if (sourceInfo != null && outputInfo != null) {
-            GridPane grid = createComparisonGrid(
-                "Vergleich",
-                sourceInfo,
-                outputInfo
-            );
-            card.getChildren().add(grid);
+            long srcSize = sourceInfo.fileSize();
+            long outSize = outputInfo.fileSize();
+            if (srcSize > 0) {
+                double pct = ((srcSize - outSize) / (double) srcSize) * 100.0;
+                HBox savingsBanner = buildSavingsBanner(pct, srcSize, outSize);
+                card.getChildren().add(savingsBanner);
+            }
         }
 
-        // ── File size comparison with savings ────────────────────────────
-
+        // ── Two-panel comparison ────────────────────────────────────────
         if (sourceInfo != null && outputInfo != null) {
-            long sourceSize = sourceInfo.fileSize();
-            long outputSize = outputInfo.fileSize();
-
-            if (sourceSize > 0) {
-                double savingsPercent =
-                    ((sourceSize - outputSize) / (double) sourceSize) * 100.0;
-                String savingsText;
-                String savingsColor;
-
-                if (savingsPercent > 0) {
-                    savingsText = String.format(
-                        "Ersparnis: %.1f%%",
-                        savingsPercent
-                    );
-                    savingsColor = C_SUCCESS;
-                } else if (savingsPercent < 0) {
-                    savingsText = String.format(
-                        "Größer um: %.1f%%",
-                        Math.abs(savingsPercent)
-                    );
-                    savingsColor = C_ERROR;
-                } else {
-                    savingsText = "Keine Änderung";
-                    savingsColor = C_WARNING;
-                }
-
-                Label savingsLabel = new Label(savingsText);
-                savingsLabel.setStyle(
-                    "-fx-text-fill: " + savingsColor + "; -fx-font-size: 12px;"
-                );
-                savingsLabel.getStyleClass().addAll(Styles.TEXT_BOLD);
-                card.getChildren().add(savingsLabel);
-            }
+            HBox panels = buildComparisonPanels(sourceInfo, outputInfo);
+            card.getChildren().add(panels);
         }
 
         return card;
     }
 
-    /**
-     * Creates a GridPane comparing source and output ProbeInfo values.
-     */
-    private GridPane createComparisonGrid(
-        String title,
-        ProbeInfo sourceInfo,
-        ProbeInfo outputInfo
+    // ── Header ───────────────────────────────────────────────────────────
+
+    private HBox buildHeader(
+        int jobNumber,
+        ProbeInfo src,
+        ProbeInfo out,
+        VideoJobStatus status
     ) {
-        GridPane grid = new GridPane();
-        grid.setHgap(12);
-        grid.setVgap(4);
+        HBox box = new HBox(14);
+        box.setAlignment(Pos.CENTER_LEFT);
 
-        // Column headers
-        Label titleLabel = new Label(title);
-        titleLabel.setStyle(
-            "-fx-text-fill: " +
-                HEX_PURPLE +
-                "; -fx-font-size: 13px; -fx-font-weight: bold;"
+        // Number circle
+        Label badge = new Label(String.valueOf(jobNumber));
+        badge.setStyle(
+            "-fx-background-color: " +
+                HEX_ACCENT +
+                ";" +
+                "-fx-text-fill: " +
+                HEX_BG +
+                ";" +
+                "-fx-background-radius: 10;" +
+                "-fx-padding: 5 9;" +
+                "-fx-font-size: 12px;" +
+                "-fx-font-weight: bold;"
         );
-        titleLabel.setAlignment(Pos.CENTER_LEFT);
-        grid.add(titleLabel, 0, 0);
 
-        Label sourceHeader = new Label("Quelle");
-        sourceHeader.setStyle(
-            "-fx-text-fill: " + C_COMMENT + "; -fx-font-size: 11px;"
-        );
-        sourceHeader.setAlignment(Pos.CENTER);
-        grid.add(sourceHeader, 1, 0);
+        // File names
+        Label nameLabel = new Label();
+        String srcName = src != null ? src.file().getName() : "Unbekannt";
+        String outName = out != null ? out.file().getName() : "Unbekannt";
+        nameLabel.setText(srcName + "  →  " + outName);
+        nameLabel.setStyle("-fx-text-fill: " + C_FG + "; -fx-font-size: 14px;");
+        nameLabel.getStyleClass().add(Styles.TEXT_BOLD);
+        HBox.setHgrow(nameLabel, Priority.ALWAYS);
 
-        Label outputHeader = new Label("Ausgabe");
-        outputHeader.setStyle(
-            "-fx-text-fill: " + C_COMMENT + "; -fx-font-size: 11px;"
-        );
-        outputHeader.setAlignment(Pos.CENTER);
-        grid.add(outputHeader, 2, 0);
-
-        // Separator line
-        for (int col = 0; col < 3; col++) {
-            Pane sep = new Pane();
-            sep.setPrefHeight(1);
-            sep.setStyle("-fx-background-color: " + HEX_COMMENT + ";");
-            grid.add(sep, col, 1);
+        // Status pill
+        Label statusPill = new Label();
+        if (status.getStatus() == Status.COMPLETED) {
+            statusPill.setText("●  Fertig");
+            statusPill.setStyle(
+                "-fx-text-fill: " +
+                    HEX_GREEN +
+                    ";" +
+                    "-fx-background-color: rgba(80,250,123,0.1);" +
+                    "-fx-background-radius: 8;" +
+                    "-fx-padding: 4 10;" +
+                    "-fx-font-size: 12px;" +
+                    "-fx-font-weight: bold;"
+            );
+        } else if (status.getStatus() == Status.FAILED) {
+            statusPill.setText("●  Fehlgeschlagen");
+            statusPill.setStyle(
+                "-fx-text-fill: " +
+                    HEX_RED +
+                    ";" +
+                    "-fx-background-color: rgba(255,85,85,0.1);" +
+                    "-fx-background-radius: 8;" +
+                    "-fx-padding: 4 10;" +
+                    "-fx-font-size: 12px;" +
+                    "-fx-font-weight: bold;"
+            );
+        } else {
+            statusPill.setText("●  Übersprungen");
+            statusPill.setStyle(
+                "-fx-text-fill: " +
+                    HEX_ORANGE +
+                    ";" +
+                    "-fx-background-color: rgba(255,184,108,0.1);" +
+                    "-fx-background-radius: 8;" +
+                    "-fx-padding: 4 10;" +
+                    "-fx-font-size: 12px;" +
+                    "-fx-font-weight: bold;"
+            );
         }
 
-        int row = 2;
-
-        // ── Video Codec ──────────────────────────────────────────────────
-        row = addComparisonRow(
-            grid,
-            row,
-            "Video-Codec",
-            sourceInfo != null ? sourceInfo.codec() : "—",
-            outputInfo != null ? outputInfo.codec() : "—"
-        );
-
-        // ── Resolution ───────────────────────────────────────────────────
-        row = addComparisonRow(
-            grid,
-            row,
-            "Auflösung",
-            sourceInfo != null
-                ? sourceInfo.resolutionWidth() +
-                  "×" +
-                  sourceInfo.resolutionHeight()
-                : "—",
-            outputInfo != null
-                ? outputInfo.resolutionWidth() +
-                  "×" +
-                  outputInfo.resolutionHeight()
-                : "—"
-        );
-
-        // ── FPS ──────────────────────────────────────────────────────────
-        row = addComparisonRow(
-            grid,
-            row,
-            "FPS",
-            sourceInfo != null ? String.valueOf(sourceInfo.fps()) : "—",
-            outputInfo != null ? String.valueOf(outputInfo.fps()) : "—"
-        );
-
-        // ── Bitrate ──────────────────────────────────────────────────────
-        row = addComparisonRow(
-            grid,
-            row,
-            "Bitrate",
-            sourceInfo != null ? formatBitrate(sourceInfo.bitrate()) : "—",
-            outputInfo != null ? formatBitrate(outputInfo.bitrate()) : "—"
-        );
-
-        // ── Audio Bitrate ────────────────────────────────────────────────
-        row = addComparisonRow(
-            grid,
-            row,
-            "Audio-Bitrate",
-            sourceInfo != null ? formatBitrate(sourceInfo.audioBitrate()) : "—",
-            outputInfo != null ? formatBitrate(outputInfo.audioBitrate()) : "—"
-        );
-
-        // ── Duration ─────────────────────────────────────────────────────
-        row = addComparisonRow(
-            grid,
-            row,
-            "Dauer",
-            sourceInfo != null ? sourceInfo.formatDuration() : "—",
-            outputInfo != null ? outputInfo.formatDuration() : "—"
-        );
-
-        // ── File Size ────────────────────────────────────────────────────
-        row = addComparisonRow(
-            grid,
-            row,
-            "Dateigröße",
-            sourceInfo != null ? formatFileSize(sourceInfo.fileSize()) : "—",
-            outputInfo != null ? formatFileSize(outputInfo.fileSize()) : "—"
-        );
-
-        return grid;
+        box.getChildren().addAll(badge, nameLabel, statusPill);
+        return box;
     }
 
-    /**
-     * Adds a single comparison row to the grid.
-     * Returns the next available row index.
-     */
-    private int addComparisonRow(
-        GridPane grid,
-        int row,
-        String property,
-        String sourceValue,
-        String outputValue
-    ) {
-        // Property label (left column)
-        Label propLabel = new Label(property);
-        propLabel.setStyle(
+    // ── Savings Banner ───────────────────────────────────────────────────
+
+    private HBox buildSavingsBanner(double pct, long srcSize, long outSize) {
+        HBox banner = new HBox(12);
+        banner.setAlignment(Pos.CENTER);
+        banner.setPadding(new Insets(10, 14, 10, 14));
+
+        String bgColor;
+        String textColor;
+        String icon;
+        String label;
+
+        if (pct > 0.5) {
+            bgColor = "rgba(80,250,123,0.08)";
+            textColor = HEX_GREEN;
+            icon = "↓";
+            label = "Ersparnis";
+        } else if (pct < -0.5) {
+            bgColor = "rgba(255,85,85,0.08)";
+            textColor = HEX_RED;
+            icon = "↑";
+            label = "Größer";
+        } else {
+            bgColor = "rgba(98,114,164,0.08)";
+            textColor = HEX_COMMENT;
+            icon = "—";
+            label = "Unverändert";
+        }
+
+        banner.setStyle(
+            "-fx-background-color: " +
+                bgColor +
+                ";" +
+                "-fx-background-radius: 10;"
+        );
+
+        // Icon
+        Label iconLabel = new Label(icon);
+        iconLabel.setStyle(
+            "-fx-text-fill: " +
+                textColor +
+                "; -fx-font-size: 18px; -fx-font-weight: bold;"
+        );
+
+        // Main percentage
+        Label pctLabel = new Label(
+            String.format("%s: %.1f%%", label, Math.abs(pct))
+        );
+        pctLabel.setStyle(
+            "-fx-text-fill: " + textColor + "; -fx-font-size: 14px;"
+        );
+        pctLabel.getStyleClass().add(Styles.TEXT_BOLD);
+
+        // Sizes
+        Label sizeLabel = new Label(
+            formatFileSize(srcSize) + "  →  " + formatFileSize(outSize)
+        );
+        sizeLabel.setStyle(
             "-fx-text-fill: " + C_COMMENT + "; -fx-font-size: 12px;"
         );
-        propLabel.setAlignment(Pos.CENTER_LEFT);
-        grid.add(propLabel, 0, row);
 
-        // Source value (middle column)
-        Label sourceLabel = new Label(sourceValue);
-        sourceLabel.setStyle(
-            "-fx-text-fill: " + C_FG + "; -fx-font-size: 12px;"
+        banner.getChildren().addAll(iconLabel, pctLabel, sizeLabel);
+        HBox.setHgrow(pctLabel, Priority.ALWAYS);
+
+        return banner;
+    }
+
+    // ── Two-Panel Comparison ─────────────────────────────────────────────
+
+    private HBox buildComparisonPanels(ProbeInfo source, ProbeInfo output) {
+        HBox panels = new HBox(12);
+        panels.setAlignment(Pos.CENTER_LEFT);
+
+        VBox leftPanel = buildSinglePanel("Quelle", source, output);
+        VBox rightPanel = buildSinglePanel("Ausgabe", output, source);
+
+        panels.getChildren().addAll(leftPanel, rightPanel);
+        HBox.setHgrow(leftPanel, Priority.ALWAYS);
+        HBox.setHgrow(rightPanel, Priority.ALWAYS);
+
+        return panels;
+    }
+
+    private VBox buildSinglePanel(
+        String title,
+        ProbeInfo info,
+        ProbeInfo other
+    ) {
+        VBox panel = new VBox(0);
+        panel.setPadding(new Insets(16));
+        panel.setStyle(
+            "-fx-background-color: " +
+                (title.equals("Quelle") ? HEX_PANEL_SOURCE : HEX_PANEL_OUTPUT) +
+                ";" +
+                "-fx-background-radius: 10;"
         );
-        sourceLabel.setAlignment(Pos.CENTER);
-        grid.add(sourceLabel, 1, row);
+        HBox.setHgrow(panel, Priority.ALWAYS);
 
-        // Output value (right column)
-        Label outputLabel = new Label(outputValue);
-        outputLabel.setStyle(
-            "-fx-text-fill: " + HEX_CYAN + "; -fx-font-size: 12px;"
+        // Panel title
+        Label titleLabel = new Label(title.toUpperCase());
+        titleLabel.setStyle(
+            "-fx-text-fill: " +
+                HEX_COMMENT +
+                ";" +
+                "-fx-font-size: 10px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-letter-spacing: 1.5;" +
+                "-fx-padding: 0 0 12 0;"
         );
-        outputLabel.setAlignment(Pos.CENTER);
-        grid.add(outputLabel, 2, row);
+        panel.getChildren().add(titleLabel);
 
-        return row + 1;
+        // Divider under title
+        Pane div = new Pane();
+        div.setPrefHeight(1);
+        div.setStyle("-fx-background-color: " + HEX_DIVIDER + ";");
+        panel.getChildren().add(div);
+
+        VBox props = new VBox(10);
+        props.setPadding(new Insets(12, 0, 0, 0));
+
+        // ── Resolution (hero value) ────────────────────────────────────
+        props
+            .getChildren()
+            .add(
+                buildHeroProperty(
+                    "Auflösung",
+                    info.getAbbreviatedResolution(),
+                    title.equals("Ausgabe") ? HEX_CYAN : C_FG
+                )
+            );
+
+        // Divider
+        Pane d1 = new Pane();
+        d1.setPrefHeight(1);
+        d1.setStyle("-fx-background-color: " + HEX_DIVIDER + ";");
+        props.getChildren().add(d1);
+
+        // ── Codec ──────────────────────────────────────────────────────
+        props
+            .getChildren()
+            .add(buildPropertyRow("Codec", info.codec(), other, "codec"));
+
+        // ── FPS ────────────────────────────────────────────────────────
+        props
+            .getChildren()
+            .add(
+                buildPropertyRow(
+                    "FPS",
+                    String.valueOf(info.fps()),
+                    other,
+                    "fps"
+                )
+            );
+
+        // ── Bitrate ────────────────────────────────────────────────────
+        props
+            .getChildren()
+            .add(
+                buildPropertyRow(
+                    "Bitrate",
+                    formatBitrate(info.bitrate()),
+                    other,
+                    "bitrate"
+                )
+            );
+
+        // ── Audio Bitrate ──────────────────────────────────────────────
+        props
+            .getChildren()
+            .add(
+                buildPropertyRow(
+                    "Audio-Bitrate",
+                    formatBitrate(info.audioBitrate()),
+                    other,
+                    "audioBitrate"
+                )
+            );
+
+        // ── Duration ───────────────────────────────────────────────────
+        props
+            .getChildren()
+            .add(
+                buildPropertyRow(
+                    "Dauer",
+                    info.formatDuration(),
+                    other,
+                    "duration"
+                )
+            );
+
+        // ── File Size (hero value) ─────────────────────────────────────
+        Pane d2 = new Pane();
+        d2.setPrefHeight(1);
+        d2.setStyle("-fx-background-color: " + HEX_DIVIDER + ";");
+        props.getChildren().add(d2);
+
+        props
+            .getChildren()
+            .add(
+                buildHeroProperty(
+                    "Dateigröße",
+                    formatFileSize(info.fileSize()),
+                    title.equals("Ausgabe") ? HEX_CYAN : C_FG
+                )
+            );
+
+        panel.getChildren().add(props);
+        return panel;
+    }
+
+    // ── Property Row Builders ────────────────────────────────────────────
+
+    private VBox buildHeroProperty(String label, String value, String color) {
+        VBox box = new VBox(3);
+
+        Label lbl = new Label(label);
+        lbl.setStyle(
+            "-fx-text-fill: " +
+                HEX_COMMENT +
+                "; -fx-font-size: 10px; -fx-font-weight: bold; -fx-letter-spacing: 1;"
+        );
+
+        Label val = new Label(value);
+        val.setStyle("-fx-text-fill: " + color + "; -fx-font-size: 18px;");
+        val.getStyleClass().add(Styles.TEXT_BOLD);
+
+        box.getChildren().addAll(lbl, val);
+        return box;
+    }
+
+    private HBox buildPropertyRow(
+        String label,
+        String value,
+        ProbeInfo other,
+        String field
+    ) {
+        HBox box = new HBox(8);
+        box.setAlignment(Pos.CENTER_LEFT);
+
+        // Label
+        Label lbl = new Label(label);
+        lbl.setStyle(
+            "-fx-text-fill: " + HEX_COMMENT + "; -fx-font-size: 12px;"
+        );
+        lbl.setMinWidth(80);
+
+        // Value
+        Label val = new Label(value);
+        val.setStyle("-fx-text-fill: " + C_FG + "; -fx-font-size: 13px;");
+        HBox.setHgrow(val, Priority.ALWAYS);
+
+        // Change indicator (only on output panel)
+        Label indicator = buildChangeIndicator(value, other, field);
+        if (indicator != null) {
+            box.getChildren().add(indicator);
+        }
+
+        box.getChildren().addAll(lbl, val);
+        return box;
+    }
+
+    private Label buildChangeIndicator(
+        String thisValue,
+        ProbeInfo other,
+        String field
+    ) {
+        if (other == null) return null;
+
+        String otherValue;
+        boolean changed;
+
+        switch (field) {
+            case "codec":
+                otherValue = other.codec();
+                changed = !thisValue.equals(otherValue);
+                break;
+            case "fps":
+                otherValue = String.valueOf(other.fps());
+                changed = !thisValue.equals(otherValue);
+                break;
+            case "bitrate":
+                otherValue = formatBitrate(other.bitrate());
+                changed = !thisValue.equals(otherValue);
+                break;
+            case "audioBitrate":
+                otherValue = formatBitrate(other.audioBitrate());
+                changed = !thisValue.equals(otherValue);
+                break;
+            case "duration":
+                otherValue = other.formatDuration();
+                changed = !thisValue.equals(otherValue);
+                break;
+            default:
+                return null;
+        }
+
+        if (!changed) return null;
+
+        // Determine direction: smaller bitrate/size = good (green ↓), larger = bad (red ↑)
+        String icon;
+        String color;
+        boolean thisIsNumeric = false;
+        double thisNum = 0,
+            otherNum = 0;
+
+        try {
+            // Try to extract numeric value for comparison
+            String numStr = thisValue.replaceAll("[^0-9.]", "");
+            if (!numStr.isEmpty()) {
+                thisNum = Double.parseDouble(numStr);
+                otherNum = Double.parseDouble(
+                    otherValue.replaceAll("[^0-9.]", "")
+                );
+                thisIsNumeric = true;
+            }
+        } catch (NumberFormatException e) {
+            // Non-numeric, just show neutral indicator
+        }
+
+        if (thisIsNumeric) {
+            if (thisNum < otherNum) {
+                icon = "↓";
+                color = HEX_GREEN;
+            } else if (thisNum > otherNum) {
+                icon = "↑";
+                color = HEX_RED;
+            } else {
+                return null;
+            }
+        } else {
+            icon = "↔";
+            color = HEX_ORANGE;
+        }
+
+        Label lbl = new Label(icon);
+        lbl.setStyle(
+            "-fx-text-fill: " +
+                color +
+                ";" +
+                "-fx-font-size: 13px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-padding: 0 0 0 4;"
+        );
+        return lbl;
     }
 
     // ── Formatting helpers ──────────────────────────────────────────────
 
-    /**
-     * Format bitrate in bps to a human-readable string.
-     */
     private String formatBitrate(int bps) {
-        if (bps <= 0) {
-            return "—";
-        }
+        if (bps <= 0) return "—";
         if (bps >= 1_000_000) {
             return String.format("%.1f Mbps", bps / 1_000_000.0);
         } else if (bps >= 1_000) {
@@ -565,19 +741,14 @@ public class Step4View implements StepView {
         return String.format("%d bps", bps);
     }
 
-    /**
-     * Format bytes to a human-readable file size string.
-     */
     private String formatFileSize(long bytes) {
-        if (bytes <= 0) {
-            return "—";
-        }
+        if (bytes <= 0) return "—";
         if (bytes >= 1_073_741_824) {
             return String.format("%.2f GB", bytes / 1_073_741_824.0);
         } else if (bytes >= 1_048_576) {
             return String.format("%.1f MB", bytes / 1_048_576.0);
         } else if (bytes >= 1_024) {
-            return String.format("%.0f kB", bytes / 1024.0);
+            return String.format("%d kB", bytes / 1024);
         }
         return String.format("%d B", bytes);
     }

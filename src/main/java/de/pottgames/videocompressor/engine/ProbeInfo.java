@@ -32,7 +32,7 @@ public record ProbeInfo(
      * Returns an abbreviated resolution string for standard 16:9 formats (horizontal & vertical),
      * or "widthxheight" for non-standard aspect ratios.
      */
-    private String getAbbreviatedResolution() {
+    public String getAbbreviatedResolution() {
         double ratio = (double) resolutionWidth / resolutionHeight;
         double invRatio = (double) resolutionHeight / resolutionWidth;
 
