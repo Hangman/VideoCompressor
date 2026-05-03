@@ -99,6 +99,7 @@ public class Step2View implements StepView {
     private ChoiceBox<AudioCodec> audioCodecBox = null;
     private ChoiceBox<VideoContainer> containerBox = null;
     private VBox audioRow = null;
+    private VBox fastStartRow = null;
     private HBox resolutionRow = null;
     private ChoiceBox<FfmpegPreset> ffmpegPresetBox = null;
     private ChoiceBox<Tune> tuneBox = null;
@@ -718,14 +719,17 @@ public class Step2View implements StepView {
                 )
             );
 
-        // Fast start
+        // Fast start — only meaningful for MP4, so wrap in a container
+        // that can be disabled when another format is selected
+        fastStartRow = new VBox(10);
+
         fastStartCheck = new CheckBox();
         HBox checkBox = buildCheckBoxRow(
             fastStartCheck,
             "Fast Start (Moov atom voranstellen)"
         );
 
-        group
+        fastStartRow
             .getChildren()
             .add(
                 buildSettingRow(
@@ -735,6 +739,16 @@ public class Step2View implements StepView {
                     checkBox
                 )
             );
+
+        // Disable fast-start settings when container is not MP4
+        containerBox
+            .valueProperty()
+            .addListener((_, _, _) -> {
+                var container = containerBox.getValue();
+                fastStartRow.setDisable(container != VideoContainer.MP4);
+            });
+
+        group.getChildren().addAll(fastStartRow);
 
         return group;
     }
@@ -826,8 +840,10 @@ public class Step2View implements StepView {
         );
         audioNormalizeCheck.setSelected(selectedPreset.audioNormalize());
         mixToMonoCheck.setSelected(selectedPreset.mixToMono());
-        containerBox.getSelectionModel().select(selectedPreset.container());
+        var container = selectedPreset.container();
+        containerBox.getSelectionModel().select(container);
         fastStartCheck.setSelected(selectedPreset.fastStart());
+        fastStartRow.setDisable(container != VideoContainer.MP4);
         ffmpegPresetBox
             .getSelectionModel()
             .select(selectedPreset.ffmpegPreset());
@@ -847,6 +863,17 @@ public class Step2View implements StepView {
             return null;
         }
 
+        var container = Objects.requireNonNullElse(
+            containerBox.getValue(),
+            selectedPreset.container()
+        );
+
+        // Fast Start is only meaningful for MP4; if the container is
+        // something else, force it to false even if the (disabled)
+        // checkbox is still checked.
+        var effectiveFastStart =
+            container == VideoContainer.MP4 && fastStartCheck.isSelected();
+
         return new Preset(
             selectedPreset.name(),
             selectedPreset.description(),
@@ -859,10 +886,7 @@ public class Step2View implements StepView {
             safeInt(resWidthField, selectedPreset.resolutionWidth()),
             safeInt(resHeightField, selectedPreset.resolutionHeight()),
             safeDouble(fpsField, selectedPreset.fps()),
-            Objects.requireNonNullElse(
-                containerBox.getValue(),
-                selectedPreset.container()
-            ),
+            container,
             keepSourceAudioCheck.isSelected(),
             Objects.requireNonNullElse(
                 audioCodecBox.getValue(),
@@ -871,7 +895,7 @@ public class Step2View implements StepView {
             safeInt(audioBitrateField, selectedPreset.audioBitrate()),
             audioNormalizeCheck.isSelected(),
             mixToMonoCheck.isSelected(),
-            fastStartCheck.isSelected(),
+            effectiveFastStart,
             Objects.requireNonNullElse(
                 ffmpegPresetBox.getValue(),
                 selectedPreset.ffmpegPreset()
