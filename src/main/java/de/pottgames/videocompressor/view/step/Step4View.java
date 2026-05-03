@@ -19,7 +19,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.Background;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -592,6 +591,5 @@ public class Step4View implements StepView {
     public void deactivate(WizardState state) {
         resultsContent.getChildren().clear();
         summaryLabel.setText("");
-        scrollPane.setVisible(false);
     }
 }
