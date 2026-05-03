@@ -50,14 +50,15 @@ public class Step2View implements StepView {
 
     // ── Color constants (Dracula palette) ────────────────────────────────
 
-    private static final String C_COMMENT = "#6272a4";
-    private static final String C_FG = "#f8f8f2";
+    // AtlantaFX CSS variable references (defined on .root in dracula.css)
+    private static final String C_COMMENT = "-color-fg-subtle";
+    private static final String C_FG = "-color-fg-default";
 
     // ── Validation UI colors ─────────────────────────────────────────────
 
-    private static final String C_VALID = "#50fa7b"; // Green
-    private static final String C_WARNING = "#f1fa8c"; // Yellow/Amber
-    private static final String C_ERROR = "#ff5555"; // Red
+    private static final String C_VALID = "-color-success-5";
+    private static final String C_WARNING = "-color-warning-5";
+    private static final String C_ERROR = "-color-danger-5";
 
     // ── Engine state ────────────────────────────────────────────────────
     private Engine engine;
@@ -304,25 +305,18 @@ public class Step2View implements StepView {
      */
     private void showValidationResult(ValidationResult result) {
         if (result.valid() && result.warnings().isEmpty()) {
-            // Fully valid — green checkmark
-            validationIconLabel.setText("\u2714"); // ✓
-            validationIconLabel.setStyle(
-                "-fx-font-size: 16px; -fx-text-fill: " + C_VALID + ";"
-            );
-            validationLabel.setText("Konfiguration ist valide.");
-            validationLabel.setStyle("-fx-text-fill: " + C_VALID + ";");
-            validationPanel.setStyle(
-                "-fx-background-color: rgba(80,250,123,0.08); " +
-                    "-fx-background-radius: 6; -fx-border-radius: 6; " +
-                    "-fx-border-color: " +
-                    C_VALID +
-                    "; -fx-border-width: 1;"
-            );
+            validationIconLabel.setVisible(false);
+            validationLabel.setVisible(false);
+            validationPanel.setVisible(false);
         } else if (result.valid()) {
             // Valid but has warnings — amber
+            validationIconLabel.setVisible(true);
+            validationLabel.setVisible(true);
+            validationPanel.setVisible(true);
+
             validationIconLabel.setText("\u26A0"); // ⚠
             validationIconLabel.setStyle(
-                "-fx-font-size: 16px; -fx-text-fill: " + C_WARNING + ";"
+                "-fx-font-size: 16px; -fx-text-fill: -color-warning-5;"
             );
             int wCount = result.warnings().size();
             validationLabel.setText(
@@ -332,19 +326,21 @@ public class Step2View implements StepView {
                     " — " +
                     String.join(" ", result.warnings())
             );
-            validationLabel.setStyle("-fx-text-fill: " + C_WARNING + ";");
+            validationLabel.setStyle("-fx-text-fill: -color-warning-5;");
             validationPanel.setStyle(
-                "-fx-background-color: rgba(241,250,140,0.08); " +
+                "-fx-background-color: -color-warning-subtle; " +
                     "-fx-background-radius: 6; -fx-border-radius: 6; " +
-                    "-fx-border-color: " +
-                    C_WARNING +
-                    "; -fx-border-width: 1;"
+                    "-fx-border-color: -color-warning-5; -fx-border-width: 1;"
             );
         } else {
             // Has errors — red
+            validationIconLabel.setVisible(true);
+            validationLabel.setVisible(true);
+            validationPanel.setVisible(true);
+
             validationIconLabel.setText("\u2717"); // ✗
             validationIconLabel.setStyle(
-                "-fx-font-size: 16px; -fx-text-fill: " + C_ERROR + ";"
+                "-fx-font-size: 16px; -fx-text-fill: -color-danger-5;"
             );
             int eCount = result.errors().size();
             int wCount = result.warnings().size();
@@ -359,13 +355,11 @@ public class Step2View implements StepView {
             validationLabel.setText(
                 msg + " — " + String.join(" ", result.errors())
             );
-            validationLabel.setStyle("-fx-text-fill: " + C_ERROR + ";");
+            validationLabel.setStyle("-fx-text-fill: -color-danger-5;");
             validationPanel.setStyle(
-                "-fx-background-color: rgba(255,85,85,0.08); " +
+                "-fx-background-color: -color-danger-subtle; " +
                     "-fx-background-radius: 6; -fx-border-radius: 6; " +
-                    "-fx-border-color: " +
-                    C_ERROR +
-                    "; -fx-border-width: 1;"
+                    "-fx-border-color: -color-danger-5; -fx-border-width: 1;"
             );
         }
     }
