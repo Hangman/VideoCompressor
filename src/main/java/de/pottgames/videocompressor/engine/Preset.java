@@ -20,7 +20,7 @@ public record Preset(
     int resolutionHeight,
     double fps,
     VideoContainer container,
-    int maxFileSize,
+
     boolean keepSourceAudio,
     AudioCodec audioCodec,
     int audioBitrate,
@@ -76,7 +76,6 @@ public record Preset(
             VideoContainer.fromName(
                 props.getProperty("preset.container", "mp4")
             ),
-            Integer.parseInt(props.getProperty("preset.maxFileSize", "0")),
             Boolean.parseBoolean(
                 props.getProperty("preset.keepSourceAudio", "true")
             ),
@@ -232,15 +231,6 @@ public record Preset(
                 "FPS " +
                     fps +
                     " ist sehr hoch – meist unnötig für Video-Kompression."
-            );
-        }
-
-        // --- Max-Dateigröße ---
-        if (maxFileSize < 0) {
-            errors.add(
-                "Maximale Dateigröße darf nicht negativ sein (ist " +
-                    maxFileSize +
-                    ")."
             );
         }
 

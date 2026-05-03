@@ -52,7 +52,7 @@ public class Strategy {
         int resolutionHeight = desiredPreset.resolutionHeight();
         double fps = desiredPreset.fps();
         VideoContainer container = desiredPreset.container();
-        int maxFileSize = desiredPreset.maxFileSize();
+
         boolean keepSourceAudio = desiredPreset.keepSourceAudio();
         AudioCodec audioCodec = desiredPreset.audioCodec();
         int audioBitrate = desiredPreset.audioBitrate();
@@ -194,17 +194,6 @@ public class Strategy {
             audioNormalize = false;
         }
 
-        // ── 1i) maxFileSize: if source already fits, remove constraint ─
-        long sourceSizeMB = sourceInfo.fileSize() / (1024 * 1024);
-        if (maxFileSize > 0 && sourceSizeMB >= maxFileSize) {
-            // Source is already at or above the limit – keep the constraint
-            // but note that two-pass / QP control would be needed.
-            // We leave maxFileSize as-is; FFmpeg will handle it.
-        } else if (maxFileSize > 0 && sourceSizeMB < maxFileSize) {
-            // Source is already below the limit – constraint is pointless
-            maxFileSize = 0;
-        }
-
         // ── 1j) audioBitrate: clamp to reasonable bounds ───────────────
         if (!keepSourceAudio) {
             if (audioBitrate > 9999) audioBitrate = 9999;
@@ -235,14 +224,11 @@ public class Strategy {
             mixToMono = false;
         }
 
-        // ── 2d) maxFileSize already simplified in 1i above ─────────────
-
         // ── 2e) If everything matches source, describe it in the name ──
         if (
             keepSourceResolution &&
             fps == sourceInfo.fps() &&
             keepSourceAudio &&
-            maxFileSize == 0 &&
             !fastStart &&
             tune == Tune.NONE
         ) {
@@ -263,7 +249,6 @@ public class Strategy {
             resolutionHeight,
             fps,
             container,
-            maxFileSize,
             keepSourceAudio,
             audioCodec,
             audioBitrate,

@@ -49,7 +49,6 @@ class StrategyTest {
             1080,
             30.0,
             VideoContainer.MP4,
-            0, // maxFileSize
             true, // keepSourceAudio
             AudioCodec.AAC,
             192,
@@ -104,7 +103,6 @@ class StrategyTest {
                 720,
                 30.0,
                 VideoContainer.MP4,
-                0,
                 true,
                 AudioCodec.AAC,
                 192,
@@ -152,7 +150,6 @@ class StrategyTest {
                 2160, // 4K target
                 30.0,
                 VideoContainer.MP4,
-                0,
                 true,
                 AudioCodec.AAC,
                 192,
@@ -179,7 +176,6 @@ class StrategyTest {
                 2160,
                 30.0,
                 VideoContainer.MP4,
-                0,
                 true,
                 AudioCodec.AAC,
                 192,
@@ -206,7 +202,6 @@ class StrategyTest {
                 720,
                 30.0,
                 VideoContainer.MP4,
-                0,
                 true,
                 AudioCodec.AAC,
                 192,
@@ -255,7 +250,6 @@ class StrategyTest {
                 768,
                 30.0,
                 VideoContainer.MP4,
-                0,
                 true,
                 AudioCodec.AAC,
                 192,
@@ -292,7 +286,6 @@ class StrategyTest {
                 721,
                 30.0,
                 VideoContainer.MP4,
-                0,
                 true,
                 AudioCodec.AAC,
                 192,
@@ -333,7 +326,6 @@ class StrategyTest {
                 1,
                 30.0,
                 VideoContainer.MP4,
-                0,
                 true,
                 AudioCodec.AAC,
                 192,
@@ -370,7 +362,6 @@ class StrategyTest {
                 1080,
                 60.0, // source is 30 fps
                 VideoContainer.MP4,
-                0,
                 true,
                 AudioCodec.AAC,
                 192,
@@ -397,7 +388,6 @@ class StrategyTest {
                 1080,
                 24.0,
                 VideoContainer.MP4,
-                0,
                 true,
                 AudioCodec.AAC,
                 192,
@@ -424,7 +414,6 @@ class StrategyTest {
                 1080,
                 0.5,
                 VideoContainer.MP4,
-                0,
                 true,
                 AudioCodec.AAC,
                 192,
@@ -464,7 +453,6 @@ class StrategyTest {
                 1080,
                 24.0,
                 VideoContainer.MP4,
-                0,
                 true,
                 AudioCodec.AAC,
                 192,
@@ -505,7 +493,6 @@ class StrategyTest {
                 1080,
                 30.0,
                 VideoContainer.MP4,
-                0,
                 true,
                 AudioCodec.AAC,
                 192,
@@ -545,7 +532,6 @@ class StrategyTest {
                 1080,
                 60.0,
                 VideoContainer.MP4,
-                0,
                 true,
                 AudioCodec.AAC,
                 192,
@@ -572,7 +558,6 @@ class StrategyTest {
                 1080,
                 120.0, // source is 30
                 VideoContainer.MP4,
-                0,
                 true,
                 AudioCodec.AAC,
                 192,
@@ -608,7 +593,6 @@ class StrategyTest {
                 1080,
                 30.0,
                 VideoContainer.MP4,
-                0,
                 true,
                 AudioCodec.AAC,
                 192,
@@ -635,7 +619,6 @@ class StrategyTest {
                 1080,
                 30.0,
                 VideoContainer.MP4,
-                0,
                 true,
                 AudioCodec.AAC,
                 192,
@@ -662,7 +645,6 @@ class StrategyTest {
                 1080,
                 30.0,
                 VideoContainer.WEBM,
-                0,
                 true,
                 AudioCodec.OPUS,
                 192,
@@ -689,7 +671,6 @@ class StrategyTest {
                 1080,
                 30.0,
                 VideoContainer.MKV,
-                0,
                 true,
                 AudioCodec.OPUS,
                 192,
@@ -716,7 +697,6 @@ class StrategyTest {
                 1080,
                 30.0,
                 VideoContainer.MP4,
-                0,
                 true,
                 AudioCodec.AAC,
                 192,
@@ -743,7 +723,6 @@ class StrategyTest {
                 1080,
                 30.0,
                 VideoContainer.WEBM,
-                0,
                 true,
                 AudioCodec.OPUS,
                 192,
@@ -779,7 +758,6 @@ class StrategyTest {
                 1080,
                 30.0,
                 VideoContainer.WEBM,
-                0,
                 true,
                 AudioCodec.OPUS,
                 192,
@@ -806,7 +784,6 @@ class StrategyTest {
                 1080,
                 30.0,
                 VideoContainer.MKV,
-                0,
                 true,
                 AudioCodec.OPUS,
                 192,
@@ -833,7 +810,6 @@ class StrategyTest {
                 1080,
                 30.0,
                 VideoContainer.MP4,
-                0,
                 true,
                 AudioCodec.AAC,
                 192,
@@ -860,7 +836,6 @@ class StrategyTest {
                 1080,
                 30.0,
                 VideoContainer.MP4,
-                0,
                 true,
                 AudioCodec.AAC,
                 192,
@@ -896,7 +871,6 @@ class StrategyTest {
                 1080,
                 30.0,
                 VideoContainer.MKV,
-                0,
                 true,
                 AudioCodec.AAC,
                 192,
@@ -923,7 +897,6 @@ class StrategyTest {
                 1080,
                 30.0,
                 VideoContainer.WEBM,
-                0,
                 true,
                 AudioCodec.OPUS,
                 192,
@@ -950,7 +923,6 @@ class StrategyTest {
                 1080,
                 30.0,
                 VideoContainer.MP4,
-                0,
                 true,
                 AudioCodec.AAC,
                 192,
@@ -986,7 +958,6 @@ class StrategyTest {
                 1080,
                 30.0,
                 VideoContainer.MP4,
-                0,
                 true,
                 AudioCodec.OPUS,
                 192,
@@ -1013,7 +984,6 @@ class StrategyTest {
                 1080,
                 30.0,
                 VideoContainer.MP4,
-                0,
                 true,
                 AudioCodec.OPUS,
                 192,
@@ -1042,7 +1012,6 @@ class StrategyTest {
                 1080,
                 30.0,
                 VideoContainer.MP4,
-                0,
                 true,
                 AudioCodec.OPUS,
                 192,
@@ -1069,7 +1038,6 @@ class StrategyTest {
                 1080,
                 30.0,
                 VideoContainer.WEBM,
-                0,
                 true,
                 AudioCodec.AAC,
                 192,
@@ -1096,7 +1064,6 @@ class StrategyTest {
                 1080,
                 30.0,
                 VideoContainer.WEBM,
-                0,
                 true,
                 AudioCodec.AAC,
                 192,
@@ -1132,7 +1099,6 @@ class StrategyTest {
                 1080,
                 30.0,
                 VideoContainer.WEBM,
-                0,
                 false, // keepSourceAudio = false
                 AudioCodec.AAC,
                 192,
@@ -1159,7 +1125,6 @@ class StrategyTest {
                 1080,
                 30.0,
                 VideoContainer.WEBM,
-                0,
                 true, // keepSourceAudio = true
                 AudioCodec.AAC,
                 192,
@@ -1186,7 +1151,6 @@ class StrategyTest {
                 1080,
                 30.0,
                 VideoContainer.MP4,
-                0,
                 false,
                 AudioCodec.OPUS,
                 192,
@@ -1213,7 +1177,6 @@ class StrategyTest {
                 1080,
                 30.0,
                 VideoContainer.MP4,
-                0,
                 false,
                 AudioCodec.VORBIS,
                 192,
@@ -1249,7 +1212,6 @@ class StrategyTest {
                 1080,
                 30.0,
                 VideoContainer.WEBM,
-                0,
                 false,
                 AudioCodec.OPUS,
                 192,
@@ -1276,7 +1238,6 @@ class StrategyTest {
                 1080,
                 30.0,
                 VideoContainer.WEBM,
-                0,
                 false,
                 AudioCodec.VORBIS,
                 192,
@@ -1303,7 +1264,6 @@ class StrategyTest {
                 1080,
                 30.0,
                 VideoContainer.MP4,
-                0,
                 false,
                 AudioCodec.AAC,
                 192,
@@ -1332,8 +1292,7 @@ class StrategyTest {
                 1920,
                 1080,
                 30.0,
-                VideoContainer.MP4,
-                0,
+                VideoContainer.WEBM,
                 true, // keepSourceAudio
                 AudioCodec.OPUS,
                 192,
@@ -1346,99 +1305,6 @@ class StrategyTest {
             Preset result = calc(preset);
             // 2c simplification: keepSourceAudio overrides audioNormalize
             assertFalse(result.audioNormalize());
-        }
-    }
-
-    // ====================================================================
-    //  1i) maxFileSize – remove constraint when source already fits
-    // ====================================================================
-
-    @Nested
-    @DisplayName("maxFileSize – remove unnecessary constraint")
-    class MaxFileSize {
-
-        @Test
-        @DisplayName("maxFileSize is cleared when source is smaller than limit")
-        void maxFileSizeClearedWhenSourceFits() {
-            // source is 50 MB, limit is 100 MB
-            Preset preset = new Preset(
-                "P",
-                "",
-                VideoCodec.H264,
-                23,
-                true,
-                1920,
-                1080,
-                30.0,
-                VideoContainer.MP4,
-                100,
-                true,
-                AudioCodec.AAC,
-                192,
-                false,
-                false,
-                false,
-                FfmpegPreset.MEDIUM,
-                Tune.NONE
-            );
-            Preset result = calc(preset);
-            assertEquals(0, result.maxFileSize());
-        }
-
-        @Test
-        @DisplayName("maxFileSize is kept when source exceeds limit")
-        void maxFileSizeKeptWhenSourceExceeds() {
-            // source is 50 MB, limit is 25 MB
-            Preset preset = new Preset(
-                "P",
-                "",
-                VideoCodec.H264,
-                23,
-                true,
-                1920,
-                1080,
-                30.0,
-                VideoContainer.MP4,
-                25,
-                true,
-                AudioCodec.AAC,
-                192,
-                false,
-                false,
-                false,
-                FfmpegPreset.MEDIUM,
-                Tune.NONE
-            );
-            Preset result = calc(preset);
-            assertEquals(25, result.maxFileSize());
-        }
-
-        @Test
-        @DisplayName("maxFileSize is kept when source equals limit")
-        void maxFileSizeKeptWhenSourceEqualsLimit() {
-            // source is exactly 50 MB, limit is 50 MB
-            Preset preset = new Preset(
-                "P",
-                "",
-                VideoCodec.H264,
-                23,
-                true,
-                1920,
-                1080,
-                30.0,
-                VideoContainer.MP4,
-                50,
-                true,
-                AudioCodec.AAC,
-                192,
-                false,
-                false,
-                false,
-                FfmpegPreset.MEDIUM,
-                Tune.NONE
-            );
-            Preset result = calc(preset);
-            assertEquals(50, result.maxFileSize());
         }
     }
 
@@ -1463,7 +1329,6 @@ class StrategyTest {
                 1080,
                 30.0,
                 VideoContainer.MP4,
-                0,
                 false,
                 AudioCodec.AAC,
                 15000,
@@ -1490,7 +1355,6 @@ class StrategyTest {
                 1080,
                 30.0,
                 VideoContainer.MP4,
-                0,
                 false,
                 AudioCodec.AAC,
                 0,
@@ -1517,7 +1381,6 @@ class StrategyTest {
                 1080,
                 30.0,
                 VideoContainer.MP4,
-                0,
                 true,
                 AudioCodec.AAC,
                 0,
@@ -1555,7 +1418,6 @@ class StrategyTest {
                 1080, // same as source
                 30.0,
                 VideoContainer.MP4,
-                0,
                 true,
                 AudioCodec.AAC,
                 192,
@@ -1582,8 +1444,7 @@ class StrategyTest {
                 1080,
                 30.0,
                 VideoContainer.MP4,
-                0,
-                true, // keepSourceAudio
+                false, // keepSourceAudio
                 AudioCodec.AAC,
                 192,
                 true,
@@ -1609,7 +1470,6 @@ class StrategyTest {
                 1080,
                 30.0,
                 VideoContainer.MP4,
-                0,
                 true, // keepSourceAudio
                 AudioCodec.AAC,
                 192,
@@ -1647,7 +1507,6 @@ class StrategyTest {
                 1080,
                 30.0,
                 VideoContainer.MP4,
-                0,
                 true,
                 AudioCodec.OPUS,
                 192,
@@ -1678,7 +1537,6 @@ class StrategyTest {
                 1080,
                 30.0,
                 VideoContainer.WEBM,
-                0,
                 true,
                 AudioCodec.AAC,
                 192,
@@ -1708,7 +1566,6 @@ class StrategyTest {
                 2160,
                 60.0,
                 VideoContainer.MP4,
-                0,
                 true,
                 AudioCodec.AAC,
                 192,
@@ -1751,7 +1608,6 @@ class StrategyTest {
                 1080,
                 60.0,
                 VideoContainer.MP4,
-                0,
                 true,
                 AudioCodec.AAC,
                 192,
@@ -1779,7 +1635,6 @@ class StrategyTest {
                 1080,
                 30.0,
                 VideoContainer.MKV,
-                0,
                 true,
                 AudioCodec.OPUS,
                 192,
@@ -1806,7 +1661,6 @@ class StrategyTest {
                 1080,
                 30.0,
                 VideoContainer.MP4,
-                0,
                 true,
                 AudioCodec.AAC,
                 192,

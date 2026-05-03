@@ -90,7 +90,7 @@ public class Step2View implements StepView {
     private TextField resWidthField = null;
     private TextField resHeightField = null;
     private TextField fpsField = null;
-    private TextField maxFileSizeField = null;
+
     private TextField audioBitrateField = null;
     private CheckBox audioNormalizeCheck = null;
     private CheckBox mixToMonoCheck = null;
@@ -179,7 +179,7 @@ public class Step2View implements StepView {
         resWidthField.setDisable(disable);
         resHeightField.setDisable(disable);
         fpsField.setDisable(disable);
-        maxFileSizeField.setDisable(disable);
+
         containerBox.setDisable(disable);
         audioCodecBox.setDisable(disable);
         audioBitrateField.setDisable(disable);
@@ -250,7 +250,6 @@ public class Step2View implements StepView {
             resWidthField,
             resHeightField,
             fpsField,
-            maxFileSizeField,
             audioBitrateField
         )) {
             tf
@@ -720,19 +719,6 @@ public class Step2View implements StepView {
                 )
             );
 
-        // Max file size
-        maxFileSizeField = new TextField();
-        group
-            .getChildren()
-            .add(
-                buildSettingRow(
-                    "Max. Dateigröße",
-                    "in MB (0 = unbegrenzt)",
-                    "0",
-                    maxFileSizeField
-                )
-            );
-
         // Fast start
         fastStartCheck = new CheckBox();
         HBox checkBox = buildCheckBoxRow(
@@ -832,7 +818,7 @@ public class Step2View implements StepView {
             String.valueOf(selectedPreset.resolutionHeight())
         );
         fpsField.setText(String.valueOf(selectedPreset.fps()));
-        maxFileSizeField.setText(String.valueOf(selectedPreset.maxFileSize()));
+
         keepSourceAudioCheck.setSelected(selectedPreset.keepSourceAudio());
         audioRow.setDisable(selectedPreset.keepSourceAudio());
         audioCodecBox.getSelectionModel().select(selectedPreset.audioCodec());
@@ -878,7 +864,6 @@ public class Step2View implements StepView {
                 containerBox.getValue(),
                 selectedPreset.container()
             ),
-            safeInt(maxFileSizeField, selectedPreset.maxFileSize()),
             keepSourceAudioCheck.isSelected(),
             Objects.requireNonNullElse(
                 audioCodecBox.getValue(),
