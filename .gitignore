@@ -102,3 +102,7 @@ jspm_packages/
 
 # Kotlin
 .kotlin/
+
+# Export folder (keep directory, ignore contents except .gitkeep)
+export/*
+!export/.gitkeep

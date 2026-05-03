@@ -1,6 +1,7 @@
 package de.pottgames.videocompressor.view.step;
 
 import atlantafx.base.theme.Styles;
+import de.pottgames.videocompressor.WizardState;
 import de.pottgames.videocompressor.engine.AudioCodec;
 import de.pottgames.videocompressor.engine.Engine;
 import de.pottgames.videocompressor.engine.FfmpegPreset;
@@ -924,11 +925,11 @@ public class Step2View implements StepView {
     }
 
     @Override
-    public void activate(
-        Button backButton,
-        Button centerButton,
-        Button nextButton
-    ) {
+    public void activate(WizardState state) {
+        var backButton = state.getBackButton();
+        var centerButton = state.getCenterButton();
+        var nextButton = state.getNextButton();
+
         // Populate controls with the currently selected preset
         if (selectedPreset != null) {
             populateControls();
@@ -945,7 +946,7 @@ public class Step2View implements StepView {
     }
 
     @Override
-    public void deactivate() {
-        // Nothing to clean up
+    public void deactivate(WizardState state) {
+        state.setSelectedPreset(getModifiedPreset());
     }
 }

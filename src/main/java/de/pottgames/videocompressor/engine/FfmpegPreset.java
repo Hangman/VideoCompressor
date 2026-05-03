@@ -6,22 +6,24 @@ package de.pottgames.videocompressor.engine;
  * These presets are commonly used with x264/x265 encoders.
  */
 public enum FfmpegPreset {
-    ULTRAFAST("ultrafast", "Ultrafast"),
-    SUPERFAST("superfast", "Superfast"),
-    VERYFAST("veryfast", "Veryfast"),
-    FASTER("faster", "Faster"),
-    FAST("fast", "Fast"),
-    MEDIUM("medium", "Medium"),
-    SLOW("slow", "Slow"),
-    SLOWER("slower", "Slower"),
-    VERYSLOW("veryslow", "Veryslow");
+    ULTRAFAST("ultrafast", "Ultrafast", 13),
+    SUPERFAST("superfast", "Superfast", 11),
+    VERYFAST("veryfast", "Veryfast", 9),
+    FASTER("faster", "Faster", 7),
+    FAST("fast", "Fast", 5),
+    MEDIUM("medium", "Medium", 4),
+    SLOW("slow", "Slow", 3),
+    SLOWER("slower", "Slower", 2),
+    VERYSLOW("veryslow", "Veryslow", 1);
 
     private final String ffmpegName;
     private final String humanName;
+    private final int av1Preset;
 
-    FfmpegPreset(String ffmpegName, String humanName) {
+    FfmpegPreset(String ffmpegName, String humanName, int av1Preset) {
         this.ffmpegName = ffmpegName;
         this.humanName = humanName;
+        this.av1Preset = av1Preset;
     }
 
     /**
@@ -40,6 +42,16 @@ public enum FfmpegPreset {
      */
     public String getHumanName() {
         return humanName;
+    }
+
+    /**
+     * Returns the numeric preset value for SVT-AV1 encoding (0–13).
+     * 0 = slowest/best quality, 13 = fastest/lowest quality.
+     *
+     * @return the SVT-AV1 preset number
+     */
+    public int getAv1Preset() {
+        return av1Preset;
     }
 
     /**

@@ -1,5 +1,6 @@
 package de.pottgames.videocompressor.view.step;
 
+import de.pottgames.videocompressor.WizardState;
 import de.pottgames.videocompressor.engine.Engine;
 import de.pottgames.videocompressor.view.StepView;
 import de.pottgames.videocompressor.view.cell.FileListCell;
@@ -148,11 +149,11 @@ public class Step1View implements StepView {
     }
 
     @Override
-    public void activate(
-        Button backButton,
-        Button centerButton,
-        Button nextButton
-    ) {
+    public void activate(WizardState state) {
+        var backButton = state.getBackButton();
+        var centerButton = state.getCenterButton();
+        var nextButton = state.getNextButton();
+
         activated = true;
         centerButton.setText("Videos importieren");
         centerButton.setVisible(true);
@@ -174,7 +175,9 @@ public class Step1View implements StepView {
     }
 
     @Override
-    public void deactivate() {
+    public void deactivate(WizardState state) {
         activated = false;
+        state.getImportedFiles().clear();
+        state.getImportedFiles().addAll(files);
     }
 }

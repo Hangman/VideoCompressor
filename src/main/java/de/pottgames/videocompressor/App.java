@@ -41,9 +41,8 @@ public class App extends Application {
     // Engine instance (initialized asynchronously at startup)
     private Engine engine;
 
-    private Button backButton;
-    private Button centerButton;
-    private Button nextButton;
+    private WizardState state;
+
     private BorderPane root;
 
     // Stepper UI elements
@@ -89,9 +88,12 @@ public class App extends Application {
         root.setPadding(new Insets(0));
 
         // Create navigation buttons
-        backButton = createNavigationButton("← Zurück", false);
-        centerButton = createNavigationButton("", false);
-        nextButton = createNavigationButton("Weiter →", true);
+        Button backButton = createNavigationButton("← Zurück", false);
+        Button centerButton = createNavigationButton("", false);
+        Button nextButton = createNavigationButton("Weiter →", true);
+
+        // Create WizardState
+        state = new WizardState(backButton, centerButton, nextButton);
 
         // Create stepper progress indicator
         HBox stepper = createStepper();
@@ -135,6 +137,10 @@ public class App extends Application {
     }
 
     private BorderPane createNavBar() {
+        var backButton = state.getBackButton();
+        var centerButton = state.getCenterButton();
+        var nextButton = state.getNextButton();
+
         BorderPane navBar = new BorderPane();
         navBar.setPadding(new Insets(16, 20, 16, 20));
         navBar.setLeft(backButton);
@@ -162,10 +168,10 @@ public class App extends Application {
         }
 
         if (nextStep != fromStep) {
-            if (fromStep != null) fromStep.deactivate();
+            if (fromStep != null) fromStep.deactivate(state);
             this.root.setCenter(nextStep.getNode());
             currentStep = nextStep;
-            nextStep.activate(backButton, centerButton, nextButton);
+            nextStep.activate(state);
 
             // Update active step for stepper indicator
             if (nextStep == step1View) {

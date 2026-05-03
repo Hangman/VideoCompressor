@@ -82,7 +82,8 @@
                     <release>25</release>
                     <compilerArgs>
                         <arg>--module-path</arg>
-                        <arg>${project.build.directory}/modules</arg>
+                        <arg
+                        >${project.build.outputDirectory}:${project.build.directory}/modules</arg>
                     </compilerArgs>
                 </configuration>
             </plugin>
@@ -97,6 +98,7 @@
                     <noHeaderFiles>true</noHeaderFiles>
                     <noManPages>true</noManPages>
                     <launcher>videoCompressor</launcher>
+                    <icon>src/main/resources/logo_64.ico</icon>
                     <jlinkImageName>VideoCompressor</jlinkImageName>
                     <jlinkZipName>VideoCompressor</jlinkZipName>
                     <mainClass

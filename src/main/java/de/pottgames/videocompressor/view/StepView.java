@@ -1,7 +1,7 @@
 package de.pottgames.videocompressor.view;
 
+import de.pottgames.videocompressor.WizardState;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
 
 /**
  * Interface for all wizard step views in the video compressor app.
@@ -11,12 +11,12 @@ public interface StepView {
     /**
      * Is being called when the StepView becomes active/is shown.
      */
-    void activate(Button backButton, Button centerButton, Button nextButton);
+    void activate(WizardState state);
 
     /**
      * Is being called when the StepView becomes inactive/is hidden.
      */
-    void deactivate();
+    void deactivate(WizardState state);
 
     /**
      * Returns the JavaFX Node that represents this step's view.
