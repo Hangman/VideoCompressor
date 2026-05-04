@@ -58,10 +58,21 @@ public class Step3View implements StepView {
     // ── Cancellation support ───────────────────────────────────────────
 
     private final ScheduledExecutorService cancelTimerExecutor =
-        Executors.newSingleThreadScheduledExecutor();
+        Executors.newSingleThreadScheduledExecutor(r -> {
+            Thread t = new Thread(r, "step3-cancel-timer");
+            t.setDaemon(true);
+            return t;
+        });
     private ScheduledFuture<?> cancelTimer;
     private boolean isProcessing;
     private boolean isInCancelMode;
+
+    /**
+     * Incremented every time processing starts.
+     * Captured by async callbacks to discard stale results
+     * from previous processing runs.
+     */
+    private int processingGeneration;
 
     public Step3View() {
         root = new VBox(16);
@@ -183,7 +194,8 @@ public class Step3View implements StepView {
      * back to the JavaFX Application Thread for safe UI updates.
      */
     private JobProgressListener createProgressListener(
-        javafx.scene.control.Button nextButton
+        javafx.scene.control.Button nextButton,
+        int generation
     ) {
         return new JobProgressListener() {
             // ── Preparation phase ──────────────────────────────────────
@@ -191,6 +203,7 @@ public class Step3View implements StepView {
             @Override
             public void onPreparationStarted(int totalFiles) {
                 Platform.runLater(() -> {
+                    if (processingGeneration != generation) return;
                     updateProgressCounter(0, totalFiles);
                     progressBar.setVisible(true);
                     progressBar.setProgress(0);
@@ -206,6 +219,7 @@ public class Step3View implements StepView {
                 String message
             ) {
                 Platform.runLater(() -> {
+                    if (processingGeneration != generation) return;
                     updateProgressCounter(current, total);
                     currentFileNameLabel.setText(fileName);
                     currentPassLabel.setText(message);
@@ -217,6 +231,7 @@ public class Step3View implements StepView {
             @Override
             public void onPreparationCompleted(int jobCount) {
                 Platform.runLater(() -> {
+                    if (processingGeneration != generation) return;
                     updateProgressCounter(jobCount, jobCount);
                     currentFileNameLabel.setText(
                         "Vorbereitung abgeschlossen (" + jobCount + " Job(s))"
@@ -229,6 +244,7 @@ public class Step3View implements StepView {
             @Override
             public void onPreparationFailed(String errorMessage) {
                 Platform.runLater(() -> {
+                    if (processingGeneration != generation) return;
                     appendLog("Vorbereitung fehlgeschlagen: " + errorMessage);
                     currentFileNameLabel.setText("Fehler");
                     currentPassLabel.setVisible(false);
@@ -246,6 +262,7 @@ public class Step3View implements StepView {
                 File outputFile
             ) {
                 Platform.runLater(() -> {
+                    if (processingGeneration != generation) return;
                     updateProgressCounter(index + 1, total);
                     currentFileNameLabel.setText(sourceFile.getName());
                     currentPassLabel.setText("Encodierung läuft...");
@@ -271,6 +288,7 @@ public class Step3View implements StepView {
             @Override
             public void onJobProgress(int index, VideoJobStatus status) {
                 Platform.runLater(() -> {
+                    if (processingGeneration != generation) return;
                     // Update progress bar
                     double progress = status.getProgressPercent() / 100.0;
                     progressBar.setProgress(Math.min(progress, 1.0));
@@ -302,6 +320,7 @@ public class Step3View implements StepView {
             @Override
             public void onJobFinished(int index, VideoJobStatus status) {
                 Platform.runLater(() -> {
+                    if (processingGeneration != generation) return;
                     int jobNumber = index + 1;
                     String fileName = currentFileNameLabel.getText();
                     if (status.isSuccess()) {
@@ -333,6 +352,7 @@ public class Step3View implements StepView {
                 int totalFailed
             ) {
                 Platform.runLater(() -> {
+                    if (processingGeneration != generation) return;
                     int total = totalCompleted + totalFailed;
                     updateProgressCounter(total, total);
                     currentFileNameLabel.setText("Alle Jobs abgeschlossen");
@@ -368,7 +388,10 @@ public class Step3View implements StepView {
 
             @Override
             public void onLog(String message) {
-                Platform.runLater(() -> appendLog(message));
+                Platform.runLater(() -> {
+                    if (processingGeneration != generation) return;
+                    appendLog(message);
+                });
             }
         };
     }
@@ -395,6 +418,9 @@ public class Step3View implements StepView {
         clearButtonBorder(centerButton);
         isProcessing = false;
         isInCancelMode = false;
+
+        // Invalidate any pending callbacks from a previous run
+        processingGeneration++;
 
         centerButton.setOnAction(_ -> {
             // ── Cancel mode: user clicked the cancel button ──────────
@@ -456,13 +482,19 @@ public class Step3View implements StepView {
                 return;
             }
 
+            int gen = processingGeneration;
+
             // Create listener that marshalls callbacks to JavaFX thread
-            JobProgressListener listener = createProgressListener(nextButton);
+            JobProgressListener listener = createProgressListener(
+                nextButton,
+                gen
+            );
 
             jobProcessor
                 .prepareJobs(files, preset, listener)
                 .thenAccept(jobs -> {
                     Platform.runLater(() -> {
+                        if (processingGeneration != gen) return;
                         preparedJobs = jobs;
                         appendLog(
                             "Vorbereitung abgeschlossen. " +
@@ -473,12 +505,14 @@ public class Step3View implements StepView {
                             preparedJobs,
                             centerButton,
                             backButton,
-                            nextButton
+                            nextButton,
+                            gen
                         );
                     });
                 })
                 .exceptionally(ex -> {
                     Platform.runLater(() -> {
+                        if (processingGeneration != gen) return;
                         isProcessing = false;
                         if (cancelTimer != null) cancelTimer.cancel(false);
                         String msg = ex.getMessage();
@@ -508,7 +542,8 @@ public class Step3View implements StepView {
         List<VideoJob> jobs,
         javafx.scene.control.Button centerButton,
         javafx.scene.control.Button backButton,
-        javafx.scene.control.Button nextButton
+        javafx.scene.control.Button nextButton,
+        int generation
     ) {
         if (jobs == null || jobs.isEmpty()) {
             isProcessing = false;
@@ -522,12 +557,16 @@ public class Step3View implements StepView {
 
         appendLog("--- Starte Encodierung ---");
 
-        JobProgressListener listener = createProgressListener(nextButton);
+        JobProgressListener listener = createProgressListener(
+            nextButton,
+            generation
+        );
 
         jobProcessor
             .executeJobs(jobs, listener)
             .whenComplete((_, ex) -> {
                 Platform.runLater(() -> {
+                    if (processingGeneration != generation) return;
                     isProcessing = false;
                     if (cancelTimer != null) cancelTimer.cancel(false);
                     if (ex != null) {
@@ -597,11 +636,22 @@ public class Step3View implements StepView {
         isInCancelMode = false;
         jobProcessor.cancel();
 
+        // Reset static cancellation flags so they don't leak into the next run
+        de.pottgames.videocompressor.engine.Ffmpeg.resetCancelled();
+
+        // Invalidate pending callbacks from this processing run
+        processingGeneration++;
+
         state.setPreparedJobs(preparedJobs);
         preparedJobs = null;
         state.getCenterButton().setDisable(false);
         state.getCenterButton().setText("");
         clearButtonBorder(state.getCenterButton());
+
+        // The cancelTimerExecutor uses daemon threads, so it won't
+        // prevent the JVM from exiting when the user closes the app.
+        // No shutdown() needed – keeping the executor alive allows
+        // subsequent activations of this view to reuse it.
     }
 
     // ─────────────────────────────────────────────────────────────────────
