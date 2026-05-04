@@ -602,6 +602,16 @@ public class Step4View implements StepView {
         HBox box = new HBox(8);
         box.setAlignment(Pos.CENTER_LEFT);
 
+        // Indicator slot (always reserved so values stay aligned across panels)
+        final double INDICATOR_SLOT_WIDTH = 20;
+        Label indicator = buildChangeIndicator(thisInfo, other, field);
+        if (indicator == null) {
+            indicator = new Label();
+            indicator.setVisible(false);
+        }
+        indicator.setMinWidth(INDICATOR_SLOT_WIDTH);
+        indicator.setPrefWidth(INDICATOR_SLOT_WIDTH);
+
         // Label
         Label lbl = new Label(label);
         lbl.setStyle(
@@ -616,13 +626,7 @@ public class Step4View implements StepView {
         );
         HBox.setHgrow(val, Priority.ALWAYS);
 
-        // Change indicator (only on output panel)
-        Label indicator = buildChangeIndicator(thisInfo, other, field);
-        if (indicator != null) {
-            box.getChildren().add(indicator);
-        }
-
-        box.getChildren().addAll(lbl, val);
+        box.getChildren().addAll(indicator, lbl, val);
         return box;
     }
 
