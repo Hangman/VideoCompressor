@@ -31,7 +31,7 @@ public class App extends Application {
 
     // Window size
     private static final int WINDOW_WIDTH = 900;
-    private static final int WINDOW_HEIGHT = 800;
+    private static final int WINDOW_HEIGHT = 900;
 
     private StepView currentStep;
 

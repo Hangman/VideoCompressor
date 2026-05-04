@@ -28,6 +28,7 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
@@ -48,9 +49,8 @@ import javafx.util.Duration;
  */
 public class Step2View implements StepView {
 
-    // ── Color constants (Dracula palette) ────────────────────────────────
+    // ── Color constants (CSS theme variables) ────────────────────────────
 
-    // AtlantaFX CSS variable references (defined on .root in dracula.css)
     private static final String C_COMMENT = "-color-fg-subtle";
     private static final String C_FG = "-color-fg-default";
 
@@ -58,6 +58,18 @@ public class Step2View implements StepView {
 
     private static final String C_WARNING = "-color-warning-5";
     private static final String C_ERROR = "-color-danger-5";
+
+    // Dracula palette (shared with Step4View)
+    private static final String HEX_BG = "#282a36";
+    private static final String HEX_COMMENT = "#6272a4";
+    private static final String HEX_ACCENT = "#9580ff";
+    private static final String HEX_CYAN = "#8be9fd";
+    private static final String HEX_GREEN = "#50fa7b";
+    private static final String HEX_RED = "#ff5555";
+    private static final String HEX_ORANGE = "#ffb86c";
+    private static final String HEX_CARD_BG = "#2f3143";
+    private static final String HEX_BORDER = "#3b3d57";
+    private static final String HEX_DIVIDER = "#3a3c52";
 
     // ── Engine state ────────────────────────────────────────────────────
     private Engine engine;
@@ -110,8 +122,8 @@ public class Step2View implements StepView {
 
     public Step2View() {
         // ── Build UI ───────────────────────────────────────────────────
-        root = new VBox(16);
-        root.setPadding(new Insets(20));
+        root = new VBox(20);
+        root.setPadding(new Insets(24));
 
         // Preset selector dropdown
         HBox presetSelector = buildPresetSelector();
@@ -201,12 +213,12 @@ public class Step2View implements StepView {
      * preset validity status with color-coded icon and message.
      */
     private VBox buildValidationPanel() {
-        validationPanel = new VBox(4);
-        validationPanel.setPadding(new Insets(8, 12, 8, 12));
+        validationPanel = new VBox(6);
+        validationPanel.setPadding(new Insets(10, 14, 10, 14));
         validationPanel.setStyle(
-            "-fx-background-color: rgba(0,0,0,0.15); " +
-                "-fx-background-radius: 6; " +
-                "-fx-border-radius: 6;"
+            "-fx-background-color: rgba(0,0,0,0.12); " +
+                "-fx-background-radius: 10; " +
+                "-fx-border-radius: 10;"
         );
         validationPanel.setVisible(false); // Hidden until engine is ready
 
@@ -372,11 +384,15 @@ public class Step2View implements StepView {
     // ─────────────────────────────────────────────────────────────────────
 
     private HBox buildPresetSelector() {
-        HBox selector = new HBox(8);
+        HBox selector = new HBox(10);
         selector.setAlignment(Pos.CENTER_LEFT);
 
         Label label = new Label("Preset:");
-        label.setStyle("-fx-text-fill: " + C_FG + ";");
+        label.setStyle(
+            "-fx-text-fill: " +
+                C_FG +
+                "; -fx-font-size: 14px; -fx-font-weight: bold;"
+        );
 
         presetChoiceBox = new ChoiceBox<>(presets);
         presetChoiceBox.setValue(null);
@@ -446,7 +462,9 @@ public class Step2View implements StepView {
 
         TabPane tabPane = new TabPane(videoTab, audioTab, outputTab);
         tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
-        tabPane.setStyle("-fx-tab-max-width: 120;");
+        tabPane.setStyle(
+            "-fx-tab-max-width: 120; " + "-fx-background-color: transparent; "
+        );
         return tabPane;
     }
 
@@ -454,13 +472,7 @@ public class Step2View implements StepView {
         ScrollPane scrollPane = new ScrollPane(content);
         scrollPane.setFitToWidth(true);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        scrollPane.setStyle(
-            "-fx-background-color: transparent; " +
-                "-fx-border-color: " +
-                C_COMMENT +
-                "; " +
-                "-fx-border-width: 1; "
-        );
+        scrollPane.setStyle("-fx-background-color: transparent;");
         return scrollPane;
     }
 
@@ -469,8 +481,8 @@ public class Step2View implements StepView {
     // ─────────────────────────────────────────────────────────────────────
 
     private VBox buildVideoSettingsGroup() {
-        VBox group = new VBox(10);
-        group.setPadding(new Insets(10));
+        VBox group = new VBox(14);
+        group.setPadding(new Insets(16));
 
         // Codec
         codecBox = new ChoiceBox<>(
@@ -591,8 +603,8 @@ public class Step2View implements StepView {
     // ─────────────────────────────────────────────────────────────────────
 
     private VBox buildAudioSettingsGroup() {
-        VBox group = new VBox(10);
-        group.setPadding(new Insets(10));
+        VBox group = new VBox(14);
+        group.setPadding(new Insets(16));
 
         // Keep source audio checkbox
         keepSourceAudioCheck = new CheckBox();
@@ -698,8 +710,8 @@ public class Step2View implements StepView {
     // ─────────────────────────────────────────────────────────────────────
 
     private VBox buildOutputSettingsGroup() {
-        VBox group = new VBox(10);
-        group.setPadding(new Insets(10));
+        VBox group = new VBox(14);
+        group.setPadding(new Insets(16));
 
         // Container format
         containerBox = new ChoiceBox<>(
@@ -774,13 +786,17 @@ public class Step2View implements StepView {
     ) {
         HBox row = new HBox(16);
         row.setAlignment(Pos.CENTER_LEFT);
+        row.setPadding(new Insets(6, 0, 6, 0));
 
         // Label (fixed width column)
         Label label = new Label(name);
         label.setMinWidth(140);
         label.setMaxWidth(140);
         label.setStyle(
-            "-fx-text-fill: " + C_FG + "; -fx-alignment: CENTER_RIGHT;"
+            "-fx-text-fill: " +
+                C_FG +
+                "; -fx-alignment: CENTER_RIGHT; " +
+                "-fx-font-size: 13px;"
         );
 
         // Tooltip hint
@@ -788,11 +804,12 @@ public class Step2View implements StepView {
         hint.setMinWidth(240);
         hint.setMaxWidth(240);
         hint.getStyleClass().addAll(Styles.TEXT_SMALL, Styles.TEXT_SUBTLE);
+        hint.setStyle("-fx-text-fill: " + HEX_COMMENT + ";");
 
         // Control
         if (control instanceof TextField tf) {
             tf.setPromptText(promptOrHint);
-            tf.setStyle("-fx-prompt-text-fill: " + C_COMMENT + ";");
+            tf.setStyle("-fx-prompt-text-fill: " + HEX_COMMENT + ";");
             tf.setPrefColumnCount(8);
         }
 
