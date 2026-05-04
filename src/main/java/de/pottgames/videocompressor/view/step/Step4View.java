@@ -499,7 +499,7 @@ public class Step4View implements StepView {
         // ── Codec ──────────────────────────────────────────────────────
         props
             .getChildren()
-            .add(buildPropertyRow("Codec", info.codec(), other, "codec"));
+            .add(buildPropertyRow("Codec", info.codec(), info, other, "codec"));
 
         // ── FPS ────────────────────────────────────────────────────────
         props
@@ -508,6 +508,7 @@ public class Step4View implements StepView {
                 buildPropertyRow(
                     "FPS",
                     String.valueOf(info.fps()),
+                    info,
                     other,
                     "fps"
                 )
@@ -520,6 +521,7 @@ public class Step4View implements StepView {
                 buildPropertyRow(
                     "Bitrate",
                     formatBitrate(info.bitrate()),
+                    info,
                     other,
                     "bitrate"
                 )
@@ -532,6 +534,7 @@ public class Step4View implements StepView {
                 buildPropertyRow(
                     "Audio-Bitrate",
                     formatBitrate(info.audioBitrate()),
+                    info,
                     other,
                     "audioBitrate"
                 )
@@ -544,6 +547,7 @@ public class Step4View implements StepView {
                 buildPropertyRow(
                     "Dauer",
                     info.formatDuration(),
+                    info,
                     other,
                     "duration"
                 )
@@ -591,6 +595,7 @@ public class Step4View implements StepView {
     private HBox buildPropertyRow(
         String label,
         String value,
+        ProbeInfo thisInfo,
         ProbeInfo other,
         String field
     ) {
@@ -612,7 +617,7 @@ public class Step4View implements StepView {
         HBox.setHgrow(val, Priority.ALWAYS);
 
         // Change indicator (only on output panel)
-        Label indicator = buildChangeIndicator(value, other, field);
+        Label indicator = buildChangeIndicator(thisInfo, other, field);
         if (indicator != null) {
             box.getChildren().add(indicator);
         }
@@ -622,35 +627,39 @@ public class Step4View implements StepView {
     }
 
     private Label buildChangeIndicator(
-        String thisValue,
+        ProbeInfo thisInfo,
         ProbeInfo other,
         String field
     ) {
         if (other == null) return null;
 
-        String otherValue;
         boolean changed;
+        double thisNum = 0;
+        double otherNum = 0;
 
         switch (field) {
             case "codec":
-                otherValue = other.codec();
-                changed = !thisValue.equals(otherValue);
+                changed = !thisInfo.codec().equals(other.codec());
                 break;
             case "fps":
-                otherValue = String.valueOf(other.fps());
-                changed = !thisValue.equals(otherValue);
+                thisNum = thisInfo.fps();
+                otherNum = other.fps();
+                changed = thisNum != otherNum;
                 break;
             case "bitrate":
-                otherValue = formatBitrate(other.bitrate());
-                changed = !thisValue.equals(otherValue);
+                thisNum = thisInfo.bitrate();
+                otherNum = other.bitrate();
+                changed = thisNum != otherNum;
                 break;
             case "audioBitrate":
-                otherValue = formatBitrate(other.audioBitrate());
-                changed = !thisValue.equals(otherValue);
+                thisNum = thisInfo.audioBitrate();
+                otherNum = other.audioBitrate();
+                changed = thisNum != otherNum;
                 break;
             case "duration":
-                otherValue = other.formatDuration();
-                changed = !thisValue.equals(otherValue);
+                thisNum = thisInfo.duration();
+                otherNum = other.duration();
+                changed = Math.abs(thisNum - otherNum) > 0.01;
                 break;
             default:
                 return null;
@@ -658,40 +667,21 @@ public class Step4View implements StepView {
 
         if (!changed) return null;
 
-        // Determine direction: smaller bitrate/size = good (green ↓), larger = bad (red ↑)
+        // Determine direction: smaller bitrate = good (green ↓), larger = bad (red ↑)
         String icon;
         String color;
-        boolean thisIsNumeric = false;
-        double thisNum = 0,
-            otherNum = 0;
 
-        try {
-            // Try to extract numeric value for comparison
-            String numStr = thisValue.replaceAll("[^0-9.]", "");
-            if (!numStr.isEmpty()) {
-                thisNum = Double.parseDouble(numStr);
-                otherNum = Double.parseDouble(
-                    otherValue.replaceAll("[^0-9.]", "")
-                );
-                thisIsNumeric = true;
-            }
-        } catch (NumberFormatException e) {
-            // Non-numeric, just show neutral indicator
-        }
-
-        if (thisIsNumeric) {
-            if (thisNum < otherNum) {
-                icon = "↓";
-                color = Theme.CSS_SUCCESS;
-            } else if (thisNum > otherNum) {
-                icon = "↑";
-                color = Theme.HEX_RED;
-            } else {
-                return null;
-            }
-        } else {
+        if (field.equals("codec")) {
             icon = "↔";
             color = Theme.HEX_ORANGE;
+        } else if (thisNum < otherNum) {
+            icon = "↓";
+            color = Theme.CSS_SUCCESS;
+        } else if (thisNum > otherNum) {
+            icon = "↑";
+            color = Theme.HEX_RED;
+        } else {
+            return null;
         }
 
         Label lbl = new Label(icon);
