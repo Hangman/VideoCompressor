@@ -8,6 +8,7 @@ import de.pottgames.videocompressor.engine.VideoJob;
 import de.pottgames.videocompressor.engine.VideoJobStatus;
 import de.pottgames.videocompressor.engine.VideoJobStatus.Status;
 import de.pottgames.videocompressor.view.StepView;
+import de.pottgames.videocompressor.view.Theme;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,22 +37,7 @@ public class Step4View implements StepView {
 
     // ── Color constants (CSS theme variables) ────────────────────────────
 
-    private static final String C_COMMENT = "-color-fg-subtle";
-    private static final String C_FG = "-color-fg-default";
-
-    // Dracula palette
-    private static final String HEX_BG = "#282a36";
-    private static final String HEX_COMMENT = "#6272a4";
-    private static final String HEX_ACCENT = "#9580ff";
-    private static final String HEX_CYAN = "#8be9fd";
-    private static final String HEX_GREEN = "#50fa7b";
-    private static final String HEX_RED = "#ff5555";
-    private static final String HEX_ORANGE = "#ffb86c";
-    private static final String HEX_CARD_BG = "#2f3143";
-    private static final String HEX_PANEL_SOURCE = "#24263a";
-    private static final String HEX_PANEL_OUTPUT = "#1d2338";
-    private static final String HEX_BORDER = "#3b3d57";
-    private static final String HEX_DIVIDER = "#3a3c52";
+    // Theme constants are centralized in Theme.java
 
     // ── Layout ───────────────────────────────────────────────────────────
 
@@ -202,7 +188,7 @@ public class Step4View implements StepView {
         // Decorative separator under summary
         Pane summarySep = new Pane();
         summarySep.setPrefHeight(1);
-        summarySep.setStyle("-fx-background-color: " + HEX_DIVIDER + ";");
+        summarySep.setStyle("-fx-background-color: " + Theme.HEX_DIVIDER + ";");
         HBox.setHgrow(summarySep, Priority.ALWAYS);
         resultsContent.getChildren().add(summarySep);
 
@@ -240,11 +226,11 @@ public class Step4View implements StepView {
         card.setPadding(new Insets(20));
         card.setStyle(
             "-fx-background-color: " +
-                HEX_CARD_BG +
+                Theme.HEX_CARD_BG +
                 ";" +
                 "-fx-background-radius: 14;" +
                 "-fx-border-color: " +
-                HEX_BORDER +
+                Theme.HEX_BORDER +
                 ";" +
                 "-fx-border-radius: 14;" +
                 "-fx-border-width: 1;"
@@ -259,7 +245,7 @@ public class Step4View implements StepView {
             Label errorLabel = new Label("⚠  " + outputProbeError);
             errorLabel.setStyle(
                 "-fx-text-fill: " +
-                    HEX_ORANGE +
+                    Theme.HEX_ORANGE +
                     ";" +
                     "-fx-font-size: 13px;" +
                     "-fx-padding: 8 12;"
@@ -313,10 +299,10 @@ public class Step4View implements StepView {
         Label badge = new Label(String.valueOf(jobNumber));
         badge.setStyle(
             "-fx-background-color: " +
-                HEX_ACCENT +
+                Theme.HEX_ACCENT +
                 ";" +
                 "-fx-text-fill: " +
-                HEX_BG +
+                Theme.HEX_BG +
                 ";" +
                 "-fx-background-radius: 10;" +
                 "-fx-padding: 5 9;" +
@@ -329,7 +315,9 @@ public class Step4View implements StepView {
         String srcName = src != null ? src.file().getName() : "Unbekannt";
         String outName = out != null ? out.file().getName() : "Unbekannt";
         nameLabel.setText(srcName + "  →  " + outName);
-        nameLabel.setStyle("-fx-text-fill: " + C_FG + "; -fx-font-size: 14px;");
+        nameLabel.setStyle(
+            "-fx-text-fill: " + Theme.CSS_FG + "; -fx-font-size: 14px;"
+        );
         nameLabel.getStyleClass().add(Styles.TEXT_BOLD);
         HBox.setHgrow(nameLabel, Priority.ALWAYS);
 
@@ -339,7 +327,7 @@ public class Step4View implements StepView {
             statusPill.setText("●  Fertig");
             statusPill.setStyle(
                 "-fx-text-fill: " +
-                    HEX_GREEN +
+                    Theme.HEX_GREEN +
                     ";" +
                     "-fx-background-color: rgba(80,250,123,0.1);" +
                     "-fx-background-radius: 8;" +
@@ -351,7 +339,7 @@ public class Step4View implements StepView {
             statusPill.setText("●  Fehlgeschlagen");
             statusPill.setStyle(
                 "-fx-text-fill: " +
-                    HEX_RED +
+                    Theme.HEX_RED +
                     ";" +
                     "-fx-background-color: rgba(255,85,85,0.1);" +
                     "-fx-background-radius: 8;" +
@@ -363,7 +351,7 @@ public class Step4View implements StepView {
             statusPill.setText("●  Übersprungen");
             statusPill.setStyle(
                 "-fx-text-fill: " +
-                    HEX_ORANGE +
+                    Theme.HEX_ORANGE +
                     ";" +
                     "-fx-background-color: rgba(255,184,108,0.1);" +
                     "-fx-background-radius: 8;" +
@@ -391,17 +379,17 @@ public class Step4View implements StepView {
 
         if (pct > 0.5) {
             bgColor = "rgba(80,250,123,0.08)";
-            textColor = HEX_GREEN;
+            textColor = Theme.HEX_GREEN;
             icon = "↓";
             label = "Ersparnis";
         } else if (pct < -0.5) {
             bgColor = "rgba(255,85,85,0.08)";
-            textColor = HEX_RED;
+            textColor = Theme.HEX_RED;
             icon = "↑";
             label = "Größer";
         } else {
             bgColor = "rgba(98,114,164,0.08)";
-            textColor = HEX_COMMENT;
+            textColor = Theme.HEX_COMMENT;
             icon = "—";
             label = "Unverändert";
         }
@@ -435,7 +423,7 @@ public class Step4View implements StepView {
             formatFileSize(srcSize) + "  →  " + formatFileSize(outSize)
         );
         sizeLabel.setStyle(
-            "-fx-text-fill: " + C_COMMENT + "; -fx-font-size: 12px;"
+            "-fx-text-fill: " + Theme.CSS_FG_SUBTLE + "; -fx-font-size: 12px;"
         );
 
         banner.getChildren().addAll(iconLabel, pctLabel, sizeLabel);
@@ -469,7 +457,9 @@ public class Step4View implements StepView {
         panel.setPadding(new Insets(16));
         panel.setStyle(
             "-fx-background-color: " +
-                (title.equals("Quelle") ? HEX_PANEL_SOURCE : HEX_PANEL_OUTPUT) +
+                (title.equals("Quelle")
+                    ? Theme.HEX_PANEL_SOURCE
+                    : Theme.HEX_PANEL_OUTPUT) +
                 ";" +
                 "-fx-background-radius: 10;"
         );
@@ -479,7 +469,7 @@ public class Step4View implements StepView {
         Label titleLabel = new Label(title.toUpperCase());
         titleLabel.setStyle(
             "-fx-text-fill: " +
-                HEX_COMMENT +
+                Theme.HEX_COMMENT +
                 ";" +
                 "-fx-font-size: 10px;" +
                 "-fx-font-weight: bold;" +
@@ -491,7 +481,7 @@ public class Step4View implements StepView {
         // Divider under title
         Pane div = new Pane();
         div.setPrefHeight(1);
-        div.setStyle("-fx-background-color: " + HEX_DIVIDER + ";");
+        div.setStyle("-fx-background-color: " + Theme.HEX_DIVIDER + ";");
         panel.getChildren().add(div);
 
         VBox props = new VBox(10);
@@ -504,14 +494,14 @@ public class Step4View implements StepView {
                 buildHeroProperty(
                     "Auflösung",
                     info.getAbbreviatedResolution(),
-                    title.equals("Ausgabe") ? HEX_CYAN : C_FG
+                    title.equals("Ausgabe") ? Theme.HEX_CYAN : Theme.CSS_FG
                 )
             );
 
         // Divider
         Pane d1 = new Pane();
         d1.setPrefHeight(1);
-        d1.setStyle("-fx-background-color: " + HEX_DIVIDER + ";");
+        d1.setStyle("-fx-background-color: " + Theme.HEX_DIVIDER + ";");
         props.getChildren().add(d1);
 
         // ── Codec ──────────────────────────────────────────────────────
@@ -570,7 +560,7 @@ public class Step4View implements StepView {
         // ── File Size (hero value) ─────────────────────────────────────
         Pane d2 = new Pane();
         d2.setPrefHeight(1);
-        d2.setStyle("-fx-background-color: " + HEX_DIVIDER + ";");
+        d2.setStyle("-fx-background-color: " + Theme.HEX_DIVIDER + ";");
         props.getChildren().add(d2);
 
         props
@@ -579,7 +569,7 @@ public class Step4View implements StepView {
                 buildHeroProperty(
                     "Dateigröße",
                     formatFileSize(info.fileSize()),
-                    title.equals("Ausgabe") ? HEX_CYAN : C_FG
+                    title.equals("Ausgabe") ? Theme.HEX_CYAN : Theme.CSS_FG
                 )
             );
 
@@ -595,7 +585,7 @@ public class Step4View implements StepView {
         Label lbl = new Label(label);
         lbl.setStyle(
             "-fx-text-fill: " +
-                HEX_COMMENT +
+                Theme.HEX_COMMENT +
                 "; -fx-font-size: 10px; -fx-font-weight: bold; -fx-letter-spacing: 1;"
         );
 
@@ -619,13 +609,15 @@ public class Step4View implements StepView {
         // Label
         Label lbl = new Label(label);
         lbl.setStyle(
-            "-fx-text-fill: " + HEX_COMMENT + "; -fx-font-size: 12px;"
+            "-fx-text-fill: " + Theme.HEX_COMMENT + "; -fx-font-size: 12px;"
         );
         lbl.setMinWidth(80);
 
         // Value
         Label val = new Label(value);
-        val.setStyle("-fx-text-fill: " + C_FG + "; -fx-font-size: 13px;");
+        val.setStyle(
+            "-fx-text-fill: " + Theme.CSS_FG + "; -fx-font-size: 13px;"
+        );
         HBox.setHgrow(val, Priority.ALWAYS);
 
         // Change indicator (only on output panel)
@@ -699,16 +691,16 @@ public class Step4View implements StepView {
         if (thisIsNumeric) {
             if (thisNum < otherNum) {
                 icon = "↓";
-                color = HEX_GREEN;
+                color = Theme.HEX_GREEN;
             } else if (thisNum > otherNum) {
                 icon = "↑";
-                color = HEX_RED;
+                color = Theme.HEX_RED;
             } else {
                 return null;
             }
         } else {
             icon = "↔";
-            color = HEX_ORANGE;
+            color = Theme.HEX_ORANGE;
         }
 
         Label lbl = new Label(icon);

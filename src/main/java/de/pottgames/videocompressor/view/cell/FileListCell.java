@@ -3,6 +3,7 @@ package de.pottgames.videocompressor.view.cell;
 import atlantafx.base.theme.Styles;
 import de.pottgames.videocompressor.engine.Ffprobe;
 import de.pottgames.videocompressor.engine.ProbeInfo;
+import de.pottgames.videocompressor.view.Theme;
 import java.io.File;
 import java.util.concurrent.CompletableFuture;
 import javafx.application.Platform;
@@ -134,7 +135,9 @@ public class FileListCell extends ListCell<File> {
         // Root layout - card-like appearance
         root = new VBox(2, topRow, separator, bottomRow);
         root.setStyle(
-            "-fx-padding: 8 12 8 12; -fx-background-color: #343646; -fx-background-radius: 10;"
+            "-fx-padding: 8 12 8 12; -fx-background-color: " +
+                Theme.HEX_CARD_BG_CELL +
+                "; -fx-background-radius: 10;"
         );
 
         // Set padding on the cell itself for spacing between entries
@@ -147,7 +150,9 @@ public class FileListCell extends ListCell<File> {
     private HBox createBadge(double maxWidth, Image icon) {
         HBox badge = new HBox(6);
         badge.setStyle(
-            "-fx-background-color: #282A36; -fx-background-radius: 8; -fx-padding: 4 8 4 8;"
+            "-fx-background-color: " +
+                Theme.HEX_BG +
+                "; -fx-background-radius: 8; -fx-padding: 4 8 4 8;"
         );
         badge.setMaxWidth(maxWidth);
         badge.setMinWidth(maxWidth);

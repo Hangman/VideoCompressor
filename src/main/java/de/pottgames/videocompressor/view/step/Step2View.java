@@ -11,6 +11,7 @@ import de.pottgames.videocompressor.engine.Tune;
 import de.pottgames.videocompressor.engine.VideoCodec;
 import de.pottgames.videocompressor.engine.VideoContainer;
 import de.pottgames.videocompressor.view.StepView;
+import de.pottgames.videocompressor.view.Theme;
 import java.util.List;
 import java.util.Objects;
 import javafx.animation.PauseTransition;
@@ -49,27 +50,7 @@ import javafx.util.Duration;
  */
 public class Step2View implements StepView {
 
-    // ── Color constants (CSS theme variables) ────────────────────────────
-
-    private static final String C_COMMENT = "-color-fg-subtle";
-    private static final String C_FG = "-color-fg-default";
-
-    // ── Validation UI colors ─────────────────────────────────────────────
-
-    private static final String C_WARNING = "-color-warning-5";
-    private static final String C_ERROR = "-color-danger-5";
-
-    // Dracula palette (shared with Step4View)
-    private static final String HEX_BG = "#282a36";
-    private static final String HEX_COMMENT = "#6272a4";
-    private static final String HEX_ACCENT = "#9580ff";
-    private static final String HEX_CYAN = "#8be9fd";
-    private static final String HEX_GREEN = "#50fa7b";
-    private static final String HEX_RED = "#ff5555";
-    private static final String HEX_ORANGE = "#ffb86c";
-    private static final String HEX_CARD_BG = "#2f3143";
-    private static final String HEX_BORDER = "#3b3d57";
-    private static final String HEX_DIVIDER = "#3a3c52";
+    // ── Color constants are in Theme.java ────────────────────────────────
 
     // ── Engine state ────────────────────────────────────────────────────
     private Engine engine;
@@ -327,7 +308,7 @@ public class Step2View implements StepView {
 
             validationIconLabel.setText("\u26A0"); // ⚠
             validationIconLabel.setStyle(
-                "-fx-font-size: 16px; -fx-text-fill: " + C_WARNING + ";"
+                "-fx-font-size: 16px; -fx-text-fill: " + Theme.CSS_WARNING + ";"
             );
             int wCount = result.warnings().size();
             validationLabel.setText(
@@ -337,12 +318,14 @@ public class Step2View implements StepView {
                     " — " +
                     String.join(" ", result.warnings())
             );
-            validationLabel.setStyle("-fx-text-fill: " + C_WARNING + ";");
+            validationLabel.setStyle(
+                "-fx-text-fill: " + Theme.CSS_WARNING + ";"
+            );
             validationPanel.setStyle(
                 "-fx-background-color: -color-warning-subtle; " +
                     "-fx-background-radius: 6; -fx-border-radius: 6; " +
                     "-fx-border-color: " +
-                    C_WARNING +
+                    Theme.CSS_WARNING +
                     "; -fx-border-width: 1;"
             );
         } else {
@@ -353,7 +336,7 @@ public class Step2View implements StepView {
 
             validationIconLabel.setText("\u2717"); // ✗
             validationIconLabel.setStyle(
-                "-fx-font-size: 16px; -fx-text-fill: " + C_ERROR + ";"
+                "-fx-font-size: 16px; -fx-text-fill: " + Theme.CSS_DANGER + ";"
             );
             int eCount = result.errors().size();
             int wCount = result.warnings().size();
@@ -368,12 +351,14 @@ public class Step2View implements StepView {
             validationLabel.setText(
                 msg + " — " + String.join(" ", result.errors())
             );
-            validationLabel.setStyle("-fx-text-fill: " + C_ERROR + ";");
+            validationLabel.setStyle(
+                "-fx-text-fill: " + Theme.CSS_DANGER + ";"
+            );
             validationPanel.setStyle(
                 "-fx-background-color: -color-danger-subtle; " +
                     "-fx-background-radius: 6; -fx-border-radius: 6; " +
                     "-fx-border-color: " +
-                    C_ERROR +
+                    Theme.CSS_DANGER +
                     "; -fx-border-width: 1;"
             );
         }
@@ -390,7 +375,7 @@ public class Step2View implements StepView {
         Label label = new Label("Preset:");
         label.setStyle(
             "-fx-text-fill: " +
-                C_FG +
+                Theme.CSS_FG +
                 "; -fx-font-size: 14px; -fx-font-weight: bold;"
         );
 
@@ -510,16 +495,20 @@ public class Step2View implements StepView {
         resWidthField = new TextField();
         resWidthField.setPromptText("1920");
         resWidthField.setPrefColumnCount(5);
-        resWidthField.setStyle("-fx-prompt-text-fill: " + C_COMMENT + ";");
+        resWidthField.setStyle(
+            "-fx-prompt-text-fill: " + Theme.CSS_FG_SUBTLE + ";"
+        );
 
         Label xLabel = new Label("\u00D7");
-        xLabel.setStyle("-fx-text-fill: " + C_COMMENT + ";");
+        xLabel.setStyle("-fx-text-fill: " + Theme.CSS_FG_SUBTLE + ";");
         xLabel.setAlignment(Pos.CENTER);
 
         resHeightField = new TextField();
         resHeightField.setPromptText("1080");
         resHeightField.setPrefColumnCount(5);
-        resHeightField.setStyle("-fx-prompt-text-fill: " + C_COMMENT + ";");
+        resHeightField.setStyle(
+            "-fx-prompt-text-fill: " + Theme.CSS_FG_SUBTLE + ";"
+        );
 
         resBox.getChildren().addAll(resWidthField, xLabel, resHeightField);
 
@@ -773,7 +762,7 @@ public class Step2View implements StepView {
         HBox box = new HBox(8);
         box.getChildren().add(checkBox);
         Label label = new Label(labelText);
-        label.setStyle("-fx-text-fill: " + C_FG + ";");
+        label.setStyle("-fx-text-fill: " + Theme.CSS_FG + ";");
         box.getChildren().add(label);
         return box;
     }
@@ -794,7 +783,7 @@ public class Step2View implements StepView {
         label.setMaxWidth(140);
         label.setStyle(
             "-fx-text-fill: " +
-                C_FG +
+                Theme.CSS_FG +
                 "; -fx-alignment: CENTER_RIGHT; " +
                 "-fx-font-size: 13px;"
         );
@@ -804,12 +793,12 @@ public class Step2View implements StepView {
         hint.setMinWidth(240);
         hint.setMaxWidth(240);
         hint.getStyleClass().addAll(Styles.TEXT_SMALL, Styles.TEXT_SUBTLE);
-        hint.setStyle("-fx-text-fill: " + HEX_COMMENT + ";");
+        hint.setStyle("-fx-text-fill: " + Theme.HEX_COMMENT + ";");
 
         // Control
         if (control instanceof TextField tf) {
             tf.setPromptText(promptOrHint);
-            tf.setStyle("-fx-prompt-text-fill: " + HEX_COMMENT + ";");
+            tf.setStyle("-fx-prompt-text-fill: " + Theme.HEX_COMMENT + ";");
             tf.setPrefColumnCount(8);
         }
 
