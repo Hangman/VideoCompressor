@@ -67,11 +67,11 @@ public class FileListCell extends ListCell<File> {
         nameLabel = new Label();
         nameLabel.setWrapText(true);
         nameLabel.setMaxWidth(Double.MAX_VALUE);
-        nameLabel.getStyleClass().addAll(Styles.TITLE_4, Styles.TEXT_BOLD);
+        nameLabel.getStyleClass().addAll(Styles.TITLE_4);
 
         removeButton = new Button("X");
         removeButton.setStyle("-fx-cursor: hand;");
-        removeButton.getStyleClass().addAll(Styles.TITLE_4, Styles.TEXT_BOLD);
+        removeButton.getStyleClass().addAll(Styles.TITLE_4);
         removeButton.setPadding(new Insets(0, 8, 0, 8));
         removeButton.setOnAction(_ -> {
             int index = getIndex();

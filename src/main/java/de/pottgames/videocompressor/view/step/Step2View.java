@@ -374,9 +374,7 @@ public class Step2View implements StepView {
 
         Label label = new Label("Preset:");
         label.setStyle(
-            "-fx-text-fill: " +
-                Theme.CSS_FG +
-                "; -fx-font-size: 14px; -fx-font-weight: bold;"
+            "-fx-text-fill: " + Theme.CSS_FG + "; -fx-font-size: 14px;"
         );
 
         presetChoiceBox = new ChoiceBox<>(presets);
