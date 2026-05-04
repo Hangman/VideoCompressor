@@ -43,6 +43,14 @@ public class Ffmpeg {
     private static final ExecutorService EXECUTOR =
         Executors.newVirtualThreadPerTaskExecutor();
 
+    // ── Cancellation support ────────────────────────────────────────────
+
+    /** Tracks the currently running FFmpeg process (if any). */
+    private static volatile Process currentProcess;
+
+    /** Set to true when cancel() is called. */
+    private static volatile boolean cancelled;
+
     // ── Regex patterns for parsing FFmpeg stderr ─────────────────────────
 
     /**
@@ -75,6 +83,46 @@ public class Ffmpeg {
      */
     public static Path path() {
         return Engine.getFfmpegPath();
+    }
+
+    /**
+     * Cancels the currently running FFmpeg process, if any.
+     * This forcibly destroys the process and marks the execution
+     * as cancelled so that callers can distinguish cancellation
+     * from a normal failure.
+     *
+     * @return true if a process was actually running and got cancelled,
+     *         false if no process was running
+     */
+    public static boolean cancel() {
+        cancelled = true;
+        Process toCancel;
+        synchronized (Ffmpeg.class) {
+            toCancel = currentProcess;
+            currentProcess = null;
+        }
+        if (toCancel != null && toCancel.isAlive()) {
+            toCancel.destroyForcibly();
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Checks whether a cancellation was requested.
+     *
+     * @return true if cancel() was called
+     */
+    public static boolean isCancelled() {
+        return cancelled;
+    }
+
+    /**
+     * Resets the cancellation flag. Call this before starting a new
+     * batch of jobs so that a previous cancellation doesn't carry over.
+     */
+    public static void resetCancelled() {
+        cancelled = false;
     }
 
     /**
@@ -142,6 +190,9 @@ public class Ffmpeg {
 
         try {
             Process process = processBuilder.start();
+            synchronized (Ffmpeg.class) {
+                currentProcess = process;
+            }
             long startTime = System.currentTimeMillis();
 
             // Emit start event
@@ -174,6 +225,13 @@ public class Ffmpeg {
             // Wait for process to finish
             int exitCode = process.waitFor();
             long endTime = System.currentTimeMillis();
+
+            // Clear the tracked process reference
+            synchronized (Ffmpeg.class) {
+                if (currentProcess == process) {
+                    currentProcess = null;
+                }
+            }
 
             // Emit complete event with collected stderr lines
             consumer.accept(
@@ -283,9 +341,10 @@ public class Ffmpeg {
      * (not to be confused with FFmpeg returning a non-zero exit code).
      */
     public static class FfmpegException extends RuntimeException {
+
         private static final long serialVersionUID = 7315240434659431544L;
 
-		FfmpegException(String message) {
+        FfmpegException(String message) {
             super(message);
         }
 

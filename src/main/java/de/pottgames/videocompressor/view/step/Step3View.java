@@ -11,6 +11,10 @@ import de.pottgames.videocompressor.view.Theme;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -50,6 +54,14 @@ public class Step3View implements StepView {
 
     private final JobProcessor jobProcessor;
     private List<VideoJob> preparedJobs;
+
+    // ── Cancellation support ───────────────────────────────────────────
+
+    private final ScheduledExecutorService cancelTimerExecutor =
+        Executors.newSingleThreadScheduledExecutor();
+    private ScheduledFuture<?> cancelTimer;
+    private boolean isProcessing;
+    private boolean isInCancelMode;
 
     public Step3View() {
         root = new VBox(16);
@@ -380,19 +392,55 @@ public class Step3View implements StepView {
         centerButton.setText("Starte Bearbeitung");
         centerButton.setVisible(true);
         centerButton.setDisable(false);
+        clearButtonBorder(centerButton);
+        isProcessing = false;
+        isInCancelMode = false;
 
         centerButton.setOnAction(_ -> {
+            // ── Cancel mode: user clicked the cancel button ──────────
+            if (isInCancelMode) {
+                isInCancelMode = false;
+                isProcessing = false;
+                if (cancelTimer != null) cancelTimer.cancel(false);
+
+                centerButton.setDisable(true);
+                centerButton.setText("Wird abgebrochen...");
+                clearButtonBorder(centerButton);
+
+                jobProcessor.cancel();
+                return;
+            }
+
+            // ── Start mode: user clicked "Starte Bearbeitung" ────────
             backButton.setVisible(false);
+            isProcessing = true;
 
             // Prevent double-clicking
             centerButton.setDisable(true);
             centerButton.setText("Bearbeitung läuft...");
+
+            // Schedule cancel button activation after 2 seconds
+            cancelTimer = cancelTimerExecutor.schedule(
+                () ->
+                    Platform.runLater(() -> {
+                        if (isProcessing) {
+                            isInCancelMode = true;
+                            centerButton.setDisable(false);
+                            centerButton.setText("Abbrechen");
+                            setButtonBorder(centerButton, Theme.CSS_WARNING);
+                        }
+                    }),
+                2,
+                TimeUnit.SECONDS
+            );
 
             // Get data from state
             var files = state.getImportedFiles();
             var preset = state.getSelectedPreset();
 
             if (files.isEmpty()) {
+                isProcessing = false;
+                if (cancelTimer != null) cancelTimer.cancel(false);
                 appendLog("FEHLER: Keine Dateien importiert!");
                 centerButton.setDisable(false);
                 centerButton.setText("Starte Bearbeitung");
@@ -400,6 +448,8 @@ public class Step3View implements StepView {
             }
 
             if (preset == null) {
+                isProcessing = false;
+                if (cancelTimer != null) cancelTimer.cancel(false);
                 appendLog("FEHLER: Kein Preset ausgewählt!");
                 centerButton.setDisable(false);
                 centerButton.setText("Starte Bearbeitung");
@@ -429,9 +479,19 @@ public class Step3View implements StepView {
                 })
                 .exceptionally(ex -> {
                     Platform.runLater(() -> {
-                        appendLog("Fehler: " + ex.getMessage());
+                        isProcessing = false;
+                        if (cancelTimer != null) cancelTimer.cancel(false);
+                        String msg = ex.getMessage();
+                        if (msg != null && msg.contains("abgebrochen")) {
+                            appendLog(
+                                "Bearbeitung wurde vom Benutzer abgebrochen."
+                            );
+                        } else {
+                            appendLog("Fehler: " + msg);
+                        }
                         centerButton.setDisable(false);
                         centerButton.setText("Starte Bearbeitung");
+                        clearButtonBorder(centerButton);
                     });
                     return null;
                 });
@@ -451,9 +511,12 @@ public class Step3View implements StepView {
         javafx.scene.control.Button nextButton
     ) {
         if (jobs == null || jobs.isEmpty()) {
+            isProcessing = false;
+            if (cancelTimer != null) cancelTimer.cancel(false);
             appendLog("FEHLER: Keine vorbereiteten Jobs gefunden!");
             centerButton.setDisable(false);
             centerButton.setText("Starte Bearbeitung");
+            clearButtonBorder(centerButton);
             return;
         }
 
@@ -465,6 +528,8 @@ public class Step3View implements StepView {
             .executeJobs(jobs, listener)
             .whenComplete((_, ex) -> {
                 Platform.runLater(() -> {
+                    isProcessing = false;
+                    if (cancelTimer != null) cancelTimer.cancel(false);
                     if (ex != null) {
                         appendLog(
                             "FEHLER bei der Verarbeitung: " + ex.getMessage()
@@ -473,6 +538,7 @@ public class Step3View implements StepView {
                     centerButton.setVisible(false);
                     centerButton.setText("Fertig");
                     backButton.setVisible(true);
+                    clearButtonBorder(centerButton);
                 });
             });
     }
@@ -523,9 +589,48 @@ public class Step3View implements StepView {
 
     @Override
     public void deactivate(WizardState state) {
+        // Cancel any pending timer
+        if (cancelTimer != null) cancelTimer.cancel(false);
+
+        // Cancel any running processing
+        isProcessing = false;
+        isInCancelMode = false;
+        jobProcessor.cancel();
+
         state.setPreparedJobs(preparedJobs);
         preparedJobs = null;
         state.getCenterButton().setDisable(false);
         state.getCenterButton().setText("");
+        clearButtonBorder(state.getCenterButton());
+    }
+
+    // ─────────────────────────────────────────────────────────────────────
+    //  Button border helpers for cancel mode visual feedback
+    // ─────────────────────────────────────────────────────────────────────
+
+    /**
+     * Sets a warning-colored border on the given button to indicate
+     * that it is currently acting as a cancel button.
+     */
+    private void setButtonBorder(
+        javafx.scene.control.Button button,
+        String color
+    ) {
+        button.setStyle(
+            "-fx-cursor: hand; " +
+                "-fx-border-color: " +
+                color +
+                "; " +
+                "-fx-border-width: 2; " +
+                "-fx-border-radius: 6;"
+        );
+    }
+
+    /**
+     * Removes the warning border from the button, restoring the
+     * default style.
+     */
+    private void clearButtonBorder(javafx.scene.control.Button button) {
+        button.setStyle("-fx-cursor: hand;");
     }
 }

@@ -14,7 +14,6 @@ import java.io.File;
  * used by the engine layer).</p>
  */
 public interface JobProgressListener {
-
     // ─────────────────────────────────────────────────────────────────────
     //  Preparation phase: probing source videos & creating VideoJobs
     // ─────────────────────────────────────────────────────────────────────
@@ -36,7 +35,12 @@ public interface JobProgressListener {
      * @param message  human-readable status message
      *                 (e.g. "Probing...", "Berechne Preset...")
      */
-    void onPreparationProgress(int current, int total, String fileName, String message);
+    void onPreparationProgress(
+        int current,
+        int total,
+        String fileName,
+        String message
+    );
 
     /**
      * Called when all jobs have been created successfully.
@@ -89,6 +93,19 @@ public interface JobProgressListener {
      * @param totalFailed    number of jobs that failed
      */
     void onAllJobsCompleted(int totalCompleted, int totalFailed);
+
+    // ─────────────────────────────────────────────────────────────────────
+    //  Cancellation
+    // ─────────────────────────────────────────────────────────────────────
+
+    /**
+     * Called when the user cancels the processing pipeline.
+     * Implementors should clean up any running processes and reset UI state.
+     *
+     * <p>Default implementation does nothing, so existing implementations
+     * are not forced to handle cancellation.</p>
+     */
+    default void onCancelled() {}
 
     // ─────────────────────────────────────────────────────────────────────
     //  General logging

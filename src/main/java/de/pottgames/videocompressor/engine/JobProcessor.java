@@ -30,6 +30,13 @@ public class JobProcessor {
     private static final Path EXPORT_PATH = Paths.get("export");
 
     /**
+     * Set to true when the user cancels processing.
+     * Checked in both preparation and execution loops to allow
+     * graceful early termination between jobs.
+     */
+    private volatile boolean isCancelled;
+
+    /**
      * Asynchronously prepares a list of {@link VideoJob}s from the given
      * source files and user-selected preset.
      *
@@ -80,6 +87,18 @@ public class JobProcessor {
 
                 try {
                     for (int i = 0; i < total; i++) {
+                        // Check cancellation between files
+                        if (isCancelled) {
+                            listener.onLog("--- Abbruch durch Benutzer ---");
+                            listener.onCancelled();
+                            Ffprobe.cancel();
+                            Ffmpeg.resetCancelled();
+                            isCancelled = false;
+                            throw new RuntimeException(
+                                "Verarbeitung wurde vom Benutzer abgebrochen"
+                            );
+                        }
+
                         File file = sourceFiles.get(i);
                         int current = i + 1;
                         String fileName = file.getName();
@@ -92,6 +111,18 @@ public class JobProcessor {
                             "Analysiere Videodatei..."
                         );
                         ProbeInfo probeInfo = Ffprobe.probe(file);
+
+                        // Check cancellation after probe (probe can be slow)
+                        if (isCancelled) {
+                            listener.onLog("--- Abbruch durch Benutzer ---");
+                            listener.onCancelled();
+                            Ffprobe.cancel();
+                            Ffmpeg.resetCancelled();
+                            isCancelled = false;
+                            throw new RuntimeException(
+                                "Verarbeitung wurde vom Benutzer abgebrochen"
+                            );
+                        }
 
                         // Step 2: Compute editing preset via Strategy
                         listener.onPreparationProgress(
@@ -188,6 +219,16 @@ public class JobProcessor {
                 );
 
                 for (int i = 0; i < total; i++) {
+                    // Check cancellation between jobs
+                    if (isCancelled) {
+                        listener.onLog("--- Abbruch durch Benutzer ---");
+                        listener.onCancelled();
+                        Ffmpeg.cancel();
+                        Ffmpeg.resetCancelled();
+                        isCancelled = false;
+                        break;
+                    }
+
                     VideoJob job = jobs.get(i);
                     JobResult result = processJob(i, total, job, listener);
 
@@ -395,6 +436,24 @@ public class JobProcessor {
             listener.onJobFinished(index, status);
             return JobResult.FAILURE;
         }
+    }
+
+    /**
+     * Cancels any currently running processing pipeline.
+     * This destroys any running FFmpeg or ffprobe processes and signals
+     * the processing loops to terminate early.
+     *
+     * <p>Call this from the UI thread or any other thread. The actual
+     * process destruction happens immediately, but the processing loops
+     * will check the flag between jobs.</p>
+     *
+     * @return true if cancellation was triggered, false if nothing was running
+     */
+    public boolean cancel() {
+        isCancelled = true;
+        boolean ffmpegKilled = Ffmpeg.cancel();
+        boolean ffprobeKilled = Ffprobe.cancel();
+        return ffmpegKilled || ffprobeKilled || isCancelled;
     }
 
     /**

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicReference;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
@@ -20,6 +21,13 @@ public class Ffprobe {
     private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
     private static final ExecutorService EXECUTOR =
         Executors.newVirtualThreadPerTaskExecutor();
+
+    /**
+     * Tracks the currently running ffprobe process so that
+     * {@link #cancel()} can terminate it.
+     */
+    private static final AtomicReference<Process> CURRENT_PROCESS =
+        new AtomicReference<>();
 
     /**
      * Asynchronously probes a video file and returns a CompletableFuture
@@ -62,13 +70,21 @@ public class Ffprobe {
             processBuilder.redirectErrorStream(true);
 
             Process process = processBuilder.start();
+            CURRENT_PROCESS.set(process);
 
-            // Read output
-            byte[] outputBytes = process.getInputStream().readAllBytes();
-            int exitCode = process.waitFor();
+            byte[] outputBytes;
+            try {
+                // Read output
+                outputBytes = process.getInputStream().readAllBytes();
+                int exitCode = process.waitFor();
 
-            if (exitCode != 0) {
-                throw new IOException("ffprobe exited with code " + exitCode);
+                if (exitCode != 0) {
+                    throw new IOException(
+                        "ffprobe exited with code " + exitCode
+                    );
+                }
+            } finally {
+                CURRENT_PROCESS.set(null);
             }
 
             // Parse JSON
@@ -168,5 +184,23 @@ public class Ffprobe {
                 e
             );
         }
+    }
+
+    /**
+     * Cancels any currently running ffprobe process.
+     * This destroys the underlying OS process immediately.
+     * If no process is running, this is a no-op.
+     *
+     * @return true if a process was cancelled, false if none was running
+     */
+    public static boolean cancel() {
+        Process process = CURRENT_PROCESS.get();
+        if (process != null && process.isAlive()) {
+            process.destroyForcibly();
+            CURRENT_PROCESS.set(null);
+            return true;
+        }
+        CURRENT_PROCESS.set(null);
+        return false;
     }
 }
