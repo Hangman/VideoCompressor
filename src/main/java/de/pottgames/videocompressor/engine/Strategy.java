@@ -134,11 +134,14 @@ public class Strategy {
         }
         if (crf < 0) crf = 0;
 
-        // ── 1d) Tune: VP9 / AV1 do not support tune ────────────────────
+        // ── 1d) Tune: VP9 / AV1 do not support tune; H.265 does not support all tunes ──
         if (
             (videoCodec == VideoCodec.VP9 || videoCodec == VideoCodec.AV1) &&
             tune != Tune.NONE
         ) {
+            tune = Tune.NONE;
+        }
+        if (videoCodec == VideoCodec.H265 && !tune.isSupportedByH265()) {
             tune = Tune.NONE;
         }
 

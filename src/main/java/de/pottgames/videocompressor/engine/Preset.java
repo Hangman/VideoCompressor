@@ -276,6 +276,13 @@ public record Preset(
         if (tune != Tune.NONE && videoCodec == VideoCodec.AV1) {
             warnings.add("Tune-Option wird von SVT-AV1 nicht unterstützt.");
         }
+        if (videoCodec == VideoCodec.H265 && !tune.isSupportedByH265()) {
+            errors.add(
+                "Tune \"" +
+                    tune.getHumanName() +
+                    "\" wird von H.265 (libx265) nicht unterstützt. Wähle \"Keine\" oder einen kompatibeln Tune."
+            );
+        }
 
         // --- Audio-Normalisierung mit Opus/Vorbis ---
         if (

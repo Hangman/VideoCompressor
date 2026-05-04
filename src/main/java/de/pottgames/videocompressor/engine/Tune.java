@@ -78,6 +78,18 @@ public enum Tune {
         throw new IllegalArgumentException("Unknown tune name: " + name);
     }
 
+    /**
+     * Returns whether this tune is supported by the libx265 (H.265/HEVC)
+     * encoder. H.265 supports: none, animation, grain, fastdecode,
+     * zerolatency. It does NOT support: film, stillimage.
+     * (psnr/ssim are also supported by x265 but intentionally not exposed.)
+     *
+     * @return true if libx265 accepts this tune value
+     */
+    public boolean isSupportedByH265() {
+        return this != Tune.FILM && this != Tune.STILLIMAGE;
+    }
+
     @Override
     public String toString() {
         return humanName;
