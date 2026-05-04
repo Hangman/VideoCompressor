@@ -369,7 +369,7 @@ public class Step4View implements StepView {
             label = "Ersparnis";
         } else if (pct < -0.5) {
             bgColor = "rgba(255,85,85,0.08)";
-            textColor = Theme.HEX_RED;
+            textColor = Theme.HEX_DANGER;
             icon = "↑";
             label = "Größer";
         } else {
@@ -668,7 +668,7 @@ public class Step4View implements StepView {
             color = Theme.CSS_SUCCESS;
         } else if (thisNum > otherNum) {
             icon = "↑";
-            color = Theme.HEX_RED;
+            color = Theme.HEX_DANGER;
         } else {
             return null;
         }

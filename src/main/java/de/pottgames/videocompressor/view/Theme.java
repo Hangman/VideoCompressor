@@ -27,25 +27,25 @@ public final class Theme {
     // ─────────────────────────────────────────────────────────────────────
 
     /** Foreground default text color. */
-    public static final String CSS_FG = "-color-fg-default";
+    public static final String CSS_FG = "-color-fg-default"; // #f8f8f2
 
     /** Foreground subtle / muted text color. */
-    public static final String CSS_FG_SUBTLE = "-color-fg-subtle";
+    public static final String CSS_FG_SUBTLE = "-color-fg-subtle"; // #7e7f86
 
     /** Success color (green). */
-    public static final String CSS_SUCCESS = "-color-success-5";
+    public static final String CSS_SUCCESS = "-color-success-5"; // #8Aff80
 
     /** Warning color (amber). */
-    public static final String CSS_WARNING = "-color-warning-5";
+    public static final String CSS_WARNING = "-color-warning-5"; // #ffca80
 
     /** Danger / error color (red). */
-    public static final String CSS_DANGER = "-color-danger-5";
+    public static final String CSS_DANGER = "-color-danger-5"; // #ff9580
 
     /** Background — main surface (same as HEX_BG). */
-    public static final String CSS_BG_DEFAULT = "-color-bg-default";
+    public static final String CSS_BG_DEFAULT = "-color-bg-default"; // #282a36
 
     /** Primary accent (purple) — same as HEX_ACCENT. */
-    public static final String CSS_ACCENT_FG = "-color-accent-fg";
+    public static final String CSS_ACCENT_FG = "-color-accent-fg"; // #9580ff
 
     // ─────────────────────────────────────────────────────────────────────
     //  Dracula palette — hex values for -fx-background-color etc.
@@ -58,7 +58,7 @@ public final class Theme {
     public static final String HEX_ACCENT_LIGHT = "#bd93f9";
 
     /** Red — error indicators. */
-    public static final String HEX_RED = "#ff5555";
+    public static final String HEX_DANGER = "#ff9580";
 
     /** Orange / amber — warning indicators. */
     public static final String HEX_ORANGE = "#ffb86c";
@@ -192,7 +192,7 @@ public final class Theme {
 
     /** Error text fill (hex). */
     public static final String TEXT_FILL_HEX_RED_STYLE =
-        "-fx-text-fill: " + HEX_RED + ";";
+        "-fx-text-fill: " + HEX_DANGER + ";";
 
     /** Warning text fill (hex). */
     public static final String TEXT_FILL_HEX_ORANGE_STYLE =
