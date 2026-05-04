@@ -145,10 +145,6 @@ public class Step2View implements StepView {
             selectedPreset = loaded.get(0);
             presetChoiceBox.setValue(selectedPreset);
             populateControls();
-        } else {
-            System.out.println(
-                "[Step2View] Warning: Engine initialized but no presets available."
-            );
         }
 
         // Enable all controls now that data is loaded
