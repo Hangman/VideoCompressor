@@ -299,10 +299,10 @@ public class Step4View implements StepView {
         Label badge = new Label(String.valueOf(jobNumber));
         badge.setStyle(
             "-fx-background-color: " +
-                Theme.HEX_ACCENT +
+                Theme.CSS_ACCENT_FG +
                 ";" +
                 "-fx-text-fill: " +
-                Theme.HEX_BG +
+                Theme.CSS_BG_DEFAULT +
                 ";" +
                 "-fx-background-radius: 10;" +
                 "-fx-padding: 5 9;" +
@@ -486,7 +486,7 @@ public class Step4View implements StepView {
                 buildHeroProperty(
                     "Auflösung",
                     info.getAbbreviatedResolution(),
-                    title.equals("Ausgabe") ? Theme.HEX_CYAN : Theme.CSS_FG
+                    Theme.CSS_FG
                 )
             );
 
@@ -561,7 +561,7 @@ public class Step4View implements StepView {
                 buildHeroProperty(
                     "Dateigröße",
                     formatFileSize(info.fileSize()),
-                    title.equals("Ausgabe") ? Theme.HEX_CYAN : Theme.CSS_FG
+                    Theme.CSS_FG
                 )
             );
 

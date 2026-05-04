@@ -41,12 +41,15 @@ public final class Theme {
     /** Danger / error color (red). */
     public static final String CSS_DANGER = "-color-danger-5";
 
+    /** Background — main surface (same as HEX_BG). */
+    public static final String CSS_BG_DEFAULT = "-color-bg-default";
+
+    /** Primary accent (purple) — same as HEX_ACCENT. */
+    public static final String CSS_ACCENT_FG = "-color-accent-fg";
+
     // ─────────────────────────────────────────────────────────────────────
     //  Dracula palette — hex values for -fx-background-color etc.
     // ─────────────────────────────────────────────────────────────────────
-
-    /** Background — main surface. */
-    public static final String HEX_BG = "#282a36";
 
     /** Background — darker variant used for log/console areas. */
     public static final String HEX_BG_DARK = "#21222c";
@@ -54,14 +57,8 @@ public final class Theme {
     /** Comment / muted elements. */
     public static final String HEX_COMMENT = "#6272a4";
 
-    /** Primary accent (purple). */
-    public static final String HEX_ACCENT = "#9580ff";
-
     /** Accent variant — lighter purple used in some panels. */
     public static final String HEX_ACCENT_LIGHT = "#bd93f9";
-
-    /** Cyan — used for highlights and output labels. */
-    public static final String HEX_CYAN = "#8be9fd";
 
     /** Red — error indicators. */
     public static final String HEX_RED = "#ff5555";

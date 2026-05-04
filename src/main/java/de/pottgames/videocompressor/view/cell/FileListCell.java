@@ -151,7 +151,7 @@ public class FileListCell extends ListCell<File> {
         HBox badge = new HBox(6);
         badge.setStyle(
             "-fx-background-color: " +
-                Theme.HEX_BG +
+                Theme.CSS_BG_DEFAULT +
                 "; -fx-background-radius: 8; -fx-padding: 4 8 4 8;"
         );
         badge.setMaxWidth(maxWidth);
