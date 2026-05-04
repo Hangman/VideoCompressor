@@ -306,7 +306,7 @@ public class Step4View implements StepView {
                 ";" +
                 "-fx-background-radius: 10;" +
                 "-fx-padding: 5 9;" +
-                "-fx-font-size: 12px;"
+                "-fx-font-size: 18px;"
         );
 
         // File names
