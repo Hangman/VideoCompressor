@@ -457,6 +457,15 @@ public class JobProcessor {
     }
 
     /**
+     * Resets the internal cancellation flag so that future calls to
+     * {@code prepareJobs} or {@code executeJobs} start with a clean slate.
+     * Call this after cancelling and before starting a new processing run.
+     */
+    public void resetCancelled() {
+        isCancelled = false;
+    }
+
+    /**
      * Builds the output file path inside the export folder.
      *
      * <p>The output filename is derived from the source filename with the

@@ -637,6 +637,7 @@ public class Step3View implements StepView {
         jobProcessor.cancel();
 
         // Reset static cancellation flags so they don't leak into the next run
+        jobProcessor.resetCancelled();
         de.pottgames.videocompressor.engine.Ffmpeg.resetCancelled();
 
         // Invalidate pending callbacks from this processing run
