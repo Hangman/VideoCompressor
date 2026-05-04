@@ -137,7 +137,9 @@ public class Step3View implements StepView {
                 Theme.CSS_FG +
                 "; " +
                 "-fx-font-family: monospace; " +
-                "-fx-font-size: 12px; " +
+                "-fx-font-size: " +
+                Theme.FONT_SIZE_SMALL +
+                "; " +
                 "-fx-background-radius: 4; " +
                 "-fx-control-inner-background-radius: 4;"
         );

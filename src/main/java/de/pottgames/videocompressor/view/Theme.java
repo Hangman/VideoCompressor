@@ -54,9 +54,6 @@ public final class Theme {
     /** Background — darker variant used for log/console areas. */
     public static final String HEX_BG_DARK = "#21222c";
 
-    /** Comment / muted elements. */
-    public static final String HEX_COMMENT = "#6272a4";
-
     /** Accent variant — lighter purple used in some panels. */
     public static final String HEX_ACCENT_LIGHT = "#bd93f9";
 
@@ -86,4 +83,43 @@ public final class Theme {
 
     /** Divider / separator color. */
     public static final String HEX_DIVIDER = "#3a3c52";
+
+    // ── Stepper (Dracula palette) ─────────────────────────────────────
+
+    /** Foreground text — used for active stepper numbers/labels. */
+    public static final String HEX_FG = "#f8f8f2";
+
+    /** Comment / muted — used for inactive stepper rings and labels. */
+    public static final String HEX_COMMENT = "#6272a4";
+
+    /** Accent — used for active stepper rings and connecting lines. */
+    public static final String HEX_ACCENT = "#9580ff";
+
+    /** Dimmed connecting line between inactive stepper steps. */
+    public static final String HEX_STEPPER_LINE_DIMMED = "#4a5a8a";
+
+    // ─────────────────────────────────────────────────────────────────────
+    //  Font sizes
+    // ─────────────────────────────────────────────────────────────────────
+
+    /** Tiny text, e.g. labels in comparison panels. */
+    public static final String FONT_SIZE_TINY = "10px";
+
+    /** Small text, e.g. status badges, log area. */
+    public static final String FONT_SIZE_SMALL = "12px";
+
+    /** Regular body text. */
+    public static final String FONT_SIZE_BASE = "13px";
+
+    /** Slightly larger text for labels and headings. */
+    public static final String FONT_SIZE_MEDIUM = "14px";
+
+    /** Large text for validation icons and emphasis. */
+    public static final String FONT_SIZE_LARGE = "16px";
+
+    /** Extra-large text for hero values and headers. */
+    public static final String FONT_SIZE_XLARGE = "18px";
+
+    /** Extra-extra-large text for stepper numbers. */
+    public static final String FONT_SIZE_XXLARGE = "20px";
 }

@@ -7,6 +7,7 @@ import atlantafx.base.theme.Dracula;
 import atlantafx.base.theme.Styles;
 import de.pottgames.videocompressor.engine.Engine;
 import de.pottgames.videocompressor.view.StepView;
+import de.pottgames.videocompressor.view.Theme;
 import de.pottgames.videocompressor.view.step.Step1View;
 import de.pottgames.videocompressor.view.step.Step2View;
 import de.pottgames.videocompressor.view.step.Step3View;
@@ -201,94 +202,71 @@ public class App extends Application {
         // Step 1: Import
         step1Ring = new Circle(18);
         step1Ring.setFill(javafx.scene.paint.Color.TRANSPARENT);
-        step1Ring.setStroke(javafx.scene.paint.Color.web("#9580FFFF"));
         step1Ring.setStrokeWidth(3);
 
         step1Number = new Label("1");
-        step1Number.setStyle("-fx-text-fill: #9580FFFF; -fx-font-size: 20px;");
-        step1Number.getStyleClass().addAll(Styles.TEXT_BOLD);
 
         StackPane step1NumberPane = new StackPane(step1Ring, step1Number);
         step1NumberPane.setAlignment(Pos.CENTER);
 
         step1Label = new Label("Import");
-        step1Label.setStyle("-fx-text-fill: #f8f8f2; -fx-font-size: 16px;");
-        step1Label.getStyleClass().addAll(Styles.TEXT_BOLD);
 
         VBox step1Box = new VBox(8, step1NumberPane, step1Label);
         step1Box.setAlignment(Pos.CENTER);
 
         // Line 1-2
         line1 = new Line(0, 18, 150, 18);
-        line1.setStroke(javafx.scene.paint.Color.web("#6272a4"));
         line1.setStrokeWidth(3);
 
         // Step 2: Einstellungen
         step2Ring = new Circle(18);
         step2Ring.setFill(javafx.scene.paint.Color.TRANSPARENT);
-        step2Ring.setStroke(javafx.scene.paint.Color.web("#9580FFFF"));
         step2Ring.setStrokeWidth(3);
 
         step2Number = new Label("2");
-        step2Number.setStyle("-fx-text-fill: #9580FFFF; -fx-font-size: 20px;");
-        step2Number.getStyleClass().addAll(Styles.TEXT_BOLD);
 
         StackPane step2NumberPane = new StackPane(step2Ring, step2Number);
         step2NumberPane.setAlignment(Pos.CENTER);
 
         step2Label = new Label("Einstellungen");
-        step2Label.setStyle("-fx-text-fill: #f8f8f2; -fx-font-size: 16px;");
-        step2Label.getStyleClass().addAll(Styles.TEXT_BOLD);
 
         VBox step2Box = new VBox(8, step2NumberPane, step2Label);
         step2Box.setAlignment(Pos.CENTER);
 
         // Line 2-3
         line2 = new Line(0, 18, 150, 18);
-        line2.setStroke(javafx.scene.paint.Color.web("#6272a4"));
         line2.setStrokeWidth(3);
 
         // Step 3: Export
         step3Ring = new Circle(18);
         step3Ring.setFill(javafx.scene.paint.Color.TRANSPARENT);
-        step3Ring.setStroke(javafx.scene.paint.Color.web("#9580FFFF"));
         step3Ring.setStrokeWidth(3);
 
         step3Number = new Label("3");
-        step3Number.setStyle("-fx-text-fill: #9580FFFF; -fx-font-size: 20px;");
-        step3Number.getStyleClass().addAll(Styles.TEXT_BOLD);
 
         StackPane step3NumberPane = new StackPane(step3Ring, step3Number);
         step3NumberPane.setAlignment(Pos.CENTER);
 
         step3Label = new Label("Export");
-        step3Label.setStyle("-fx-text-fill: #f8f8f2; -fx-font-size: 16px;");
-        step3Label.getStyleClass().addAll(Styles.TEXT_BOLD);
 
         VBox step3Box = new VBox(8, step3NumberPane, step3Label);
         step3Box.setAlignment(Pos.CENTER);
 
         // Line 3-4
         line3 = new Line(0, 18, 150, 18);
-        line3.setStroke(javafx.scene.paint.Color.web("#6272a4"));
         line3.setStrokeWidth(3);
 
         // Step 4: Ergebnis
         step4Ring = new Circle(18);
         step4Ring.setFill(javafx.scene.paint.Color.TRANSPARENT);
-        step4Ring.setStroke(javafx.scene.paint.Color.web("#9580FFFF"));
         step4Ring.setStrokeWidth(3);
 
         step4Number = new Label("4");
-        step4Number.setStyle("-fx-text-fill: #9580FFFF; -fx-font-size: 20px;");
-        step4Number.getStyleClass().addAll(Styles.TEXT_BOLD);
 
         StackPane step4NumberPane = new StackPane(step4Ring, step4Number);
         step4NumberPane.setAlignment(Pos.CENTER);
 
         step4Label = new Label("Ergebnis");
-        step4Label.setStyle("-fx-text-fill: #f8f8f2; -fx-font-size: 16px;");
-        step4Label.getStyleClass().addAll(Styles.TEXT_BOLD);
 
         VBox step4Box = new VBox(8, step4NumberPane, step4Label);
         step4Box.setAlignment(Pos.CENTER);
@@ -314,130 +292,183 @@ public class App extends Application {
     }
 
     private void updateStepperState() {
-        // Active color
-        String activeRingColor = "#9580FFFF";
-        String activeLabelColor = "#f8f8f2";
-
-        // Dimmed color for inactive steps
-        String dimmedRingColor = "#6272a4";
-        String dimmedLabelColor = "#6272a4";
-
-        // Active line color
-        String activeLineColor = "#9580FFFF";
-        // Dimmed line color
-        String dimmedLineColor = "#4a5a8a";
-
         // Update Step 1
         if (activeStep >= 1) {
-            step1Ring.setStroke(javafx.scene.paint.Color.web(activeRingColor));
+            step1Ring.setStroke(javafx.scene.paint.Color.web(Theme.HEX_ACCENT));
             step1Number.setStyle(
-                "-fx-text-fill: " + activeRingColor + "; -fx-font-size: 20px;"
+                "-fx-text-fill: " +
+                    Theme.CSS_ACCENT_FG +
+                    "; -fx-font-size: " +
+                    Theme.FONT_SIZE_XXLARGE +
+                    ";"
             );
-            step1Number.getStyleClass().addAll(Styles.TEXT_BOLD);
             step1Label.setStyle(
-                "-fx-text-fill: " + activeLabelColor + "; -fx-font-size: 16px;"
+                "-fx-text-fill: " +
+                    Theme.CSS_FG +
+                    "; -fx-font-size: " +
+                    Theme.FONT_SIZE_LARGE +
+                    ";"
             );
-            step1Label.getStyleClass().addAll(Styles.TEXT_BOLD);
         } else {
-            step1Ring.setStroke(javafx.scene.paint.Color.web(dimmedRingColor));
+            step1Ring.setStroke(
+                javafx.scene.paint.Color.web(Theme.HEX_COMMENT)
+            );
             step1Number.setStyle(
-                "-fx-text-fill: " + dimmedRingColor + "; -fx-font-size: 20px;"
+                "-fx-text-fill: " +
+                    Theme.CSS_FG_SUBTLE +
+                    "; -fx-font-size: " +
+                    Theme.FONT_SIZE_XXLARGE +
+                    ";"
             );
-            step1Number.getStyleClass().addAll(Styles.TEXT_BOLD);
             step1Label.setStyle(
-                "-fx-text-fill: " + dimmedLabelColor + "; -fx-font-size: 16px;"
+                "-fx-text-fill: " +
+                    Theme.CSS_FG_SUBTLE +
+                    "; -fx-font-size: " +
+                    Theme.FONT_SIZE_LARGE +
+                    ";"
             );
-            step1Label.getStyleClass().addAll(Styles.TEXT_BOLD);
         }
 
         // Update Step 2
         if (activeStep >= 2) {
-            step2Ring.setStroke(javafx.scene.paint.Color.web(activeRingColor));
+            step2Ring.setStroke(javafx.scene.paint.Color.web(Theme.HEX_ACCENT));
             step2Number.setStyle(
-                "-fx-text-fill: " + activeRingColor + "; -fx-font-size: 20px;"
+                "-fx-text-fill: " +
+                    Theme.CSS_ACCENT_FG +
+                    "; -fx-font-size: " +
+                    Theme.FONT_SIZE_XXLARGE +
+                    ";"
             );
-            step2Number.getStyleClass().addAll(Styles.TEXT_BOLD);
             step2Label.setStyle(
-                "-fx-text-fill: " + activeLabelColor + "; -fx-font-size: 16px;"
+                "-fx-text-fill: " +
+                    Theme.CSS_FG +
+                    "; -fx-font-size: " +
+                    Theme.FONT_SIZE_LARGE +
+                    ";"
             );
-            step2Label.getStyleClass().addAll(Styles.TEXT_BOLD);
         } else {
-            step2Ring.setStroke(javafx.scene.paint.Color.web(dimmedRingColor));
+            step2Ring.setStroke(
+                javafx.scene.paint.Color.web(Theme.HEX_COMMENT)
+            );
             step2Number.setStyle(
-                "-fx-text-fill: " + dimmedRingColor + "; -fx-font-size: 20px;"
+                "-fx-text-fill: " +
+                    Theme.CSS_FG_SUBTLE +
+                    "; -fx-font-size: " +
+                    Theme.FONT_SIZE_XXLARGE +
+                    ";"
             );
-            step2Number.getStyleClass().addAll(Styles.TEXT_BOLD);
             step2Label.setStyle(
-                "-fx-text-fill: " + dimmedLabelColor + "; -fx-font-size: 16px;"
+                "-fx-text-fill: " +
+                    Theme.CSS_FG_SUBTLE +
+                    "; -fx-font-size: " +
+                    Theme.FONT_SIZE_LARGE +
+                    ";"
             );
-            step2Label.getStyleClass().addAll(Styles.TEXT_BOLD);
         }
 
         // Update Step 3
         if (activeStep >= 3) {
-            step3Ring.setStroke(javafx.scene.paint.Color.web(activeRingColor));
+            step3Ring.setStroke(javafx.scene.paint.Color.web(Theme.HEX_ACCENT));
             step3Number.setStyle(
-                "-fx-text-fill: " + activeRingColor + "; -fx-font-size: 20px;"
+                "-fx-text-fill: " +
+                    Theme.CSS_ACCENT_FG +
+                    "; -fx-font-size: " +
+                    Theme.FONT_SIZE_XXLARGE +
+                    ";"
             );
-            step3Number.getStyleClass().addAll(Styles.TEXT_BOLD);
             step3Label.setStyle(
-                "-fx-text-fill: " + activeLabelColor + "; -fx-font-size: 16px;"
+                "-fx-text-fill: " +
+                    Theme.CSS_FG +
+                    "; -fx-font-size: " +
+                    Theme.FONT_SIZE_LARGE +
+                    ";"
             );
-            step3Label.getStyleClass().addAll(Styles.TEXT_BOLD);
         } else {
-            step3Ring.setStroke(javafx.scene.paint.Color.web(dimmedRingColor));
+            step3Ring.setStroke(
+                javafx.scene.paint.Color.web(Theme.HEX_COMMENT)
+            );
             step3Number.setStyle(
-                "-fx-text-fill: " + dimmedRingColor + "; -fx-font-size: 20px;"
+                "-fx-text-fill: " +
+                    Theme.CSS_FG_SUBTLE +
+                    "; -fx-font-size: " +
+                    Theme.FONT_SIZE_XXLARGE +
+                    ";"
             );
-            step3Number.getStyleClass().addAll(Styles.TEXT_BOLD);
             step3Label.setStyle(
-                "-fx-text-fill: " + dimmedLabelColor + "; -fx-font-size: 16px;"
+                "-fx-text-fill: " +
+                    Theme.CSS_FG_SUBTLE +
+                    "; -fx-font-size: " +
+                    Theme.FONT_SIZE_LARGE +
+                    ";"
             );
-            step3Label.getStyleClass().addAll(Styles.TEXT_BOLD);
         }
 
         // Update Line 1 (between Step 1 and Step 2)
         if (activeStep >= 2) {
-            line1.setStroke(javafx.scene.paint.Color.web(activeLineColor));
+            line1.setStroke(javafx.scene.paint.Color.web(Theme.HEX_ACCENT));
         } else {
-            line1.setStroke(javafx.scene.paint.Color.web(dimmedLineColor));
+            line1.setStroke(
+                javafx.scene.paint.Color.web(Theme.HEX_STEPPER_LINE_DIMMED)
+            );
         }
 
         // Update Line 2 (between Step 2 and Step 3)
         if (activeStep >= 3) {
-            line2.setStroke(javafx.scene.paint.Color.web(activeLineColor));
+            line2.setStroke(javafx.scene.paint.Color.web(Theme.HEX_ACCENT));
         } else {
-            line2.setStroke(javafx.scene.paint.Color.web(dimmedLineColor));
+            line2.setStroke(
+                javafx.scene.paint.Color.web(Theme.HEX_STEPPER_LINE_DIMMED)
+            );
         }
 
         // Update Step 4
         if (activeStep >= 4) {
-            step4Ring.setStroke(javafx.scene.paint.Color.web(activeRingColor));
+            step4Ring.setStroke(javafx.scene.paint.Color.web(Theme.HEX_ACCENT));
             step4Number.setStyle(
-                "-fx-text-fill: " + activeRingColor + "; -fx-font-size: 20px;"
+                "-fx-text-fill: " +
+                    Theme.CSS_ACCENT_FG +
+                    "; -fx-font-size: " +
+                    Theme.FONT_SIZE_XXLARGE +
+                    ";"
             );
             step4Number.getStyleClass().addAll(Styles.TEXT_BOLD);
             step4Label.setStyle(
-                "-fx-text-fill: " + activeLabelColor + "; -fx-font-size: 16px;"
+                "-fx-text-fill: " +
+                    Theme.CSS_FG +
+                    "; -fx-font-size: " +
+                    Theme.FONT_SIZE_LARGE +
+                    ";"
             );
             step4Label.getStyleClass().addAll(Styles.TEXT_BOLD);
         } else {
-            step4Ring.setStroke(javafx.scene.paint.Color.web(dimmedRingColor));
+            step4Ring.setStroke(
+                javafx.scene.paint.Color.web(Theme.HEX_COMMENT)
+            );
             step4Number.setStyle(
-                "-fx-text-fill: " + dimmedRingColor + "; -fx-font-size: 20px;"
+                "-fx-text-fill: " +
+                    Theme.CSS_FG_SUBTLE +
+                    "; -fx-font-size: " +
+                    Theme.FONT_SIZE_XXLARGE +
+                    ";"
             );
             step4Number.getStyleClass().addAll(Styles.TEXT_BOLD);
             step4Label.setStyle(
-                "-fx-text-fill: " + dimmedLabelColor + "; -fx-font-size: 16px;"
+                "-fx-text-fill: " +
+                    Theme.CSS_FG_SUBTLE +
+                    "; -fx-font-size: " +
+                    Theme.FONT_SIZE_LARGE +
+                    ";"
             );
             step4Label.getStyleClass().addAll(Styles.TEXT_BOLD);
         }
 
         // Update Line 3 (between Step 3 and Step 4)
         if (activeStep >= 4) {
-            line3.setStroke(javafx.scene.paint.Color.web(activeLineColor));
+            line3.setStroke(javafx.scene.paint.Color.web(Theme.HEX_ACCENT));
         } else {
-            line3.setStroke(javafx.scene.paint.Color.web(dimmedLineColor));
+            line3.setStroke(
+                javafx.scene.paint.Color.web(Theme.HEX_STEPPER_LINE_DIMMED)
+            );
         }
     }
 

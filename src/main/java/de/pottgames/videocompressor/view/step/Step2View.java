@@ -207,7 +207,9 @@ public class Step2View implements StepView {
         iconRow.setAlignment(Pos.CENTER_LEFT);
 
         validationIconLabel = new Label();
-        validationIconLabel.setStyle("-fx-font-size: 16px;");
+        validationIconLabel.setStyle(
+            "-fx-font-size: " + Theme.FONT_SIZE_LARGE + ";"
+        );
 
         validationLabel = new Label();
         validationLabel.setWrapText(true);
@@ -307,7 +309,11 @@ public class Step2View implements StepView {
 
             validationIconLabel.setText("\u26A0"); // ⚠
             validationIconLabel.setStyle(
-                "-fx-font-size: 16px; -fx-text-fill: " + Theme.CSS_WARNING + ";"
+                "-fx-font-size: " +
+                    Theme.FONT_SIZE_LARGE +
+                    "; -fx-text-fill: " +
+                    Theme.CSS_WARNING +
+                    ";"
             );
             int wCount = result.warnings().size();
             validationLabel.setText(
@@ -335,7 +341,11 @@ public class Step2View implements StepView {
 
             validationIconLabel.setText("\u2717"); // ✗
             validationIconLabel.setStyle(
-                "-fx-font-size: 16px; -fx-text-fill: " + Theme.CSS_DANGER + ";"
+                "-fx-font-size: " +
+                    Theme.FONT_SIZE_LARGE +
+                    "; -fx-text-fill: " +
+                    Theme.CSS_DANGER +
+                    ";"
             );
             int eCount = result.errors().size();
             int wCount = result.warnings().size();
@@ -373,7 +383,11 @@ public class Step2View implements StepView {
 
         Label label = new Label("Preset:");
         label.setStyle(
-            "-fx-text-fill: " + Theme.CSS_FG + "; -fx-font-size: 14px;"
+            "-fx-text-fill: " +
+                Theme.CSS_FG +
+                "; -fx-font-size: " +
+                Theme.FONT_SIZE_MEDIUM +
+                ";"
         );
 
         presetChoiceBox = new ChoiceBox<>(presets);
@@ -396,9 +410,10 @@ public class Step2View implements StepView {
 
         // Description label shown to the right of the dropdown
         presetDescriptionLabel = new Label();
-        presetDescriptionLabel
-            .getStyleClass()
-            .addAll(Styles.TEXT_SMALL, Styles.TEXT_SUBTLE);
+        presetDescriptionLabel.getStyleClass().add(Styles.TEXT_SMALL);
+        presetDescriptionLabel.setStyle(
+            "-fx-text-fill: " + Theme.CSS_FG_SUBTLE + ";"
+        );
         presetDescriptionLabel.setWrapText(true);
         presetDescriptionLabel.setMaxWidth(320);
 
@@ -782,20 +797,22 @@ public class Step2View implements StepView {
             "-fx-text-fill: " +
                 Theme.CSS_FG +
                 "; -fx-alignment: CENTER_RIGHT; " +
-                "-fx-font-size: 13px;"
+                "-fx-font-size: " +
+                Theme.FONT_SIZE_BASE +
+                ";"
         );
 
         // Tooltip hint
         Label hint = new Label(tooltip);
         hint.setMinWidth(240);
         hint.setMaxWidth(240);
-        hint.getStyleClass().addAll(Styles.TEXT_SMALL, Styles.TEXT_SUBTLE);
-        hint.setStyle("-fx-text-fill: " + Theme.HEX_COMMENT + ";");
+        hint.getStyleClass().addAll(Styles.TEXT_SMALL);
+        hint.setStyle("-fx-text-fill: " + Theme.CSS_FG_SUBTLE + ";");
 
         // Control
         if (control instanceof TextField tf) {
             tf.setPromptText(promptOrHint);
-            tf.setStyle("-fx-prompt-text-fill: " + Theme.HEX_COMMENT + ";");
+            tf.setStyle("-fx-prompt-text-fill: " + Theme.CSS_FG_SUBTLE + ";");
             tf.setPrefColumnCount(8);
         }
 
