@@ -431,7 +431,6 @@ public class App extends Application {
                     Theme.FONT_SIZE_XXLARGE +
                     ";"
             );
-            step4Number.getStyleClass().addAll(Styles.TEXT_BOLD);
             step4Label.setStyle(
                 "-fx-text-fill: " +
                     Theme.CSS_FG +
@@ -439,7 +438,6 @@ public class App extends Application {
                     Theme.FONT_SIZE_LARGE +
                     ";"
             );
-            step4Label.getStyleClass().addAll(Styles.TEXT_BOLD);
         } else {
             step4Ring.setStroke(
                 javafx.scene.paint.Color.web(Theme.HEX_COMMENT)
@@ -451,7 +449,6 @@ public class App extends Application {
                     Theme.FONT_SIZE_XXLARGE +
                     ";"
             );
-            step4Number.getStyleClass().addAll(Styles.TEXT_BOLD);
             step4Label.setStyle(
                 "-fx-text-fill: " +
                     Theme.CSS_FG_SUBTLE +
@@ -459,7 +456,6 @@ public class App extends Application {
                     Theme.FONT_SIZE_LARGE +
                     ";"
             );
-            step4Label.getStyleClass().addAll(Styles.TEXT_BOLD);
         }
 
         // Update Line 3 (between Step 3 and Step 4)
