@@ -94,12 +94,10 @@ public class Step3View implements StepView {
         videoInfoPanel.setAlignment(Pos.CENTER_LEFT);
 
         currentFileNameLabel = new Label("Kein Video ausgewählt");
-        currentFileNameLabel.setStyle("-fx-text-fill: " + Theme.CSS_FG + ";");
+        currentFileNameLabel.setStyle(Theme.TEXT_FILL_FG_STYLE);
 
         currentPassLabel = new Label("");
-        currentPassLabel.setStyle(
-            "-fx-text-fill: " + Theme.CSS_FG_SUBTLE + ";"
-        );
+        currentPassLabel.setStyle(Theme.TEXT_FILL_FG_SUBTLE_STYLE);
         //currentPassLabel.setVisible(false);
 
         progressBar = new ProgressBar(0);
@@ -133,14 +131,11 @@ public class Step3View implements StepView {
                 "-fx-background-color: " +
                 Theme.HEX_BG_DARK +
                 "; " +
-                "-fx-text-fill: " +
-                Theme.CSS_FG +
+                Theme.TEXT_FILL_FG_STYLE +
                 "; " +
                 "-fx-font-family: monospace; " +
-                "-fx-font-size: " +
-                Theme.FONT_SIZE_SMALL +
-                "; " +
-                "-fx-background-radius: 4; " +
+                Theme.FONT_SMALL_STYLE +
+                " -fx-background-radius: 4; " +
                 "-fx-control-inner-background-radius: 4;"
         );
         VBox.setVgrow(logArea, Priority.ALWAYS);
@@ -268,9 +263,7 @@ public class Step3View implements StepView {
                     updateProgressCounter(index + 1, total);
                     currentFileNameLabel.setText(sourceFile.getName());
                     currentPassLabel.setText("Encodierung läuft...");
-                    currentPassLabel.setStyle(
-                        "-fx-text-fill: " + Theme.CSS_FG_SUBTLE + ";"
-                    );
+                    currentPassLabel.setStyle(Theme.TEXT_FILL_FG_SUBTLE_STYLE);
                     currentPassLabel.setVisible(true);
                     progressBar.setVisible(true);
                     progressBar.setProgress(0);
@@ -329,7 +322,7 @@ public class Step3View implements StepView {
                         appendLog("[" + jobNumber + "] ✓ Fertig: " + fileName);
                         currentPassLabel.setText("✓ Abgeschlossen");
                         currentPassLabel.setStyle(
-                            "-fx-text-fill: " + Theme.CSS_SUCCESS + ";"
+                            Theme.TEXT_FILL_SUCCESS_STYLE
                         );
                     } else {
                         appendLog(
@@ -341,9 +334,7 @@ public class Step3View implements StepView {
                                 status.getErrorMessage()
                         );
                         currentPassLabel.setText("✗ Fehlgeschlagen");
-                        currentPassLabel.setStyle(
-                            "-fx-text-fill: " + Theme.CSS_DANGER + ";"
-                        );
+                        currentPassLabel.setStyle(Theme.TEXT_FILL_DANGER_STYLE);
                     }
                 });
             }
@@ -365,9 +356,7 @@ public class Step3View implements StepView {
                             " fehlgeschlagen"
                     );
                     currentPassLabel.setVisible(true);
-                    currentPassLabel.setStyle(
-                        "-fx-text-fill: " + Theme.CSS_FG + ";"
-                    );
+                    currentPassLabel.setStyle(Theme.TEXT_FILL_FG_STYLE);
                     progressBar.setProgress(1.0);
 
                     appendLog("════════════════════════════════════════");

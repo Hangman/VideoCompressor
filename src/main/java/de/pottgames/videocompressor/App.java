@@ -296,36 +296,20 @@ public class App extends Application {
         if (activeStep >= 1) {
             step1Ring.setStroke(javafx.scene.paint.Color.web(Theme.HEX_ACCENT));
             step1Number.setStyle(
-                "-fx-text-fill: " +
-                    Theme.CSS_ACCENT_FG +
-                    "; -fx-font-size: " +
-                    Theme.FONT_SIZE_XXLARGE +
-                    ";"
+                Theme.TEXT_FILL_ACCENT_STYLE + Theme.FONT_XXLARGE_STYLE
             );
             step1Label.setStyle(
-                "-fx-text-fill: " +
-                    Theme.CSS_FG +
-                    "; -fx-font-size: " +
-                    Theme.FONT_SIZE_LARGE +
-                    ";"
+                Theme.TEXT_FILL_FG_STYLE + Theme.FONT_LARGE_STYLE
             );
         } else {
             step1Ring.setStroke(
                 javafx.scene.paint.Color.web(Theme.HEX_COMMENT)
             );
             step1Number.setStyle(
-                "-fx-text-fill: " +
-                    Theme.CSS_FG_SUBTLE +
-                    "; -fx-font-size: " +
-                    Theme.FONT_SIZE_XXLARGE +
-                    ";"
+                Theme.TEXT_FILL_FG_SUBTLE_STYLE + Theme.FONT_XXLARGE_STYLE
             );
             step1Label.setStyle(
-                "-fx-text-fill: " +
-                    Theme.CSS_FG_SUBTLE +
-                    "; -fx-font-size: " +
-                    Theme.FONT_SIZE_LARGE +
-                    ";"
+                Theme.TEXT_FILL_FG_SUBTLE_STYLE + Theme.FONT_LARGE_STYLE
             );
         }
 
@@ -333,36 +317,20 @@ public class App extends Application {
         if (activeStep >= 2) {
             step2Ring.setStroke(javafx.scene.paint.Color.web(Theme.HEX_ACCENT));
             step2Number.setStyle(
-                "-fx-text-fill: " +
-                    Theme.CSS_ACCENT_FG +
-                    "; -fx-font-size: " +
-                    Theme.FONT_SIZE_XXLARGE +
-                    ";"
+                Theme.TEXT_FILL_ACCENT_STYLE + Theme.FONT_XXLARGE_STYLE
             );
             step2Label.setStyle(
-                "-fx-text-fill: " +
-                    Theme.CSS_FG +
-                    "; -fx-font-size: " +
-                    Theme.FONT_SIZE_LARGE +
-                    ";"
+                Theme.TEXT_FILL_FG_STYLE + Theme.FONT_LARGE_STYLE
             );
         } else {
             step2Ring.setStroke(
                 javafx.scene.paint.Color.web(Theme.HEX_COMMENT)
             );
             step2Number.setStyle(
-                "-fx-text-fill: " +
-                    Theme.CSS_FG_SUBTLE +
-                    "; -fx-font-size: " +
-                    Theme.FONT_SIZE_XXLARGE +
-                    ";"
+                Theme.TEXT_FILL_FG_SUBTLE_STYLE + Theme.FONT_XXLARGE_STYLE
             );
             step2Label.setStyle(
-                "-fx-text-fill: " +
-                    Theme.CSS_FG_SUBTLE +
-                    "; -fx-font-size: " +
-                    Theme.FONT_SIZE_LARGE +
-                    ";"
+                Theme.TEXT_FILL_FG_SUBTLE_STYLE + Theme.FONT_LARGE_STYLE
             );
         }
 
@@ -370,36 +338,20 @@ public class App extends Application {
         if (activeStep >= 3) {
             step3Ring.setStroke(javafx.scene.paint.Color.web(Theme.HEX_ACCENT));
             step3Number.setStyle(
-                "-fx-text-fill: " +
-                    Theme.CSS_ACCENT_FG +
-                    "; -fx-font-size: " +
-                    Theme.FONT_SIZE_XXLARGE +
-                    ";"
+                Theme.TEXT_FILL_ACCENT_STYLE + Theme.FONT_XXLARGE_STYLE
             );
             step3Label.setStyle(
-                "-fx-text-fill: " +
-                    Theme.CSS_FG +
-                    "; -fx-font-size: " +
-                    Theme.FONT_SIZE_LARGE +
-                    ";"
+                Theme.TEXT_FILL_FG_STYLE + Theme.FONT_LARGE_STYLE
             );
         } else {
             step3Ring.setStroke(
                 javafx.scene.paint.Color.web(Theme.HEX_COMMENT)
             );
             step3Number.setStyle(
-                "-fx-text-fill: " +
-                    Theme.CSS_FG_SUBTLE +
-                    "; -fx-font-size: " +
-                    Theme.FONT_SIZE_XXLARGE +
-                    ";"
+                Theme.TEXT_FILL_FG_SUBTLE_STYLE + Theme.FONT_XXLARGE_STYLE
             );
             step3Label.setStyle(
-                "-fx-text-fill: " +
-                    Theme.CSS_FG_SUBTLE +
-                    "; -fx-font-size: " +
-                    Theme.FONT_SIZE_LARGE +
-                    ";"
+                Theme.TEXT_FILL_FG_SUBTLE_STYLE + Theme.FONT_LARGE_STYLE
             );
         }
 
@@ -425,36 +377,20 @@ public class App extends Application {
         if (activeStep >= 4) {
             step4Ring.setStroke(javafx.scene.paint.Color.web(Theme.HEX_ACCENT));
             step4Number.setStyle(
-                "-fx-text-fill: " +
-                    Theme.CSS_ACCENT_FG +
-                    "; -fx-font-size: " +
-                    Theme.FONT_SIZE_XXLARGE +
-                    ";"
+                Theme.TEXT_FILL_ACCENT_STYLE + Theme.FONT_XXLARGE_STYLE
             );
             step4Label.setStyle(
-                "-fx-text-fill: " +
-                    Theme.CSS_FG +
-                    "; -fx-font-size: " +
-                    Theme.FONT_SIZE_LARGE +
-                    ";"
+                Theme.TEXT_FILL_FG_STYLE + Theme.FONT_LARGE_STYLE
             );
         } else {
             step4Ring.setStroke(
                 javafx.scene.paint.Color.web(Theme.HEX_COMMENT)
             );
             step4Number.setStyle(
-                "-fx-text-fill: " +
-                    Theme.CSS_FG_SUBTLE +
-                    "; -fx-font-size: " +
-                    Theme.FONT_SIZE_XXLARGE +
-                    ";"
+                Theme.TEXT_FILL_FG_SUBTLE_STYLE + Theme.FONT_XXLARGE_STYLE
             );
             step4Label.setStyle(
-                "-fx-text-fill: " +
-                    Theme.CSS_FG_SUBTLE +
-                    "; -fx-font-size: " +
-                    Theme.FONT_SIZE_LARGE +
-                    ";"
+                Theme.TEXT_FILL_FG_SUBTLE_STYLE + Theme.FONT_LARGE_STYLE
             );
         }
 

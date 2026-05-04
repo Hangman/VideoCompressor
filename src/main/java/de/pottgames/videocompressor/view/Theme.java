@@ -102,24 +102,99 @@ public final class Theme {
     //  Font sizes
     // ─────────────────────────────────────────────────────────────────────
 
+    // ── Font sizes (raw values, internal) ───────────────────────────────
+
     /** Tiny text, e.g. labels in comparison panels. */
-    public static final String FONT_SIZE_TINY = "10px";
+    private static final String FONT_TINY = "10px";
 
     /** Small text, e.g. status badges, log area. */
-    public static final String FONT_SIZE_SMALL = "12px";
+    private static final String FONT_SMALL = "12px";
 
     /** Regular body text. */
-    public static final String FONT_SIZE_BASE = "13px";
+    private static final String FONT_BASE = "13px";
 
     /** Slightly larger text for labels and headings. */
-    public static final String FONT_SIZE_MEDIUM = "14px";
+    private static final String FONT_MEDIUM = "14px";
 
     /** Large text for validation icons and emphasis. */
-    public static final String FONT_SIZE_LARGE = "16px";
+    private static final String FONT_LARGE = "16px";
 
     /** Extra-large text for hero values and headers. */
-    public static final String FONT_SIZE_XLARGE = "18px";
+    private static final String FONT_XLARGE = "18px";
 
     /** Extra-extra-large text for stepper numbers. */
-    public static final String FONT_SIZE_XXLARGE = "20px";
+    private static final String FONT_XXLARGE = "20px";
+
+    // ── Font-size CSS style strings (ready for inline styles) ───────────
+
+    public static final String FONT_TINY_STYLE =
+        "-fx-font-size: " + FONT_TINY + ";";
+    public static final String FONT_SMALL_STYLE =
+        "-fx-font-size: " + FONT_SMALL + ";";
+    public static final String FONT_BASE_STYLE =
+        "-fx-font-size: " + FONT_BASE + ";";
+    public static final String FONT_MEDIUM_STYLE =
+        "-fx-font-size: " + FONT_MEDIUM + ";";
+    public static final String FONT_LARGE_STYLE =
+        "-fx-font-size: " + FONT_LARGE + ";";
+    public static final String FONT_XLARGE_STYLE =
+        "-fx-font-size: " + FONT_XLARGE + ";";
+    public static final String FONT_XXLARGE_STYLE =
+        "-fx-font-size: " + FONT_XXLARGE + ";";
+
+    // ─────────────────────────────────────────────────────────────────────
+    //  Text-fill CSS style strings (ready for inline styles)
+    // ─────────────────────────────────────────────────────────────────────
+
+    // ── AtlantFX CSS variable based ─────────────────────────────────────
+
+    /** Default foreground text fill. */
+    public static final String TEXT_FILL_FG_STYLE =
+        "-fx-text-fill: " + CSS_FG + ";";
+
+    /** Subtle / muted text fill. */
+    public static final String TEXT_FILL_FG_SUBTLE_STYLE =
+        "-fx-text-fill: " + CSS_FG_SUBTLE + ";";
+
+    /** Success text fill. */
+    public static final String TEXT_FILL_SUCCESS_STYLE =
+        "-fx-text-fill: " + CSS_SUCCESS + ";";
+
+    /** Warning text fill. */
+    public static final String TEXT_FILL_WARNING_STYLE =
+        "-fx-text-fill: " + CSS_WARNING + ";";
+
+    /** Danger / error text fill. */
+    public static final String TEXT_FILL_DANGER_STYLE =
+        "-fx-text-fill: " + CSS_DANGER + ";";
+
+    /** Accent text fill. */
+    public static final String TEXT_FILL_ACCENT_STYLE =
+        "-fx-text-fill: " + CSS_ACCENT_FG + ";";
+
+    /** Background default — used as text fill on accent backgrounds (e.g., badge). */
+    public static final String TEXT_FILL_BG_DEFAULT_STYLE =
+        "-fx-text-fill: " + CSS_BG_DEFAULT + ";";
+
+    // ── Dracula hex based ───────────────────────────────────────────────
+
+    /** Default foreground text fill (hex). */
+    public static final String TEXT_FILL_HEX_FG_STYLE =
+        "-fx-text-fill: " + HEX_FG + ";";
+
+    /** Comment / muted text fill (hex). */
+    public static final String TEXT_FILL_HEX_COMMENT_STYLE =
+        "-fx-text-fill: " + HEX_COMMENT + ";";
+
+    /** Accent text fill (hex). */
+    public static final String TEXT_FILL_HEX_ACCENT_STYLE =
+        "-fx-text-fill: " + HEX_ACCENT + ";";
+
+    /** Error text fill (hex). */
+    public static final String TEXT_FILL_HEX_RED_STYLE =
+        "-fx-text-fill: " + HEX_RED + ";";
+
+    /** Warning text fill (hex). */
+    public static final String TEXT_FILL_HEX_ORANGE_STYLE =
+        "-fx-text-fill: " + HEX_ORANGE + ";";
 }

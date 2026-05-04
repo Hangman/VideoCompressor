@@ -244,12 +244,8 @@ public class Step4View implements StepView {
         if (outputProbeError != null) {
             Label errorLabel = new Label("⚠  " + outputProbeError);
             errorLabel.setStyle(
-                "-fx-text-fill: " +
-                    Theme.HEX_ORANGE +
-                    ";" +
-                    "-fx-font-size: " +
-                    Theme.FONT_SIZE_BASE +
-                    ";" +
+                Theme.TEXT_FILL_HEX_ORANGE_STYLE +
+                    Theme.FONT_BASE_STYLE +
                     "-fx-padding: 8 12;"
             );
             errorLabel.setWrapText(true);
@@ -303,14 +299,11 @@ public class Step4View implements StepView {
             "-fx-background-color: " +
                 Theme.CSS_ACCENT_FG +
                 ";" +
-                "-fx-text-fill: " +
-                Theme.CSS_BG_DEFAULT +
+                Theme.TEXT_FILL_BG_DEFAULT_STYLE +
                 ";" +
                 "-fx-background-radius: 10;" +
                 "-fx-padding: 5 9;" +
-                "-fx-font-size: " +
-                Theme.FONT_SIZE_XLARGE +
-                ";"
+                Theme.FONT_XLARGE_STYLE
         );
 
         // File names
@@ -318,13 +311,7 @@ public class Step4View implements StepView {
         String srcName = src != null ? src.file().getName() : "Unbekannt";
         String outName = out != null ? out.file().getName() : "Unbekannt";
         nameLabel.setText(srcName + "  →  " + outName);
-        nameLabel.setStyle(
-            "-fx-text-fill: " +
-                Theme.CSS_FG +
-                "; -fx-font-size: " +
-                Theme.FONT_SIZE_MEDIUM +
-                ";"
-        );
+        nameLabel.setStyle(Theme.TEXT_FILL_FG_STYLE + Theme.FONT_MEDIUM_STYLE);
 
         HBox.setHgrow(nameLabel, Priority.ALWAYS);
 
@@ -333,41 +320,29 @@ public class Step4View implements StepView {
         if (status.getStatus() == Status.COMPLETED) {
             statusPill.setText("●  Fertig");
             statusPill.setStyle(
-                "-fx-text-fill: " +
-                    Theme.CSS_SUCCESS +
-                    ";" +
+                Theme.TEXT_FILL_SUCCESS_STYLE +
                     "-fx-background-color: rgba(80,250,123,0.1);" +
                     "-fx-background-radius: 8;" +
                     "-fx-padding: 4 10;" +
-                    "-fx-font-size: " +
-                    Theme.FONT_SIZE_SMALL +
-                    ";"
+                    Theme.FONT_SMALL_STYLE
             );
         } else if (status.getStatus() == Status.FAILED) {
             statusPill.setText("●  Fehlgeschlagen");
             statusPill.setStyle(
-                "-fx-text-fill: " +
-                    Theme.HEX_RED +
-                    ";" +
+                Theme.TEXT_FILL_HEX_RED_STYLE +
                     "-fx-background-color: rgba(255,85,85,0.1);" +
                     "-fx-background-radius: 8;" +
                     "-fx-padding: 4 10;" +
-                    "-fx-font-size: " +
-                    Theme.FONT_SIZE_SMALL +
-                    ";"
+                    Theme.FONT_SMALL_STYLE
             );
         } else {
             statusPill.setText("●  Übersprungen");
             statusPill.setStyle(
-                "-fx-text-fill: " +
-                    Theme.HEX_ORANGE +
-                    ";" +
+                Theme.TEXT_FILL_HEX_ORANGE_STYLE +
                     "-fx-background-color: rgba(255,184,108,0.1);" +
                     "-fx-background-radius: 8;" +
                     "-fx-padding: 4 10;" +
-                    "-fx-font-size: " +
-                    Theme.FONT_SIZE_SMALL +
-                    ";"
+                    Theme.FONT_SMALL_STYLE
             );
         }
 
@@ -414,11 +389,7 @@ public class Step4View implements StepView {
         // Icon
         Label iconLabel = new Label(icon);
         iconLabel.setStyle(
-            "-fx-text-fill: " +
-                textColor +
-                "; -fx-font-size: " +
-                Theme.FONT_SIZE_XLARGE +
-                ";"
+            "-fx-text-fill: " + textColor + "; " + Theme.FONT_XLARGE_STYLE
         );
 
         // Main percentage
@@ -426,11 +397,7 @@ public class Step4View implements StepView {
             String.format("%s: %.1f%%", label, Math.abs(pct))
         );
         pctLabel.setStyle(
-            "-fx-text-fill: " +
-                textColor +
-                "; -fx-font-size: " +
-                Theme.FONT_SIZE_MEDIUM +
-                ";"
+            "-fx-text-fill: " + textColor + "; " + Theme.FONT_MEDIUM_STYLE
         );
 
         // Sizes
@@ -438,11 +405,7 @@ public class Step4View implements StepView {
             formatFileSize(srcSize) + "  →  " + formatFileSize(outSize)
         );
         sizeLabel.setStyle(
-            "-fx-text-fill: " +
-                Theme.CSS_FG_SUBTLE +
-                "; -fx-font-size: " +
-                Theme.FONT_SIZE_SMALL +
-                ";"
+            Theme.TEXT_FILL_FG_SUBTLE_STYLE + Theme.FONT_SMALL_STYLE
         );
 
         banner.getChildren().addAll(iconLabel, pctLabel, sizeLabel);
@@ -487,12 +450,8 @@ public class Step4View implements StepView {
         // Panel title
         Label titleLabel = new Label(title.toUpperCase());
         titleLabel.setStyle(
-            "-fx-text-fill: " +
-                Theme.CSS_FG_SUBTLE +
-                ";" +
-                "-fx-font-size: " +
-                Theme.FONT_SIZE_TINY +
-                ";" +
+            Theme.TEXT_FILL_FG_SUBTLE_STYLE +
+                Theme.FONT_TINY_STYLE +
                 "-fx-letter-spacing: 1.5;" +
                 "-fx-padding: 0 0 12 0;"
         );
@@ -608,20 +567,14 @@ public class Step4View implements StepView {
 
         Label lbl = new Label(label);
         lbl.setStyle(
-            "-fx-text-fill: " +
-                Theme.CSS_FG_SUBTLE +
-                "; -fx-font-size: " +
-                Theme.FONT_SIZE_TINY +
-                "; -fx-letter-spacing: 1;"
+            Theme.TEXT_FILL_FG_SUBTLE_STYLE +
+                Theme.FONT_TINY_STYLE +
+                "-fx-letter-spacing: 1;"
         );
 
         Label val = new Label(value);
         val.setStyle(
-            "-fx-text-fill: " +
-                color +
-                "; -fx-font-size: " +
-                Theme.FONT_SIZE_XLARGE +
-                ";"
+            "-fx-text-fill: " + color + "; " + Theme.FONT_XLARGE_STYLE
         );
 
         box.getChildren().addAll(lbl, val);
@@ -650,24 +603,12 @@ public class Step4View implements StepView {
 
         // Label
         Label lbl = new Label(label);
-        lbl.setStyle(
-            "-fx-text-fill: " +
-                Theme.CSS_FG_SUBTLE +
-                "; -fx-font-size: " +
-                Theme.FONT_SIZE_SMALL +
-                ";"
-        );
+        lbl.setStyle(Theme.TEXT_FILL_FG_SUBTLE_STYLE + Theme.FONT_SMALL_STYLE);
         lbl.setMinWidth(80);
 
         // Value
         Label val = new Label(value);
-        val.setStyle(
-            "-fx-text-fill: " +
-                Theme.CSS_FG +
-                "; -fx-font-size: " +
-                Theme.FONT_SIZE_BASE +
-                ";"
-        );
+        val.setStyle(Theme.TEXT_FILL_FG_STYLE + Theme.FONT_BASE_STYLE);
         HBox.setHgrow(val, Priority.ALWAYS);
 
         box.getChildren().addAll(indicator, lbl, val);
@@ -737,9 +678,7 @@ public class Step4View implements StepView {
             "-fx-text-fill: " +
                 color +
                 ";" +
-                "-fx-font-size: " +
-                Theme.FONT_SIZE_BASE +
-                ";" +
+                Theme.FONT_BASE_STYLE +
                 "-fx-padding: 0 0 0 4;"
         );
         return lbl;

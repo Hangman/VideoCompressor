@@ -170,7 +170,7 @@ public class FileListCell extends ListCell<File> {
         textLabel.setMaxWidth(showIcon ? maxWidth - 16 : maxWidth);
         textLabel.setMinWidth(showIcon ? maxWidth - 16 : maxWidth);
         textLabel.getStyleClass().add(Styles.TEXT_SMALL);
-        textLabel.setStyle("-fx-text-fill: " + Theme.CSS_FG_SUBTLE + ";");
+        textLabel.setStyle(Theme.TEXT_FILL_FG_SUBTLE_STYLE);
 
         badge.getChildren().add(textLabel);
         return badge;
