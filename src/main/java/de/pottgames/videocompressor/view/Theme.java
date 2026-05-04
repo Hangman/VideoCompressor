@@ -63,9 +63,6 @@ public final class Theme {
     /** Cyan — used for highlights and output labels. */
     public static final String HEX_CYAN = "#8be9fd";
 
-    /** Green — success indicators. */
-    public static final String HEX_GREEN = "#50fa7b";
-
     /** Red — error indicators. */
     public static final String HEX_RED = "#ff5555";
 

@@ -110,7 +110,7 @@ public class Step4View implements StepView {
             final VideoJob job = jobs.get(i);
 
             chain = chain
-                .thenCompose(ignored -> {
+                .thenCompose(_ -> {
                     File outputFile = job.outputFile();
                     if (outputFile != null && outputFile.exists()) {
                         return Ffprobe.probeAsync(outputFile);
@@ -138,7 +138,7 @@ public class Step4View implements StepView {
                 });
         }
 
-        chain.whenComplete((ignored, ex) -> {
+        chain.whenComplete((_, _) -> {
             Platform.runLater(() -> {
                 buildComparisonUI(state, jobs, outputProbes);
             });
@@ -326,7 +326,7 @@ public class Step4View implements StepView {
             statusPill.setText("●  Fertig");
             statusPill.setStyle(
                 "-fx-text-fill: " +
-                    Theme.HEX_GREEN +
+                    Theme.CSS_SUCCESS +
                     ";" +
                     "-fx-background-color: rgba(80,250,123,0.1);" +
                     "-fx-background-radius: 8;" +
@@ -375,7 +375,7 @@ public class Step4View implements StepView {
 
         if (pct > 0.5) {
             bgColor = "rgba(80,250,123,0.08)";
-            textColor = Theme.HEX_GREEN;
+            textColor = Theme.CSS_SUCCESS;
             icon = "↓";
             label = "Ersparnis";
         } else if (pct < -0.5) {
@@ -682,7 +682,7 @@ public class Step4View implements StepView {
         if (thisIsNumeric) {
             if (thisNum < otherNum) {
                 icon = "↓";
-                color = Theme.HEX_GREEN;
+                color = Theme.CSS_SUCCESS;
             } else if (thisNum > otherNum) {
                 icon = "↑";
                 color = Theme.HEX_RED;
