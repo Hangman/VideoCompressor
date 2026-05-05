@@ -169,8 +169,9 @@ public class FileListCell extends ListCell<File> {
         Label textLabel = new Label();
         textLabel.setMaxWidth(showIcon ? maxWidth - 16 : maxWidth);
         textLabel.setMinWidth(showIcon ? maxWidth - 16 : maxWidth);
-        textLabel.getStyleClass().add(Styles.TEXT_SMALL);
-        textLabel.setStyle(Theme.TEXT_FILL_FG_SUBTLE_STYLE);
+        textLabel.setStyle(
+            Theme.TEXT_FILL_FG_SUBTLE_STYLE + Theme.FONT_SMALL_STYLE
+        );
 
         badge.getChildren().add(textLabel);
         return badge;

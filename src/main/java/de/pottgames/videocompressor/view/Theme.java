@@ -104,17 +104,14 @@ public final class Theme {
 
     // ── Font sizes (raw values, internal) ───────────────────────────────
 
-    /** Tiny text, e.g. labels in comparison panels. */
-    private static final String FONT_TINY = "10px";
-
     /** Small text, e.g. status badges, log area. */
-    private static final String FONT_SMALL = "12px";
+    private static final String FONT_SMALL = "13px";
 
     /** Regular body text. */
-    private static final String FONT_BASE = "13px";
+    private static final String FONT_BASE = "14px";
 
     /** Slightly larger text for labels and headings. */
-    private static final String FONT_MEDIUM = "14px";
+    private static final String FONT_MEDIUM = "15px";
 
     /** Large text for validation icons and emphasis. */
     private static final String FONT_LARGE = "16px";
@@ -127,8 +124,6 @@ public final class Theme {
 
     // ── Font-size CSS style strings (ready for inline styles) ───────────
 
-    public static final String FONT_TINY_STYLE =
-        "-fx-font-size: " + FONT_TINY + ";";
     public static final String FONT_SMALL_STYLE =
         "-fx-font-size: " + FONT_SMALL + ";";
     public static final String FONT_BASE_STYLE =

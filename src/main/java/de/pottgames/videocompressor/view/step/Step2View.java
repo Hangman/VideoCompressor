@@ -1,6 +1,5 @@
 package de.pottgames.videocompressor.view.step;
 
-import atlantafx.base.theme.Styles;
 import de.pottgames.videocompressor.WizardState;
 import de.pottgames.videocompressor.engine.AudioCodec;
 import de.pottgames.videocompressor.engine.Engine;
@@ -386,8 +385,9 @@ public class Step2View implements StepView {
 
         // Description label shown to the right of the dropdown
         presetDescriptionLabel = new Label();
-        presetDescriptionLabel.getStyleClass().add(Styles.TEXT_SMALL);
-        presetDescriptionLabel.setStyle(Theme.TEXT_FILL_FG_SUBTLE_STYLE);
+        presetDescriptionLabel.setStyle(
+            Theme.TEXT_FILL_FG_SUBTLE_STYLE + Theme.FONT_SMALL_STYLE
+        );
         presetDescriptionLabel.setWrapText(true);
         presetDescriptionLabel.setMaxWidth(320);
 
@@ -777,8 +777,7 @@ public class Step2View implements StepView {
         Label hint = new Label(tooltip);
         hint.setMinWidth(240);
         hint.setMaxWidth(240);
-        hint.getStyleClass().addAll(Styles.TEXT_SMALL);
-        hint.setStyle(Theme.TEXT_FILL_FG_SUBTLE_STYLE);
+        hint.setStyle(Theme.TEXT_FILL_FG_SUBTLE_STYLE + Theme.FONT_SMALL_STYLE);
 
         // Control
         if (control instanceof TextField tf) {

@@ -451,7 +451,7 @@ public class Step4View implements StepView {
         Label titleLabel = new Label(title.toUpperCase());
         titleLabel.setStyle(
             Theme.TEXT_FILL_FG_SUBTLE_STYLE +
-                Theme.FONT_TINY_STYLE +
+                Theme.FONT_SMALL_STYLE +
                 "-fx-letter-spacing: 1.5;" +
                 "-fx-padding: 0 0 12 0;"
         );
@@ -568,7 +568,7 @@ public class Step4View implements StepView {
         Label lbl = new Label(label);
         lbl.setStyle(
             Theme.TEXT_FILL_FG_SUBTLE_STYLE +
-                Theme.FONT_TINY_STYLE +
+                Theme.FONT_SMALL_STYLE +
                 "-fx-letter-spacing: 1;"
         );
 
