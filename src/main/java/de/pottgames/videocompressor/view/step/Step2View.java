@@ -61,6 +61,9 @@ public class Step2View implements StepView {
     // ── Currently selected preset (mutable copy for editing) ─────────────
     private Preset selectedPreset;
 
+    // ── Tracks which original preset selectedPreset was derived from ────
+    private Preset basePreset;
+
     // ── UI references ────────────────────────────────────────────────────
     // Assigned in build methods called from constructor, so not final.
     private VBox root = null;
@@ -144,6 +147,7 @@ public class Step2View implements StepView {
         if (loaded != null && !loaded.isEmpty()) {
             presets.setAll(loaded);
             selectedPreset = loaded.get(0);
+            basePreset = selectedPreset;
             presetChoiceBox.setValue(selectedPreset);
             populateControls();
         }
@@ -377,6 +381,9 @@ public class Step2View implements StepView {
 
         presetChoiceBox = new ChoiceBox<>(presets);
         presetChoiceBox.setValue(null);
+        presetChoiceBox.setPrefWidth(200);
+        presetChoiceBox.setMinWidth(200);
+        presetChoiceBox.setMaxWidth(200);
 
         // Custom string converter for readable preset names
         presetChoiceBox.setConverter(
@@ -408,6 +415,7 @@ public class Step2View implements StepView {
             .addListener((_, _, newPreset) -> {
                 if (newPreset != null) {
                     selectedPreset = newPreset;
+                    basePreset = newPreset;
                     populateControls();
                     // Re-trigger validation for the new preset values
                     validationDebounce.stop();
@@ -982,6 +990,19 @@ public class Step2View implements StepView {
         var centerButton = state.getCenterButton();
         var nextButton = state.getNextButton();
 
+        // Restore modified preset from WizardState if available
+        Preset restored = state.getSelectedPreset();
+        Preset restoredBase = state.getBasePreset();
+        if (restored != null) {
+            selectedPreset = restored;
+            basePreset = restoredBase != null ? restoredBase : restored;
+            // Ensure "Custom" preset is in the choicebox list
+            if (!presets.contains(selectedPreset)) {
+                presets.add(selectedPreset);
+            }
+            presetChoiceBox.setValue(selectedPreset);
+        }
+
         // Populate controls with the currently selected preset
         if (selectedPreset != null) {
             populateControls();
@@ -999,6 +1020,15 @@ public class Step2View implements StepView {
 
     @Override
     public void deactivate(WizardState state) {
-        state.setSelectedPreset(getModifiedPreset());
+        Preset modified = getModifiedPreset();
+        if (modified != null && basePreset != null) {
+            // If the modified preset differs from the original base preset,
+            // rename it to "Custom" so the user sees that in the choicebox
+            if (!modified.equals(basePreset)) {
+                modified = modified.withName("Custom");
+            }
+        }
+        state.setSelectedPreset(modified);
+        state.setBasePreset(basePreset);
     }
 }

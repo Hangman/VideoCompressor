@@ -22,6 +22,10 @@ public class WizardState {
 
     private Preset selectedPreset;
 
+    // The original preset that selectedPreset was derived from.
+    // Used to detect whether user modifications diverged from the base.
+    private Preset basePreset;
+
     /**
      * The prepared video jobs from Step 3, stored here so that
      * Step 4 can access the source-to-output file mappings and their status.
@@ -72,6 +76,22 @@ public class WizardState {
      */
     public void setSelectedPreset(Preset preset) {
         this.selectedPreset = preset;
+    }
+
+    /**
+     * Returns the base preset that the selected preset was derived from.
+     * @return the base preset, or null if not set
+     */
+    public Preset getBasePreset() {
+        return basePreset;
+    }
+
+    /**
+     * Sets the base preset.
+     * @param preset the base preset to store
+     */
+    public void setBasePreset(Preset preset) {
+        this.basePreset = preset;
     }
 
     /**

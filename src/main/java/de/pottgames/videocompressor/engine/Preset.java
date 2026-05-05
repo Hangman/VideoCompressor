@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Properties;
 
 /**
@@ -30,6 +31,79 @@ public record Preset(
     FfmpegPreset ffmpegPreset,
     Tune tune
 ) {
+    @Override
+    public int hashCode() {
+        return Objects.hash(
+            audioBitrate,
+            audioCodec,
+            audioNormalize,
+            container,
+            crf,
+            fastStart,
+            ffmpegPreset,
+            fps,
+            keepSourceAudio,
+            keepSourceResolution,
+            mixToMono,
+            resolutionHeight,
+            resolutionWidth,
+            tune,
+            videoCodec
+        );
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+        Preset other = (Preset) obj;
+        return (
+            audioBitrate == other.audioBitrate &&
+            audioCodec == other.audioCodec &&
+            audioNormalize == other.audioNormalize &&
+            container == other.container &&
+            crf == other.crf &&
+            fastStart == other.fastStart &&
+            ffmpegPreset == other.ffmpegPreset &&
+            Double.doubleToLongBits(fps) ==
+            Double.doubleToLongBits(other.fps) &&
+            keepSourceAudio == other.keepSourceAudio &&
+            keepSourceResolution == other.keepSourceResolution &&
+            mixToMono == other.mixToMono &&
+            resolutionHeight == other.resolutionHeight &&
+            resolutionWidth == other.resolutionWidth &&
+            tune == other.tune &&
+            videoCodec == other.videoCodec
+        );
+    }
+
+    /**
+     * Returns a copy of this preset with a different name.
+     * Used to mark a modified preset as "Custom".
+     */
+    public Preset withName(String newName) {
+        return new Preset(
+            newName,
+            description,
+            videoCodec,
+            crf,
+            keepSourceResolution,
+            resolutionWidth,
+            resolutionHeight,
+            fps,
+            container,
+            keepSourceAudio,
+            audioCodec,
+            audioBitrate,
+            audioNormalize,
+            mixToMono,
+            fastStart,
+            ffmpegPreset,
+            tune
+        );
+    }
+
     public static final Path PRESET_FOLDER_PATH = Path.of("presets");
     private static final Path DEFAULT_PRESET_PATH = Path.of(
         "presets",
