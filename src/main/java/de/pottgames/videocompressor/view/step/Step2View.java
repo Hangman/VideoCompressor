@@ -23,6 +23,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Slider;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
@@ -76,7 +77,8 @@ public class Step2View implements StepView {
     // Initialized inline with null; actual instances are created in build methods
     // called from the constructor.
     private ChoiceBox<VideoCodec> codecBox = null;
-    private TextField crfField = null;
+    private Slider crfSlider = null;
+    private Label crfValueLabel = null;
     private TextField resWidthField = null;
     private TextField resHeightField = null;
     private TextField fpsField = null;
@@ -162,7 +164,8 @@ public class Step2View implements StepView {
         boolean disable = !enabled;
         presetChoiceBox.setDisable(disable);
         codecBox.setDisable(disable);
-        crfField.setDisable(disable);
+        crfSlider.setDisable(disable);
+        crfValueLabel.setDisable(disable);
         resWidthField.setDisable(disable);
         resHeightField.setDisable(disable);
         fpsField.setDisable(disable);
@@ -233,7 +236,6 @@ public class Step2View implements StepView {
 
         // TextFields: listen to text property changes
         for (TextField tf : List.of(
-            crfField,
             resWidthField,
             resHeightField,
             fpsField,
@@ -246,6 +248,14 @@ public class Step2View implements StepView {
                     validationDebounce.playFromStart();
                 });
         }
+
+        // Slider: listen to value changes
+        crfSlider
+            .valueProperty()
+            .addListener((_, _, _) -> {
+                validationDebounce.stop();
+                validationDebounce.playFromStart();
+            });
 
         // CheckBoxes: listen to selected property changes
         for (CheckBox cb : List.of(
@@ -389,6 +399,7 @@ public class Step2View implements StepView {
             Theme.TEXT_FILL_FG_SUBTLE_STYLE + Theme.FONT_SMALL_STYLE
         );
         presetDescriptionLabel.setWrapText(true);
+        presetDescriptionLabel.setMaxWidth(500);
 
         // On preset change, update selectedPreset and repopulate controls
         presetChoiceBox
@@ -462,16 +473,62 @@ public class Step2View implements StepView {
             .getChildren()
             .add(buildSettingRow("Codec", "Video-Codec", "libx264", codecBox));
 
-        // CRF
-        crfField = new TextField();
+        // CRF slider
+        crfSlider = new Slider(0, 63, 23);
+        crfSlider.setShowTickLabels(true);
+        crfSlider.setShowTickMarks(true);
+        crfSlider.setMajorTickUnit(10);
+        crfSlider.setMinorTickCount(1);
+        crfSlider.setBlockIncrement(1);
+        crfSlider.setSnapToTicks(true);
+        crfSlider.setStyle("-fx-pref-width: 300;");
+
+        // Label that shows the current CRF value next to the slider
+        crfValueLabel = new Label("23");
+        crfValueLabel.setMinWidth(30);
+        crfValueLabel.setAlignment(Pos.CENTER_LEFT);
+        crfValueLabel.setStyle(
+            Theme.TEXT_FILL_FG_STYLE + Theme.FONT_BASE_STYLE
+        );
+
+        // Update label text when slider value changes
+        crfSlider
+            .valueProperty()
+            .addListener((_, _, _) -> {
+                crfValueLabel.setText(
+                    String.valueOf((int) crfSlider.getValue())
+                );
+            });
+
+        // Adjust slider max based on selected codec
+        codecBox
+            .getSelectionModel()
+            .selectedItemProperty()
+            .addListener((_, _, codec) -> {
+                if (codec != null) {
+                    double max = (codec == VideoCodec.VP9 ||
+                        codec == VideoCodec.AV1)
+                        ? 63
+                        : 51;
+                    crfSlider.setMax(max);
+                    if (crfSlider.getValue() > max) {
+                        crfSlider.setValue(max);
+                    }
+                }
+            });
+
+        HBox crfBox = new HBox(10);
+        crfBox.setAlignment(Pos.CENTER_LEFT);
+        crfBox.getChildren().addAll(crfSlider, crfValueLabel);
+
         group
             .getChildren()
             .add(
                 buildSettingRow(
                     "CRF",
-                    "Constrained Rate Factor (0–51, niedriger = besser)",
-                    "23",
-                    crfField
+                    "Constrained Rate Factor (niedriger = bessere Qualität)",
+                    "",
+                    crfBox
                 )
             );
 
@@ -809,7 +866,14 @@ public class Step2View implements StepView {
         }
 
         codecBox.getSelectionModel().select(selectedPreset.videoCodec());
-        crfField.setText(String.valueOf(selectedPreset.crf()));
+
+        // Update CRF slider max based on codec, then set value
+        double max = (selectedPreset.videoCodec() == VideoCodec.VP9 ||
+            selectedPreset.videoCodec() == VideoCodec.AV1)
+            ? 63
+            : 51;
+        crfSlider.setMax(max);
+        crfSlider.setValue(selectedPreset.crf());
         keepSourceResCheck.setSelected(selectedPreset.keepSourceResolution());
         resolutionRow.setDisable(selectedPreset.keepSourceResolution());
         resWidthField.setText(String.valueOf(selectedPreset.resolutionWidth()));
@@ -867,7 +931,7 @@ public class Step2View implements StepView {
                 codecBox.getValue(),
                 selectedPreset.videoCodec()
             ),
-            safeInt(crfField, selectedPreset.crf()),
+            (int) crfSlider.getValue(),
             keepSourceResCheck.isSelected(),
             safeInt(resWidthField, selectedPreset.resolutionWidth()),
             safeInt(resHeightField, selectedPreset.resolutionHeight()),
