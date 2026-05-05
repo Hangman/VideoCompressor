@@ -93,7 +93,7 @@ public class Step3View implements StepView {
         );
         videoInfoPanel.setAlignment(Pos.CENTER_LEFT);
 
-        currentFileNameLabel = new Label("Kein Video ausgewählt");
+        currentFileNameLabel = new Label("");
         currentFileNameLabel.setStyle(Theme.TEXT_FILL_FG_STYLE);
 
         currentPassLabel = new Label("");
@@ -174,7 +174,7 @@ public class Step3View implements StepView {
      */
     private void resetUI() {
         progressCounterLabel.setText("Bereit zum Starten");
-        currentFileNameLabel.setText("Kein Video ausgewählt");
+        currentFileNameLabel.setText("");
         currentPassLabel.setVisible(false);
         currentPassLabel.setText("");
         progressBar.setVisible(false);
