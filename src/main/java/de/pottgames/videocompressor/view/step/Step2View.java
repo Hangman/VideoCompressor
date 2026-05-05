@@ -389,7 +389,6 @@ public class Step2View implements StepView {
             Theme.TEXT_FILL_FG_SUBTLE_STYLE + Theme.FONT_SMALL_STYLE
         );
         presetDescriptionLabel.setWrapText(true);
-        presetDescriptionLabel.setMaxWidth(320);
 
         // On preset change, update selectedPreset and repopulate controls
         presetChoiceBox
