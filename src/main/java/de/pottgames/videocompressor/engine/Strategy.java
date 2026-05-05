@@ -127,12 +127,10 @@ public class Strategy {
         }
 
         // ── 1c) CRF: clamp to codec-specific valid range ────────────────
-        if (videoCodec == VideoCodec.AV1 || videoCodec == VideoCodec.VP9) {
-            if (crf > 63) crf = 63;
-        } else {
-            if (crf > 51) crf = 51;
-        }
-        if (crf < 0) crf = 0;
+        int crfMin = videoCodec.getCrfMin();
+        int crfMax = videoCodec.getCrfMax();
+        if (crf > crfMax) crf = crfMax;
+        if (crf < crfMin) crf = crfMin;
 
         // ── 1d) Tune: VP9 / AV1 do not support tune; H.265 does not support all tunes ──
         if (

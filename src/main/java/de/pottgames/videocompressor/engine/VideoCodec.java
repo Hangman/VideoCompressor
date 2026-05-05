@@ -5,17 +5,21 @@ package de.pottgames.videocompressor.engine;
  * Each codec provides its FFmpeg CLI identifier and a human-readable name.
  */
 public enum VideoCodec {
-    H264("libx264", "H.264 / AVC"),
-    H265("libx265", "H.265 / HEVC"),
-    VP9("libvpx-vp9", "VP9"),
-    AV1("libsvtav1", "AV1");
+    H264("libx264", "H.264 / AVC", 0, 51),
+    H265("libx265", "H.265 / HEVC", 0, 51),
+    VP9("libvpx-vp9", "VP9", 0, 63),
+    AV1("libsvtav1", "AV1", 0, 63);
 
     private final String ffmpegName;
     private final String humanName;
+    private final int crfMin;
+    private final int crfMax;
 
-    VideoCodec(String ffmpegName, String humanName) {
+    VideoCodec(String ffmpegName, String humanName, int crfMin, int crfMax) {
         this.ffmpegName = ffmpegName;
         this.humanName = humanName;
+        this.crfMin = crfMin;
+        this.crfMax = crfMax;
     }
 
     /**
@@ -34,6 +38,24 @@ public enum VideoCodec {
      */
     public String getHumanName() {
         return humanName;
+    }
+
+    /**
+     * Returns the minimum valid CRF value for this codec.
+     *
+     * @return the minimum CRF value
+     */
+    public int getCrfMin() {
+        return crfMin;
+    }
+
+    /**
+     * Returns the maximum valid CRF value for this codec.
+     *
+     * @return the maximum CRF value
+     */
+    public int getCrfMax() {
+        return crfMax;
     }
 
     /**

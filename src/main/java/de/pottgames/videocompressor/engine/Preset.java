@@ -137,17 +137,24 @@ public record Preset(
         List<String> errors = new ArrayList<>();
 
         // --- CRF ---
-        if (crf < 0) {
-            errors.add("CRF muss 0 oder größer sein (ist " + crf + ").");
-        } else if (videoCodec == VideoCodec.AV1) {
-            if (crf > 63) {
+        {
+            int crfMin = videoCodec.getCrfMin();
+            int crfMax = videoCodec.getCrfMax();
+            if (crf < crfMin) {
                 errors.add(
-                    "CRF für AV1 darf maximal 63 sein (ist " + crf + ")."
+                    "CRF muss mindestens " + crfMin + " sein (ist " + crf + ")."
                 );
             }
-        } else {
-            if (crf > 51) {
-                errors.add("CRF darf maximal 51 sein (ist " + crf + ").");
+            if (crf > crfMax) {
+                errors.add(
+                    "CRF darf maximal " +
+                        crfMax +
+                        " sein für " +
+                        videoCodec.getHumanName() +
+                        " (ist " +
+                        crf +
+                        ")."
+                );
             }
         }
         if (crf > 0 && crf <= 10) {

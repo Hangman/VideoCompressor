@@ -506,10 +506,7 @@ public class Step2View implements StepView {
             .selectedItemProperty()
             .addListener((_, _, codec) -> {
                 if (codec != null) {
-                    double max = (codec == VideoCodec.VP9 ||
-                        codec == VideoCodec.AV1)
-                        ? 63
-                        : 51;
+                    double max = codec.getCrfMax();
                     crfSlider.setMax(max);
                     if (crfSlider.getValue() > max) {
                         crfSlider.setValue(max);
@@ -868,10 +865,7 @@ public class Step2View implements StepView {
         codecBox.getSelectionModel().select(selectedPreset.videoCodec());
 
         // Update CRF slider max based on codec, then set value
-        double max = (selectedPreset.videoCodec() == VideoCodec.VP9 ||
-            selectedPreset.videoCodec() == VideoCodec.AV1)
-            ? 63
-            : 51;
+        double max = selectedPreset.videoCodec().getCrfMax();
         crfSlider.setMax(max);
         crfSlider.setValue(selectedPreset.crf());
         keepSourceResCheck.setSelected(selectedPreset.keepSourceResolution());
