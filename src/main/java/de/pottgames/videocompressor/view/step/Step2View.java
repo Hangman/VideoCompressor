@@ -363,7 +363,7 @@ public class Step2View implements StepView {
         selector.setAlignment(Pos.CENTER_LEFT);
 
         Label label = new Label("Preset:");
-        label.setStyle(Theme.TEXT_FILL_FG_STYLE + Theme.FONT_MEDIUM_STYLE);
+        label.setStyle(Theme.TEXT_FILL_FG_STYLE + Theme.FONT_LARGE_STYLE);
 
         presetChoiceBox = new ChoiceBox<>(presets);
         presetChoiceBox.setValue(null);
@@ -724,12 +724,12 @@ public class Step2View implements StepView {
                 )
             );
 
-        // Disable fast-start settings when container is not MP4
+        // Disable fast-start settings when container does not support it
         containerBox
             .valueProperty()
             .addListener((_, _, _) -> {
                 var container = containerBox.getValue();
-                fastStartRow.setDisable(container != VideoContainer.MP4);
+                fastStartRow.setDisable(!container.supportsFastStart());
             });
 
         group.getChildren().addAll(fastStartRow);

@@ -311,7 +311,7 @@ public class Step4View implements StepView {
         String srcName = src != null ? src.file().getName() : "Unbekannt";
         String outName = out != null ? out.file().getName() : "Unbekannt";
         nameLabel.setText(srcName + "  →  " + outName);
-        nameLabel.setStyle(Theme.TEXT_FILL_FG_STYLE + Theme.FONT_MEDIUM_STYLE);
+        nameLabel.setStyle(Theme.TEXT_FILL_FG_STYLE + Theme.FONT_LARGE_STYLE);
 
         HBox.setHgrow(nameLabel, Priority.ALWAYS);
 
@@ -397,7 +397,7 @@ public class Step4View implements StepView {
             String.format("%s: %.1f%%", label, Math.abs(pct))
         );
         pctLabel.setStyle(
-            "-fx-text-fill: " + textColor + "; " + Theme.FONT_MEDIUM_STYLE
+            "-fx-text-fill: " + textColor + "; " + Theme.FONT_LARGE_STYLE
         );
 
         // Sizes

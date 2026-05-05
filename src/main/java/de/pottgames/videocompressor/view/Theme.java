@@ -110,9 +110,6 @@ public final class Theme {
     /** Regular body text. */
     private static final String FONT_BASE = "14px";
 
-    /** Slightly larger text for labels and headings. */
-    private static final String FONT_MEDIUM = "15px";
-
     /** Large text for validation icons and emphasis. */
     private static final String FONT_LARGE = "16px";
 
@@ -128,8 +125,6 @@ public final class Theme {
         "-fx-font-size: " + FONT_SMALL + ";";
     public static final String FONT_BASE_STYLE =
         "-fx-font-size: " + FONT_BASE + ";";
-    public static final String FONT_MEDIUM_STYLE =
-        "-fx-font-size: " + FONT_MEDIUM + ";";
     public static final String FONT_LARGE_STYLE =
         "-fx-font-size: " + FONT_LARGE + ";";
     public static final String FONT_XLARGE_STYLE =

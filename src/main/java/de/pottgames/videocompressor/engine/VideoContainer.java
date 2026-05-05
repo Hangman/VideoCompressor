@@ -5,18 +5,35 @@ package de.pottgames.videocompressor.engine;
  * Each container provides its FFmpeg CLI identifier and a human-readable name.
  */
 public enum VideoContainer {
-    MP4("mp4", "MP4", "mp4"),
-    MKV("matroska", "MKV", "mkv"),
-    WEBM("webm", "WebM", "webm");
+    MP4("mp4", "MP4", "mp4", true),
+    MOV("mov", "MOV", "mov", true),
+    MKV("matroska", "MKV", "mkv", false),
+    WEBM("webm", "WebM", "webm", false);
 
     private final String ffmpegName;
     private final String humanName;
     private final String extension;
+    private final boolean supportsFastStart;
 
-    VideoContainer(String ffmpegName, String humanName, String extension) {
+    VideoContainer(
+        String ffmpegName,
+        String humanName,
+        String extension,
+        boolean supportsFastStart
+    ) {
         this.ffmpegName = ffmpegName;
         this.humanName = humanName;
         this.extension = extension;
+        this.supportsFastStart = supportsFastStart;
+    }
+
+    /**
+     * Returns whether this container supports the -movflags faststart option.
+     *
+     * @return true for MP4 and MOV containers
+     */
+    public boolean supportsFastStart() {
+        return supportsFastStart;
     }
 
     /**
