@@ -463,25 +463,30 @@ public class Step4View implements StepView {
         HBox titleRow = new HBox();
         titleRow.setAlignment(Pos.CENTER_LEFT);
         titleRow.setSpacing(8);
+        titleRow.setPadding(new Insets(0, 0, 12, 0));
 
         Label titleLabel = new Label(title.toUpperCase());
         titleLabel.setStyle(
             Theme.TEXT_FILL_FG_SUBTLE_STYLE +
                 Theme.FONT_SMALL_STYLE +
-                "-fx-letter-spacing: 1.5;" +
-                "-fx-padding: 0 0 12 0;"
+                "-fx-letter-spacing: 1.5;"
         );
 
         Button playButton = new Button("▶");
         playButton.setStyle(
             "-fx-background-color: transparent;" +
                 "-fx-text-fill: " +
-                Theme.CSS_FG +
+                Theme.HEX_ACCENT +
                 ";" +
                 "-fx-font-size: 14px;" +
                 "-fx-cursor: hand;" +
-                "-fx-padding: 2 6;"
+                "-fx-border: 1px;" +
+                "-fx-border-color: " +
+                Theme.HEX_ACCENT +
+                ";" +
+                "-fx-border-radius: 6px;"
         );
+        playButton.setPadding(new Insets(4, 10, 4, 10));
         playButton.setOnAction(e -> {
             PathOpener.openAsync(info.file().toPath());
         });
