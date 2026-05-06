@@ -6,30 +6,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Glue-Klasse, die die für {@link Ffmpeg#execute} benötigte Argument-Liste aus
- * einem {@link ProbeInfo}, einem {@link Preset} und einem Output-Verzeichnis
- * zusammenbaut.
+ * Utility class that builds the argument list required for {@link Ffmpeg#execute}
+ * from a {@link ProbeInfo}, a {@link Preset}, and an output directory.
  *
- * <p>Der Ausgabe-Dateiname wird aus dem Eingabe-Dateinamen, dem Prefix {@code vc_}
- * und der Dateierweiterung des im Preset konfigurierten {@link VideoContainer}
- * zusammengesetzt.</p>
+ * <p>The output filename retains the original name of the input file.
+ * Only if the output file would overwrite the source file (same
+ * absolute path), the prefix {@code vc_} is prepended to prevent
+ * overwriting.</p>
  */
 public final class FfmpegCommandBuilder {
 
     private FfmpegCommandBuilder() {
-        // Utility-Klasse – keine Instanziierung
+        // Utility class – no instantiation
     }
 
     /**
-     * Baut die vollständige Liste von FFmpeg-CLI-Argumenten für einen
-     * Kompressions-Job.
+     * Builds the complete list of FFmpeg CLI arguments for a
+     * compression job.
      *
-     * @param probeInfo  die Probe-Informationen (enthält die Input-Datei)
-     * @param preset     das zu verwendende Encoding-Preset
-     * @param outputDir  das Verzeichnis, in das die Ausgabe geschrieben wird
-     * @return eine {@code List&lt;String&gt;}, die direkt an
-     *         {@link Ffmpeg#execute(List, java.util.function.Consumer)} übergeben
-     *         werden kann
+     * @param probeInfo  the probe information (contains the input file)
+     * @param preset     the encoding preset to use
+     * @param outputDir  the directory where the output is written
+     * @return a {@code List&lt;String&gt;} that can be passed directly to
+     *         {@link Ffmpeg#execute(List, java.util.function.Consumer)}
      */
     public static List<String> buildCommand(
         ProbeInfo probeInfo,
@@ -43,7 +42,7 @@ public final class FfmpegCommandBuilder {
         args.add("-i");
         args.add(inputFile.getAbsolutePath());
 
-        // ── Video-Codec ────────────────────────────────────────────────
+        // ── Video Codec ────────────────────────────────────────────────
         args.add("-c:v");
         args.add(preset.videoCodec().getFfmpegName());
 
@@ -71,7 +70,7 @@ public final class FfmpegCommandBuilder {
             args.add(preset.tune().getFfmpegName());
         }
 
-        // ── Video-Filter (Skalierung + eventuelle Normalisierung) ──────
+        // ── Video Filters (Scaling + Optional Normalization) ───────────
         String vfParts = new String();
         if (!preset.keepSourceResolution()) {
             vfParts =
@@ -106,22 +105,23 @@ public final class FfmpegCommandBuilder {
             }
         }
 
-        // ── Audio-Filter (Lautstärken-Normalisierung) ──────────────────
+        // ── Audio Filters (Loudness Normalization) ─────────────────────
         if (preset.audioNormalize()) {
             args.add("-af");
             args.add("loudnorm");
         }
 
-        // ── Fast-Start (moov atom voranstellen) ────────────────────────
+        // ── Fast Start (move moov atom to front) ───────────────────────
         if (preset.fastStart()) {
             args.add("-movflags");
             args.add("+faststart");
         }
 
-        // ── Output-Datei ───────────────────────────────────────────────
+        // ── Output File ────────────────────────────────────────────────
         String outputFileName = buildOutputFileName(
             inputFile,
-            preset.container()
+            preset.container(),
+            outputDir
         );
         Path outputPath = outputDir.resolve(outputFileName);
         args.add(outputPath.toString());
@@ -130,22 +130,37 @@ public final class FfmpegCommandBuilder {
     }
 
     /**
-     * Baut den Ausgabe-Dateinamen aus dem Eingabe-Dateinamen, dem Prefix
-     * {@code vc_} und der Dateierweiterung des Ziel-Containers.
+     * Builds the output filename. The original filename is retained.
+     * Only if the output file would overwrite the source file,
+     * the prefix {@code vc_} is prepended.
      *
-     * <p>Beispiel: {@code "urlaub.mp4"} → {@code "vc_urlaub.mkv"}</p>
+     * <p>Example (no overwriting): {@code "urlaub.mp4"} → {@code "urlaub.mkv"}</p>
+     * <p>Example (overwriting would occur): {@code "urlaub.mp4"} → {@code "vc_urlaub.mp4"}</p>
      *
-     * @param inputFile die Quelldatei
-     * @param container das Ziel-Container-Format
-     * @return der Ausgabe-Dateiname (kein Pfad)
+     * @param inputFile the source file
+     * @param container the target container format
+     * @param outputDir the output directory
+     * @return the output filename (no path)
      */
     public static String buildOutputFileName(
         File inputFile,
-        VideoContainer container
+        VideoContainer container,
+        Path outputDir
     ) {
         String name = inputFile.getName();
         int lastDot = name.lastIndexOf('.');
         String baseName = lastDot > 0 ? name.substring(0, lastDot) : name;
-        return "vc_" + baseName + "." + container.getExtension();
+        String outputName = baseName + "." + container.getExtension();
+
+        // Check if output path would overwrite the input file
+        Path outputPath = outputDir.resolve(outputName);
+        boolean wouldOverwrite = outputPath
+            .toAbsolutePath()
+            .equals(inputFile.toPath().toAbsolutePath());
+
+        if (wouldOverwrite) {
+            return "vc_" + outputName;
+        }
+        return outputName;
     }
 }

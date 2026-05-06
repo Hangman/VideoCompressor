@@ -485,8 +485,20 @@ public class JobProcessor {
         }
 
         String ext = editingPreset.container().getExtension();
-        String outputName = "vc_" + baseName + "." + ext;
+        String outputName = baseName + "." + ext;
 
-        return ExportPathResolver.getExportPath().resolve(outputName).toFile();
+        Path exportPath = ExportPathResolver.getExportPath();
+        Path outputPath = exportPath.resolve(outputName);
+
+        // Check if output path would overwrite the input file
+        boolean wouldOverwrite = outputPath
+            .toAbsolutePath()
+            .equals(sourceFile.toPath().toAbsolutePath());
+
+        if (wouldOverwrite) {
+            outputName = "vc_" + outputName;
+        }
+
+        return exportPath.resolve(outputName).toFile();
     }
 }
