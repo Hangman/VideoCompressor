@@ -93,12 +93,10 @@
                     <noHeaderFiles>true</noHeaderFiles>
                     <noManPages>true</noManPages>
                     <launcher>videoCompressor</launcher>
-                    <icon>src/main/resources/logo_64.ico</icon>
                     <jlinkImageName>VideoCompressor</jlinkImageName>
                     <jlinkZipName>VideoCompressor</jlinkZipName>
                     <mainClass
                     >de.pottgames.videocompressor/de.pottgames.videocompressor.App</mainClass>
-                    <launcherType>win32</launcherType>
                 </configuration>
             </plugin>
 
