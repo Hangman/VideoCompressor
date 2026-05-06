@@ -2,7 +2,9 @@ package de.pottgames.videocompressor.view.step;
 
 import atlantafx.base.theme.Styles;
 import de.pottgames.videocompressor.WizardState;
+import de.pottgames.videocompressor.engine.ExportPathResolver;
 import de.pottgames.videocompressor.engine.Ffprobe;
+import de.pottgames.videocompressor.engine.FolderOpener;
 import de.pottgames.videocompressor.engine.ProbeInfo;
 import de.pottgames.videocompressor.engine.VideoJob;
 import de.pottgames.videocompressor.engine.VideoJobStatus;
@@ -78,7 +80,12 @@ public class Step4View implements StepView {
         var nextButton = state.getNextButton();
 
         backButton.setVisible(true);
-        centerButton.setVisible(false);
+        centerButton.setText("Export-Ordner öffnen");
+        centerButton.setVisible(true);
+        centerButton.setDisable(false);
+        centerButton.setOnAction(_ ->
+            FolderOpener.openAsync(ExportPathResolver.getExportPath())
+        );
         nextButton.setVisible(false);
         nextButton.setDisable(true);
 
