@@ -4,6 +4,7 @@ import de.pottgames.videocompressor.WizardState;
 import de.pottgames.videocompressor.engine.AudioCodec;
 import de.pottgames.videocompressor.engine.Engine;
 import de.pottgames.videocompressor.engine.FfmpegPreset;
+import de.pottgames.videocompressor.engine.Fps;
 import de.pottgames.videocompressor.engine.Preset;
 import de.pottgames.videocompressor.engine.Preset.ValidationResult;
 import de.pottgames.videocompressor.engine.Tune;
@@ -84,7 +85,7 @@ public class Step2View implements StepView {
     private Label crfValueLabel = null;
     private TextField resWidthField = null;
     private TextField resHeightField = null;
-    private TextField fpsField = null;
+    private ChoiceBox<Fps> fpsBox = null;
 
     private TextField audioBitrateField = null;
     private CheckBox audioNormalizeCheck = null;
@@ -174,7 +175,7 @@ public class Step2View implements StepView {
         crfValueLabel.setDisable(disable);
         resWidthField.setDisable(disable);
         resHeightField.setDisable(disable);
-        fpsField.setDisable(disable);
+        fpsBox.setDisable(disable);
 
         containerBox.setDisable(disable);
         audioCodecBox.setDisable(disable);
@@ -244,7 +245,6 @@ public class Step2View implements StepView {
         for (TextField tf : List.of(
             resWidthField,
             resHeightField,
-            fpsField,
             audioBitrateField
         )) {
             tf
@@ -284,6 +284,7 @@ public class Step2View implements StepView {
             codecBox,
             containerBox,
             audioCodecBox,
+            fpsBox,
             ffmpegPresetBox,
             tuneBox
         )) {
@@ -598,10 +599,14 @@ public class Step2View implements StepView {
             );
 
         // FPS
-        fpsField = new TextField();
+        fpsBox = new ChoiceBox<>(
+            FXCollections.observableArrayList(Fps.values())
+        );
         group
             .getChildren()
-            .add(buildSettingRow("FPS", "Bilder pro Sekunde", "30", fpsField));
+            .add(
+                buildSettingRow("FPS", "Bilder pro Sekunde", "30 fps", fpsBox)
+            );
 
         // FFmpeg preset
         ffmpegPresetBox = new ChoiceBox<>(
@@ -884,7 +889,7 @@ public class Step2View implements StepView {
         resHeightField.setText(
             String.valueOf(selectedPreset.resolutionHeight())
         );
-        fpsField.setText(String.valueOf(selectedPreset.fps()));
+        fpsBox.getSelectionModel().select(Fps.fromValue(selectedPreset.fps()));
 
         keepSourceAudioCheck.setSelected(selectedPreset.keepSourceAudio());
         audioRow.setDisable(selectedPreset.keepSourceAudio());
@@ -939,7 +944,10 @@ public class Step2View implements StepView {
             keepSourceResCheck.isSelected(),
             safeInt(resWidthField, selectedPreset.resolutionWidth()),
             safeInt(resHeightField, selectedPreset.resolutionHeight()),
-            safeDouble(fpsField, selectedPreset.fps()),
+            Objects.requireNonNullElse(
+                fpsBox.getValue(),
+                Fps.fromValue(selectedPreset.fps())
+            ).getValue(),
             container,
             keepSourceAudioCheck.isSelected(),
             Objects.requireNonNullElse(
@@ -964,14 +972,6 @@ public class Step2View implements StepView {
     private int safeInt(TextField field, int fallback) {
         try {
             return Integer.parseInt(field.getText().trim());
-        } catch (NumberFormatException e) {
-            return fallback;
-        }
-    }
-
-    private double safeDouble(TextField field, double fallback) {
-        try {
-            return Double.parseDouble(field.getText().trim());
         } catch (NumberFormatException e) {
             return fallback;
         }
