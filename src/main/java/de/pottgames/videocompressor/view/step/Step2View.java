@@ -534,7 +534,7 @@ public class Step2View implements StepView {
             .add(
                 buildSettingRow(
                     "CRF",
-                    "Constrained Rate Factor (niedriger = bessere Qualität)",
+                    "Videoqualität (niedriger = besser)",
                     "",
                     crfBox
                 )
