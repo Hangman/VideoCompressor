@@ -7,45 +7,44 @@ import java.nio.file.Path;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * Generic utility class for opening a folder path in the native file explorer.
+ * Generic utility class for opening a file or folder path in the system's
+ * native handler.
+ *
+ * <p>For directories, this opens the system file explorer. For files, this
+ * opens the default application associated with the file type (e.g., video
+ * players for video files, text editors for text files, etc.).</p>
  *
  * <p>Supports all major operating systems via the Java {@code Desktop} API
  * with platform-specific CLI fallbacks ({@code xdg-open}, {@code open},
  * {@code explorer}). Execution is asynchronous to avoid blocking the UI.</p>
- *
- * <p>This class is intentionally path-agnostic so it can be reused to open
- * any directory, not just the export folder.</p>
  */
-public final class FolderOpener {
+public final class PathOpener {
 
     /** Prevents instantiation – this is a pure utility class. */
-    private FolderOpener() {
+    private PathOpener() {
         throw new UnsupportedOperationException("Utility class");
     }
 
     /**
-     * Opens the given folder path in the system's native file explorer.
+     * Opens the given path (file or directory) in the system's native handler.
      *
      * <p>This method runs asynchronously and does not block the caller.
      * It first attempts to use the Java {@link Desktop} API and falls back
      * to platform-specific CLI commands if that fails.</p>
      *
-     * @param path the directory path to open
-     * @return a {@link CompletableFuture} that completes when the folder
+     * @param path the file or directory path to open
+     * @return a {@link CompletableFuture} that completes when the path
      *         has been opened (or a failure has been logged)
      */
     public static CompletableFuture<Void> openAsync(Path path) {
         File file = path.toFile();
 
-        // Ensure the directory exists
-        if (!file.exists()) {
-            file.mkdirs();
-        }
-
         return CompletableFuture.runAsync(() -> {
             try {
-                if (Desktop.isDesktopSupported() &&
-                    Desktop.getDesktop().isSupported(Desktop.Action.OPEN)) {
+                if (
+                    Desktop.isDesktopSupported() &&
+                    Desktop.getDesktop().isSupported(Desktop.Action.OPEN)
+                ) {
                     Desktop.getDesktop().open(file);
                     return;
                 }
@@ -58,9 +57,10 @@ public final class FolderOpener {
                 openWithFallback(path);
             } catch (Exception e) {
                 System.err.println(
-                    "Failed to open folder: " +
-                    e.getMessage() +
-                    " | Path: " + path
+                    "Failed to open path: " +
+                        e.getMessage() +
+                        " | Path: " +
+                        path
                 );
             }
         });
@@ -76,14 +76,13 @@ public final class FolderOpener {
      *   <li>Windows — {@code explorer}</li>
      * </ul>
      *
-     * @param path the directory path to open
+     * @param path the file or directory path to open
      * @throws IOException          if the command cannot be executed or
      *                              returns a non-zero exit code
      * @throws InterruptedException if the process is interrupted while waiting
      */
     static void openWithFallback(Path path)
         throws IOException, InterruptedException {
-
         String os = System.getProperty("os.name").toLowerCase();
 
         ProcessBuilder pb;
@@ -92,6 +91,9 @@ public final class FolderOpener {
         } else if (os.contains("mac")) {
             pb = new ProcessBuilder("open", path.toString());
         } else if (os.contains("win")) {
+            // On Windows, explorer opens directories directly.
+            // For files, we need to use /select or just open the file.
+            // explorer <file> works for most file types.
             pb = new ProcessBuilder("explorer", path.toString());
         } else {
             throw new IOException("Unknown OS: " + os);

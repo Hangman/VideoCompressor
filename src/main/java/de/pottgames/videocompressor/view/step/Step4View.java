@@ -4,7 +4,7 @@ import atlantafx.base.theme.Styles;
 import de.pottgames.videocompressor.WizardState;
 import de.pottgames.videocompressor.engine.ExportPathResolver;
 import de.pottgames.videocompressor.engine.Ffprobe;
-import de.pottgames.videocompressor.engine.FolderOpener;
+import de.pottgames.videocompressor.engine.PathOpener;
 import de.pottgames.videocompressor.engine.ProbeInfo;
 import de.pottgames.videocompressor.engine.VideoJob;
 import de.pottgames.videocompressor.engine.VideoJobStatus;
@@ -20,6 +20,7 @@ import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
@@ -84,7 +85,7 @@ public class Step4View implements StepView {
         centerButton.setVisible(true);
         centerButton.setDisable(false);
         centerButton.setOnAction(_ ->
-            FolderOpener.openAsync(ExportPathResolver.getExportPath())
+            PathOpener.openAsync(ExportPathResolver.getExportPath())
         );
         nextButton.setVisible(false);
         nextButton.setDisable(true);
@@ -458,7 +459,11 @@ public class Step4View implements StepView {
         );
         HBox.setHgrow(panel, Priority.ALWAYS);
 
-        // Panel title
+        // Panel title row: label (left) + play button (right)
+        HBox titleRow = new HBox();
+        titleRow.setAlignment(Pos.CENTER_LEFT);
+        titleRow.setSpacing(8);
+
         Label titleLabel = new Label(title.toUpperCase());
         titleLabel.setStyle(
             Theme.TEXT_FILL_FG_SUBTLE_STYLE +
@@ -466,7 +471,24 @@ public class Step4View implements StepView {
                 "-fx-letter-spacing: 1.5;" +
                 "-fx-padding: 0 0 12 0;"
         );
-        panel.getChildren().add(titleLabel);
+
+        Button playButton = new Button("▶");
+        playButton.setStyle(
+            "-fx-background-color: transparent;" +
+                "-fx-text-fill: " +
+                Theme.CSS_FG +
+                ";" +
+                "-fx-font-size: 14px;" +
+                "-fx-cursor: hand;" +
+                "-fx-padding: 2 6;"
+        );
+        playButton.setOnAction(e -> {
+            PathOpener.openAsync(info.file().toPath());
+        });
+
+        titleRow.getChildren().addAll(titleLabel, new Pane(), playButton);
+        HBox.setHgrow((Pane) titleRow.getChildren().get(1), Priority.ALWAYS);
+        panel.getChildren().add(titleRow);
 
         // Divider under title
         Pane div = new Pane();
