@@ -111,6 +111,8 @@ public class Step2View implements StepView {
 
         // Preset selector dropdown
         HBox presetSelector = buildPresetSelector();
+        presetSelector.setMinHeight(70);
+        presetSelector.setAlignment(Pos.TOP_LEFT);
 
         // Tabbed detail section
         Node detailSection = buildDetailSection();
