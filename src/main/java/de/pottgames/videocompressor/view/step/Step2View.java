@@ -489,7 +489,7 @@ public class Step2View implements StepView {
         crfSlider.setShowTickLabels(true);
         crfSlider.setShowTickMarks(true);
         crfSlider.setMajorTickUnit(10);
-        crfSlider.setMinorTickCount(1);
+        crfSlider.setMinorTickCount(9);
         crfSlider.setBlockIncrement(1);
         crfSlider.setSnapToTicks(true);
         crfSlider.setStyle("-fx-pref-width: 300;");
