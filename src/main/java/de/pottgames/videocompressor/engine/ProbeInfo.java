@@ -9,7 +9,7 @@ public record ProbeInfo(
     File file,
     int resolutionWidth,
     int resolutionHeight,
-    int fps,
+    double fps,
     int bitrate,
     int audioBitrate,
     double duration,
@@ -25,7 +25,20 @@ public record ProbeInfo(
      */
     public String getResolutionFpsString() {
         String resolution = getAbbreviatedResolution();
-        return resolution + " @ " + fps;
+        return resolution + " @ " + formatFps(fps);
+    }
+
+    /**
+     * Formats an FPS value nicely: whole numbers without decimals,
+     * fractional values with up to 2 decimal places (trailing zeros trimmed).
+     */
+    public static String formatFps(double f) {
+        if (f == Math.floor(f) && !Double.isInfinite(f)) {
+            return String.valueOf((int) f);
+        }
+        return String.format("%.3f", f)
+            .replaceAll("0+$", "")
+            .replaceAll("\\.$", "");
     }
 
     /**

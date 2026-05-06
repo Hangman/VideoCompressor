@@ -105,12 +105,12 @@ public class Strategy {
         }
 
         // ── 1b) FPS: no increase (with film-rate tolerance) ─────────────
-        int sourceFps = sourceInfo.fps();
+        double sourceFps = sourceInfo.fps();
         if (sourceFps > 0) {
             // Allow small NTSC/film-rate rounding:
             //   23.976 → 24, 29.97 → 30, 59.94 → 60
             double effectiveSourceFps = roundFilmRate(sourceFps);
-            double effectiveTargetFps = roundFilmRate((int) fps);
+            double effectiveTargetFps = roundFilmRate(fps);
 
             if (fps > effectiveSourceFps) {
                 // Check if this is a harmless film-rate rounding
@@ -278,8 +278,9 @@ public class Strategy {
      * @param fps the integer FPS value from ffprobe
      * @return the "effective" FPS for comparison
      */
-    private static double roundFilmRate(int fps) {
-        return switch (fps) {
+    private static double roundFilmRate(double fps) {
+        int rounded = (int) Math.round(fps);
+        return switch (rounded) {
             case 23 -> 24.0;
             case 29 -> 30.0;
             case 59 -> 60.0;

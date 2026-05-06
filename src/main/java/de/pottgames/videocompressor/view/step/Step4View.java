@@ -532,7 +532,7 @@ public class Step4View implements StepView {
             .add(
                 buildPropertyRow(
                     "FPS",
-                    String.valueOf(info.fps()),
+                    ProbeInfo.formatFps(info.fps()),
                     info,
                     other,
                     "fps"

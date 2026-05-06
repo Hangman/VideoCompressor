@@ -121,17 +121,14 @@ public class Ffprobe {
                 : 0;
 
             // Extract FPS
-            int fps = 0;
+            double fps = 0;
             if (videoStream.has("r_frame_rate")) {
                 String frameRate = videoStream.get("r_frame_rate").asString();
                 if (frameRate.contains("/")) {
                     String[] parts = frameRate.split("/");
                     double numerator = Double.parseDouble(parts[0]);
                     double denominator = Double.parseDouble(parts[1]);
-                    fps =
-                        denominator != 0
-                            ? (int) Math.round(numerator / denominator)
-                            : 0;
+                    fps = denominator != 0 ? numerator / denominator : 0;
                 }
             }
 
