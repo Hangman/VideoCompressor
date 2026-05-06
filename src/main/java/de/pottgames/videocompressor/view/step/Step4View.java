@@ -659,7 +659,7 @@ public class Step4View implements StepView {
             case "duration":
                 thisNum = thisInfo.duration();
                 otherNum = other.duration();
-                changed = Math.abs(thisNum - otherNum) > 0.01;
+                changed = Math.abs(thisNum - otherNum) > 0.5;
                 break;
             default:
                 return null;
