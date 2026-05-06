@@ -172,14 +172,28 @@ public class Step3View implements StepView {
     /**
      * Reset all UI elements to their initial idle state.
      */
-    private void resetUI() {
+    private void resetUI(boolean printAsciiArt) {
         progressCounterLabel.setText("Bereit zum Starten");
         currentFileNameLabel.setText("");
         currentPassLabel.setVisible(false);
         currentPassLabel.setText("");
         progressBar.setVisible(false);
         progressBar.setProgress(0);
-        logArea.clear();
+        if (printAsciiArt) {
+            logArea.setText(
+                "================================================================\n" +
+                    " ▖▖▘ ▌      ▄▖                     ▗   ▄▖\n" +
+                    " ▌▌▌▛▌█▌▛▌  ▌ ▛▌▛▛▌▛▌▛▘█▌▛▘▛▘▛▌▛▘  ▜   ▛▌\n" +
+                    " ▚▘▌▙▌▙▖▙▌  ▙▖▙▌▌▌▌▙▌▌ ▙▖▄▌▄▌▙▌▌   ▟▖▗ █▌\n" +
+                    "                   ▌                     \n" +
+                    " ▖▖  ▄▖▄▖▖  ▖▄▖▄▖▄▖                      \n" +
+                    " ▚▘  ▙▖▙▖▛▖▞▌▙▌▙▖▌                       \n" +
+                    " ▌▌  ▌ ▌ ▌▝ ▌▌ ▙▖▙▌                      \n" +
+                    "================================================================\n"
+            );
+        } else {
+            logArea.clear();
+        }
     }
 
     // ─────────────────────────────────────────────────────────────────────
@@ -392,7 +406,7 @@ public class Step3View implements StepView {
         var centerButton = state.getCenterButton();
         var nextButton = state.getNextButton();
 
-        resetUI();
+        resetUI(true);
         centerButton.setText("Starte Bearbeitung");
         centerButton.setVisible(true);
         centerButton.setDisable(false);
@@ -439,6 +453,7 @@ public class Step3View implements StepView {
             // ── Start mode: user clicked "Starte Bearbeitung" ────────
             backButton.setVisible(false);
             isProcessing = true;
+            logArea.clear();
 
             // Prevent double-clicking
             centerButton.setDisable(true);
