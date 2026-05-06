@@ -18,6 +18,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
 
 /**
@@ -43,9 +44,10 @@ public class Step1View implements StepView {
         fileListView.setSelectionModel(null);
 
         dropLabel = new Label(
-            "Drag & drop video files here\nor click the button below to browse"
+            "Füge Videodateien per Drag & Drop hinzu\noder klicke unten auf die Schaltfläche,\num Dateien zu importieren"
         );
         dropLabel.setWrapText(true);
+        dropLabel.textAlignmentProperty().set(TextAlignment.CENTER);
 
         // Logo shown when no videos have been added yet
         Image logoImage = new Image(
