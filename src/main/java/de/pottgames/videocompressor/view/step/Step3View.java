@@ -267,16 +267,6 @@ public class Step3View implements StepView {
                     currentPassLabel.setVisible(true);
                     progressBar.setVisible(true);
                     progressBar.setProgress(0);
-                    appendLog(
-                        "[" +
-                            (index + 1) +
-                            "/" +
-                            total +
-                            "] Starte: " +
-                            sourceFile.getName() +
-                            " → " +
-                            outputFile.getName()
-                    );
                 });
             }
 
@@ -412,6 +402,24 @@ public class Step3View implements StepView {
 
         // Invalidate any pending callbacks from a previous run
         processingGeneration++;
+
+        // Show job summary in the gray info panel
+        var importedFiles = state.getImportedFiles();
+        var selectedPreset = state.getSelectedPreset();
+        if (!importedFiles.isEmpty()) {
+            currentFileNameLabel.setText(
+                importedFiles.size() +
+                    " Datei" +
+                    (importedFiles.size() > 1 ? "en" : "") +
+                    " zu bearbeiten"
+            );
+            if (selectedPreset != null) {
+                currentPassLabel.setText("Preset: " + selectedPreset.name());
+                currentPassLabel.setVisible(true);
+            }
+        } else {
+            currentFileNameLabel.setText("Keine Dateien importiert");
+        }
 
         centerButton.setOnAction(_ -> {
             // ── Cancel mode: user clicked the cancel button ──────────
