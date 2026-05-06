@@ -233,62 +233,57 @@ public record Preset(
             int crfMax = videoCodec.getCrfMax();
             if (crf < crfMin) {
                 errors.add(
-                    "CRF muss mindestens " + crfMin + " sein (ist " + crf + ")."
+                    I18n.get("preset.validate.crf_too_low", crfMin, crf)
                 );
             }
             if (crf > crfMax) {
                 errors.add(
-                    "CRF darf maximal " +
-                        crfMax +
-                        " sein für " +
-                        videoCodec.getHumanName() +
-                        " (ist " +
-                        crf +
-                        ")."
+                    I18n.get(
+                        "preset.validate.crf_too_high",
+                        crfMax,
+                        videoCodec.getHumanName(),
+                        crf
+                    )
                 );
             }
         }
         if (crf > 0 && crf <= 10) {
-            warnings.add(
-                "CRF " +
-                    crf +
-                    " bedeutet nahezu verlustfrei – sehr große Dateien."
-            );
+            warnings.add(I18n.get("preset.validate.crf_lossless", crf));
         }
         if (crf >= 35) {
-            warnings.add("CRF " + crf + " führt zu sehr geringer Qualität.");
+            warnings.add(I18n.get("preset.validate.crf_low_quality", crf));
         }
 
         // --- Auflösung ---
         if (!keepSourceResolution) {
             if (resolutionWidth <= 0 || resolutionHeight <= 0) {
                 errors.add(
-                    "Auflösung muss positiv sein (ist " +
-                        resolutionWidth +
-                        "x" +
-                        resolutionHeight +
-                        ")."
+                    I18n.get(
+                        "preset.validate.resolution_not_positive",
+                        resolutionWidth,
+                        resolutionHeight
+                    )
                 );
             } else {
                 // Gerade Werte erforderlich für die meisten Codecs
                 if (resolutionWidth % 2 != 0 || resolutionHeight % 2 != 0) {
                     errors.add(
-                        "Auflösung muss gerade Werte haben (ist " +
-                            resolutionWidth +
-                            "x" +
-                            resolutionHeight +
-                            ")."
+                        I18n.get(
+                            "preset.validate.resolution_not_even",
+                            resolutionWidth,
+                            resolutionHeight
+                        )
                     );
                 }
 
                 // Warnung: nicht durch 4 teilbar (suboptimal für viele Codecs)
                 if (resolutionWidth % 4 != 0 || resolutionHeight % 4 != 0) {
                     warnings.add(
-                        "Auflösung " +
-                            resolutionWidth +
-                            "x" +
-                            resolutionHeight +
-                            " ist nicht durch 4 teilbar – suboptimal für viele Codecs."
+                        I18n.get(
+                            "preset.validate.resolution_not_div4",
+                            resolutionWidth,
+                            resolutionHeight
+                        )
                     );
                 }
 
@@ -302,20 +297,20 @@ public record Preset(
                 // Extremwerte
                 if (resolutionWidth > 7680 || resolutionHeight > 4320) {
                     warnings.add(
-                        "Auflösung " +
-                            resolutionWidth +
-                            "x" +
-                            resolutionHeight +
-                            " ist sehr hoch – stelle Hardware-Kapazität sicher."
+                        I18n.get(
+                            "preset.validate.resolution_very_high",
+                            resolutionWidth,
+                            resolutionHeight
+                        )
                     );
                 }
                 if (resolutionWidth < 160 || resolutionHeight < 120) {
                     warnings.add(
-                        "Auflösung " +
-                            resolutionWidth +
-                            "x" +
-                            resolutionHeight +
-                            " ist sehr niedrig."
+                        I18n.get(
+                            "preset.validate.resolution_very_low",
+                            resolutionWidth,
+                            resolutionHeight
+                        )
                     );
                 }
             }
@@ -323,42 +318,42 @@ public record Preset(
 
         // --- FPS ---
         if (fps <= 0) {
-            errors.add("FPS muss größer als 0 sein (ist " + fps + ").");
+            errors.add(I18n.get("preset.validate.fps_not_positive", fps));
         } else if (fps > 120) {
-            warnings.add(
-                "FPS " +
-                    fps +
-                    " ist sehr hoch – meist unnötig für Video-Kompression."
-            );
+            warnings.add(I18n.get("preset.validate.fps_very_high", fps));
         }
 
         // --- Audio-Bitrate ---
         if (!keepSourceAudio) {
             if (audioBitrate <= 0) {
                 errors.add(
-                    "Audio-Bitrate muss größer als 0 sein (ist " +
-                        audioBitrate +
-                        ")."
+                    I18n.get(
+                        "preset.validate.audio_bitrate_not_positive",
+                        audioBitrate
+                    )
                 );
             } else if (audioBitrate > 9999) {
                 errors.add(
-                    "Audio-Bitrate " +
-                        audioBitrate +
-                        " kbit/s ist unüblich hoch."
+                    I18n.get(
+                        "preset.validate.audio_bitrate_too_high",
+                        audioBitrate
+                    )
                 );
             } else {
                 if (!mixToMono && audioBitrate < 64) {
                     warnings.add(
-                        "Audio-Bitrate " +
-                            audioBitrate +
-                            " kbit/s ist für Stereo sehr niedrig."
+                        I18n.get(
+                            "preset.validate.audio_bitrate_stereo_low",
+                            audioBitrate
+                        )
                     );
                 }
                 if (mixToMono && audioBitrate < 32) {
                     warnings.add(
-                        "Audio-Bitrate " +
-                            audioBitrate +
-                            " kbit/s ist für Mono sehr niedrig."
+                        I18n.get(
+                            "preset.validate.audio_bitrate_mono_low",
+                            audioBitrate
+                        )
                     );
                 }
             }
@@ -369,16 +364,17 @@ public record Preset(
 
         // --- Tune-Codec-Kompatibilität ---
         if (tune != Tune.NONE && videoCodec == VideoCodec.VP9) {
-            warnings.add("Tune-Option wird von VP9 nicht unterstützt.");
+            warnings.add(I18n.get("preset.validate.tune_unsupported_vp9"));
         }
         if (tune != Tune.NONE && videoCodec == VideoCodec.AV1) {
-            warnings.add("Tune-Option wird von SVT-AV1 nicht unterstützt.");
+            warnings.add(I18n.get("preset.validate.tune_unsupported_av1"));
         }
         if (videoCodec == VideoCodec.H265 && !tune.isSupportedByH265()) {
             errors.add(
-                "Tune \"" +
-                    tune.getHumanName() +
-                    "\" wird von H.265 (libx265) nicht unterstützt. Wähle \"Keine\" oder einen kompatibeln Tune."
+                I18n.get(
+                    "preset.validate.tune_unsupported_h265",
+                    tune.getHumanName()
+                )
             );
         }
 
@@ -389,15 +385,16 @@ public record Preset(
             (audioCodec == AudioCodec.OPUS || audioCodec == AudioCodec.VORBIS)
         ) {
             warnings.add(
-                "Lautstärken-Normalisierung funktioniert mit " +
-                    audioCodec.getHumanName() +
-                    " möglicherweise nicht zuverlässig."
+                I18n.get(
+                    "preset.validate.normalize_unreliable",
+                    audioCodec.getHumanName()
+                )
             );
         }
 
         // --- Fast-Start nur bei MP4 sinnvoll ---
         if (fastStart && container != VideoContainer.MP4) {
-            warnings.add("Fast-Start (moov atom) ist nur bei MP4 sinnvoll.");
+            warnings.add(I18n.get("preset.validate.faststart_mp4_only"));
         }
 
         boolean valid = errors.isEmpty();
@@ -428,15 +425,13 @@ public record Preset(
             int diffH = Math.abs(h - std.h);
             if (diffW <= 2 && diffH <= 2 && (diffW > 0 || diffH > 0)) {
                 warnings.add(
-                    "Auflösung " +
-                        w +
-                        "x" +
-                        h +
-                        " ähnelt " +
-                        std.w +
-                        "x" +
-                        std.h +
-                        " – Tippfehler?"
+                    I18n.get(
+                        "preset.validate.resolution_typo",
+                        w,
+                        h,
+                        std.w,
+                        std.h
+                    )
                 );
                 break;
             }
@@ -454,8 +449,10 @@ public record Preset(
         if (container == VideoContainer.MP4) {
             if (videoCodec == VideoCodec.VP9 || videoCodec == VideoCodec.AV1) {
                 warnings.add(
-                    videoCodec.getHumanName() +
-                        " in MP4 hat eingeschränkte Player-Unterstützung. MKV oder WebM bevorzugen."
+                    I18n.get(
+                        "preset.validate.codec_mp4_limited",
+                        videoCodec.getHumanName()
+                    )
                 );
             }
             // AAC ist der Standard-Audio-Codec für MP4; Opus/Vorbis sind problematisch
@@ -465,8 +462,10 @@ public record Preset(
                     audioCodec == AudioCodec.VORBIS
                 ) {
                     warnings.add(
-                        audioCodec.getHumanName() +
-                            " in MP4 wird von vielen Playern nicht unterstützt. AAC bevorzugen."
+                        I18n.get(
+                            "preset.validate.audio_mp4_unsupported",
+                            audioCodec.getHumanName()
+                        )
                     );
                 }
             }
@@ -475,9 +474,7 @@ public record Preset(
         // WebM: AAC ist nicht gut unterstützt
         if (container == VideoContainer.WEBM && !keepSourceAudio) {
             if (audioCodec == AudioCodec.AAC) {
-                warnings.add(
-                    "AAC in WebM wird nicht gut unterstützt. Opus oder Vorbis bevorzugen."
-                );
+                warnings.add(I18n.get("preset.validate.aac_webm_unsupported"));
             }
         }
 
@@ -487,8 +484,10 @@ public record Preset(
                 videoCodec == VideoCodec.H264 || videoCodec == VideoCodec.H265
             ) {
                 warnings.add(
-                    videoCodec.getHumanName() +
-                        " in WebM ist nicht Standard. VP9 oder AV1 bevorzugen."
+                    I18n.get(
+                        "preset.validate.codec_webm_nonstandard",
+                        videoCodec.getHumanName()
+                    )
                 );
             }
         }
