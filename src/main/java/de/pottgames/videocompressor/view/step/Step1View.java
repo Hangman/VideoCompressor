@@ -3,7 +3,6 @@ package de.pottgames.videocompressor.view.step;
 import de.pottgames.videocompressor.WizardState;
 import de.pottgames.videocompressor.engine.Engine;
 import de.pottgames.videocompressor.view.StepView;
-import de.pottgames.videocompressor.view.Theme;
 import de.pottgames.videocompressor.view.cell.FileListCell;
 import java.io.File;
 import java.util.List;
