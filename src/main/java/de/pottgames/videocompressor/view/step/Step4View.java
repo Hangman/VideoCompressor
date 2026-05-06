@@ -310,7 +310,11 @@ public class Step4View implements StepView {
         Label nameLabel = new Label();
         String srcName = src != null ? src.file().getName() : "Unbekannt";
         String outName = out != null ? out.file().getName() : "Unbekannt";
-        nameLabel.setText(srcName + "  →  " + outName);
+        if (srcName.equals(outName)) {
+            nameLabel.setText(srcName);
+        } else {
+            nameLabel.setText(srcName + "  →  " + outName);
+        }
         nameLabel.setStyle(Theme.TEXT_FILL_FG_STYLE + Theme.FONT_LARGE_STYLE);
 
         HBox.setHgrow(nameLabel, Priority.ALWAYS);
