@@ -1,5 +1,6 @@
 package de.pottgames.videocompressor.engine;
 
+import de.pottgames.videocompressor.i18n.I18n;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -171,12 +172,12 @@ public class Ffmpeg {
             consumer.accept(
                 new FfmpegErrorEvent(
                     System.currentTimeMillis(),
-                    "FFmpeg executable not found at: " + ffmpegPath,
+                    I18n.get("ffmpeg.executable_not_found", ffmpegPath),
                     null
                 )
             );
             throw new FfmpegException(
-                "FFmpeg executable not found at: " + ffmpegPath
+                I18n.get("ffmpeg.executable_not_found", ffmpegPath)
             );
         }
 
@@ -245,14 +246,14 @@ public class Ffmpeg {
 
             return exitCode;
         } catch (IOException e) {
-            String msg = "Failed to start FFmpeg process: " + e.getMessage();
+            String msg = I18n.get("ffmpeg.failed_to_start", e.getMessage());
             consumer.accept(
                 new FfmpegErrorEvent(System.currentTimeMillis(), msg, e)
             );
             throw new FfmpegException(msg, e);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            String msg = "FFmpeg process was interrupted";
+            String msg = I18n.get("ffmpeg.interrupted");
             consumer.accept(
                 new FfmpegErrorEvent(System.currentTimeMillis(), msg, e)
             );
