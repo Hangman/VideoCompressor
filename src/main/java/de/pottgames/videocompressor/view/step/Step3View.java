@@ -172,28 +172,14 @@ public class Step3View implements StepView {
     /**
      * Reset all UI elements to their initial idle state.
      */
-    private void resetUI(boolean printAsciiArt) {
+    private void resetUI() {
         progressCounterLabel.setText("Bereit zum Starten");
         currentFileNameLabel.setText("");
         currentPassLabel.setVisible(false);
         currentPassLabel.setText("");
         progressBar.setVisible(false);
         progressBar.setProgress(0);
-        if (printAsciiArt) {
-            logArea.setText(
-                "================================================================\n" +
-                    " ▖▖▘ ▌      ▄▖                     ▗   ▄▖\n" +
-                    " ▌▌▌▛▌█▌▛▌  ▌ ▛▌▛▛▌▛▌▛▘█▌▛▘▛▘▛▌▛▘  ▜   ▛▌\n" +
-                    " ▚▘▌▙▌▙▖▙▌  ▙▖▙▌▌▌▌▙▌▌ ▙▖▄▌▄▌▙▌▌   ▟▖▗ █▌\n" +
-                    "                   ▌                     \n" +
-                    " ▖▖  ▄▖▄▖▖  ▖▄▖▄▖▄▖                      \n" +
-                    " ▚▘  ▙▖▙▖▛▖▞▌▙▌▙▖▌                       \n" +
-                    " ▌▌  ▌ ▌ ▌▝ ▌▌ ▙▖▙▌                      \n" +
-                    "================================================================\n"
-            );
-        } else {
-            logArea.clear();
-        }
+        logArea.clear();
     }
 
     // ─────────────────────────────────────────────────────────────────────
@@ -406,7 +392,7 @@ public class Step3View implements StepView {
         var centerButton = state.getCenterButton();
         var nextButton = state.getNextButton();
 
-        resetUI(true);
+        resetUI();
         centerButton.setText("Starte Bearbeitung");
         centerButton.setVisible(true);
         centerButton.setDisable(false);
