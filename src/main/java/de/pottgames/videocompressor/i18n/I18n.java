@@ -30,8 +30,7 @@ public final class I18n {
 
     // Static initializer – load bundle on first access
     static {
-        //setLocale(Locale.getDefault()); // TODO: uncomment after testing
-        setLocale(Locale.CHINESE); // temporarily for testing, remove after testing
+        setLocale(Locale.getDefault());
     }
 
     /**
