@@ -3,6 +3,7 @@ package de.pottgames.videocompressor.view.step;
 import de.pottgames.videocompressor.WizardState;
 import de.pottgames.videocompressor.engine.Engine;
 import de.pottgames.videocompressor.view.StepView;
+import de.pottgames.videocompressor.view.Theme;
 import de.pottgames.videocompressor.view.cell.FileListCell;
 import java.io.File;
 import java.util.List;
@@ -30,10 +31,8 @@ public class Step1View implements StepView {
     private final ObservableList<File> files =
         FXCollections.observableArrayList();
     private final ListView<File> fileListView;
-    private final Label dropLabel;
     private final StackPane root;
     private Button nextButton;
-    private ImageView logoView;
     private VBox placeholderVBox;
     private boolean activated = false;
 
@@ -43,7 +42,7 @@ public class Step1View implements StepView {
         fileListView.setCellFactory(_ -> new FileListCell());
         fileListView.setSelectionModel(null);
 
-        dropLabel = new Label(
+        var dropLabel = new Label(
             "Füge Videodateien per Drag & Drop hinzu\noder klicke unten auf die Schaltfläche,\num Dateien zu importieren"
         );
         dropLabel.setWrapText(true);
@@ -53,7 +52,7 @@ public class Step1View implements StepView {
         Image logoImage = new Image(
             getClass().getResourceAsStream("/logo_466.png")
         );
-        logoView = new ImageView(logoImage);
+        var logoView = new ImageView(logoImage);
         logoView.setFitHeight(300);
         logoView.setFitWidth(300);
         logoView.setPreserveRatio(true);
