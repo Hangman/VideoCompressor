@@ -2,7 +2,6 @@ package de.pottgames.videocompressor.engine;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -24,10 +23,8 @@ public class JobProcessor {
     private static final ExecutorService EXECUTOR =
         Executors.newVirtualThreadPerTaskExecutor();
 
-    /**
-     * Base directory for all exported video files.
-     */
-    private static final Path EXPORT_PATH = Paths.get("export");
+    // Export path is dynamically resolved via ExportPathResolver
+    // (user video folder → user home → temp → current dir fallback)
 
     /**
      * Set to true when the user cancels processing.
@@ -292,7 +289,7 @@ public class JobProcessor {
         Path outputDir =
             outputFile.getParentFile() != null
                 ? outputFile.getParentFile().toPath()
-                : EXPORT_PATH;
+                : ExportPathResolver.getExportPath();
         List<String> cmd = FfmpegCommandBuilder.buildCommand(
             probeInfo,
             preset,
@@ -490,6 +487,6 @@ public class JobProcessor {
         String ext = editingPreset.container().getExtension();
         String outputName = "vc_" + baseName + "." + ext;
 
-        return EXPORT_PATH.resolve(outputName).toFile();
+        return ExportPathResolver.getExportPath().resolve(outputName).toFile();
     }
 }
