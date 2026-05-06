@@ -186,6 +186,16 @@ public class Engine {
                 );
             }
 
+            // Sort: default preset first, then alphabetically by name
+            Preset defaultPreset = Preset.getDefault();
+            loadedPresets.sort((a, b) -> {
+                boolean aIsDefault = a.equals(defaultPreset);
+                boolean bIsDefault = b.equals(defaultPreset);
+                if (aIsDefault && !bIsDefault) return -1;
+                if (!aIsDefault && bIsDefault) return 1;
+                return a.name().compareTo(b.name());
+            });
+
             if (loadedPresets.isEmpty()) {
                 System.out.println(
                     "[Engine] Warning: No preset files found. Using empty list."

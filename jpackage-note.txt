@@ -1,0 +1,3 @@
+mvn clean javafx:jlink
+
+jpackage --name "VideoCompressor" --type exe --runtime-image target/VideoCompressor --module de.pottgames.videocompressor/de.pottgames.videocompressor.App --icon src/main/resources/logo_64.ico --win-dir-chooser --win-menu --win-shortcut --dest dist

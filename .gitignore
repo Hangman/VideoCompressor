@@ -1,5 +1,6 @@
 # FFMPEG
 ffmpeg-master-latest-linux64-lgpl/
+ffmpeg-master-latest-linux64-gpl/
 ffmpeg/
 
 # Test Files
@@ -15,6 +16,9 @@ release.properties
 dependency-reduced-pom.xml
 buildNumber.properties
 .mvn/timing.properties
+
+# jpackage
+dist/
 
 # IDE - IntelliJ
 .idea/
