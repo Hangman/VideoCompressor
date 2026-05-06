@@ -9,6 +9,7 @@ import de.pottgames.videocompressor.engine.ProbeInfo;
 import de.pottgames.videocompressor.engine.VideoJob;
 import de.pottgames.videocompressor.engine.VideoJobStatus;
 import de.pottgames.videocompressor.engine.VideoJobStatus.Status;
+import de.pottgames.videocompressor.i18n.I18n;
 import de.pottgames.videocompressor.view.StepView;
 import de.pottgames.videocompressor.view.Theme;
 import java.io.File;
@@ -81,7 +82,7 @@ public class Step4View implements StepView {
         var nextButton = state.getNextButton();
 
         backButton.setVisible(true);
-        centerButton.setText("Export-Ordner öffnen");
+        centerButton.setText(I18n.get("step4.open_export_folder"));
         centerButton.setVisible(true);
         centerButton.setDisable(false);
         centerButton.setOnAction(_ ->
@@ -91,14 +92,12 @@ public class Step4View implements StepView {
         nextButton.setDisable(true);
 
         resultsContent.getChildren().clear();
-        summaryLabel.setText("Ergebnisse werden geladen...");
+        summaryLabel.setText(I18n.get("step4.loading"));
 
         List<VideoJob> jobs = state.getPreparedJobs();
         if (jobs == null || jobs.isEmpty()) {
             Platform.runLater(() -> {
-                summaryLabel.setText(
-                    "Keine Ergebnisse verfügbar. Bitte bearbeiten Sie zuerst Videos in Schritt 3."
-                );
+                summaryLabel.setText(I18n.get("step4.no_results"));
             });
             return;
         }
@@ -134,11 +133,11 @@ public class Step4View implements StepView {
 
                     Platform.runLater(() -> {
                         summaryLabel.setText(
-                            "Ergebnisse werden geladen... (" +
-                                (index + 1) +
-                                "/" +
-                                totalFiles +
-                                ")"
+                            I18n.get(
+                                "step4.loading_progress",
+                                index + 1,
+                                totalFiles
+                            )
                         );
                     });
 
@@ -179,17 +178,18 @@ public class Step4View implements StepView {
 
         int numJobs = jobs.size();
         summaryLabel.setText(
-            "Zusammenfassung: " +
-                numJobs +
-                (numJobs > 1 ? " Dateien" : " Datei") +
+            I18n.get("step4.summary") +
+                " " +
+                I18n.get("step4.file_count", numJobs) +
                 "  ·  " +
                 successCount +
-                " erfolgreich" +
+                " " +
+                I18n.get("step4.successful") +
                 (failedCount > 0
-                    ? "  ·  " + failedCount + " fehlgeschlagen"
+                    ? "  ·  " + failedCount + " " + I18n.get("step4.failed")
                     : "") +
                 (skippedCount > 0
-                    ? "  ·  " + skippedCount + " übersprungen"
+                    ? "  ·  " + skippedCount + " " + I18n.get("step4.skipped")
                     : "")
         );
 
@@ -206,9 +206,7 @@ public class Step4View implements StepView {
             ProbeInfo sourceInfo = job.sourceInfo();
             ProbeInfo outputInfo = outputProbes.get(i);
             String outputProbeError =
-                outputInfo == null
-                    ? "Konnte Ausgabedatei nicht analysieren"
-                    : null;
+                outputInfo == null ? I18n.get("step4.probe_error") : null;
 
             VBox card = createComparisonCard(
                 i + 1,
@@ -261,7 +259,7 @@ public class Step4View implements StepView {
 
             if (sourceInfo != null) {
                 VBox sourcePanel = buildSinglePanel(
-                    "Quelldatei",
+                    I18n.get("step4.source_file_panel"),
                     sourceInfo,
                     null
                 );
@@ -316,8 +314,10 @@ public class Step4View implements StepView {
 
         // File names
         Label nameLabel = new Label();
-        String srcName = src != null ? src.file().getName() : "Unbekannt";
-        String outName = out != null ? out.file().getName() : "Unbekannt";
+        String srcName =
+            src != null ? src.file().getName() : I18n.get("step4.unknown");
+        String outName =
+            out != null ? out.file().getName() : I18n.get("step4.unknown");
         if (srcName.equals(outName)) {
             nameLabel.setText(srcName);
         } else {
@@ -330,7 +330,7 @@ public class Step4View implements StepView {
         // Status pill
         Label statusPill = new Label();
         if (status.getStatus() == Status.COMPLETED) {
-            statusPill.setText("●  Fertig");
+            statusPill.setText(I18n.get("step4.status_completed"));
             statusPill.setStyle(
                 Theme.TEXT_FILL_SUCCESS_STYLE +
                     "-fx-background-color: rgba(80,250,123,0.1);" +
@@ -339,7 +339,7 @@ public class Step4View implements StepView {
                     Theme.FONT_SMALL_STYLE
             );
         } else if (status.getStatus() == Status.FAILED) {
-            statusPill.setText("●  Fehlgeschlagen");
+            statusPill.setText(I18n.get("step4.status_failed"));
             statusPill.setStyle(
                 Theme.TEXT_FILL_HEX_RED_STYLE +
                     "-fx-background-color: rgba(255,85,85,0.1);" +
@@ -348,7 +348,7 @@ public class Step4View implements StepView {
                     Theme.FONT_SMALL_STYLE
             );
         } else {
-            statusPill.setText("●  Übersprungen");
+            statusPill.setText(I18n.get("step4.status_skipped"));
             statusPill.setStyle(
                 Theme.TEXT_FILL_HEX_ORANGE_STYLE +
                     "-fx-background-color: rgba(255,184,108,0.1);" +
@@ -378,17 +378,17 @@ public class Step4View implements StepView {
             bgColor = "rgba(80,250,123,0.08)";
             textColor = Theme.CSS_SUCCESS;
             icon = "↓";
-            label = "Ersparnis";
+            label = I18n.get("step4.savings");
         } else if (pct < -0.5) {
             bgColor = "rgba(255,85,85,0.08)";
             textColor = Theme.HEX_DANGER;
             icon = "↑";
-            label = "Größer";
+            label = I18n.get("step4.larger");
         } else {
             bgColor = "rgba(98,114,164,0.08)";
             textColor = Theme.CSS_FG_SUBTLE;
             icon = "—";
-            label = "Unverändert";
+            label = I18n.get("step4.unchanged");
         }
 
         banner.setStyle(
@@ -406,7 +406,7 @@ public class Step4View implements StepView {
 
         // Main percentage
         Label pctLabel = new Label(
-            String.format("%s: %.1f%%", label, Math.abs(pct))
+            String.format(I18n.getLocale(), "%s: %.1f%%", label, Math.abs(pct))
         );
         pctLabel.setStyle(
             "-fx-text-fill: " + textColor + "; " + Theme.FONT_LARGE_STYLE
@@ -432,8 +432,16 @@ public class Step4View implements StepView {
         HBox panels = new HBox(12);
         panels.setAlignment(Pos.CENTER_LEFT);
 
-        VBox leftPanel = buildSinglePanel("Quelle", source, output);
-        VBox rightPanel = buildSinglePanel("Ausgabe", output, source);
+        VBox leftPanel = buildSinglePanel(
+            I18n.get("step4.source_panel"),
+            source,
+            output
+        );
+        VBox rightPanel = buildSinglePanel(
+            I18n.get("step4.output_panel"),
+            output,
+            source
+        );
 
         panels.getChildren().addAll(leftPanel, rightPanel);
         HBox.setHgrow(leftPanel, Priority.ALWAYS);
@@ -451,7 +459,7 @@ public class Step4View implements StepView {
         panel.setPadding(new Insets(16));
         panel.setStyle(
             "-fx-background-color: " +
-                (title.equals("Quelle")
+                (title.equals(I18n.get("step4.source_panel"))
                     ? Theme.HEX_PANEL_SOURCE
                     : Theme.HEX_PANEL_OUTPUT) +
                 ";" +
@@ -509,7 +517,7 @@ public class Step4View implements StepView {
             .getChildren()
             .add(
                 buildHeroProperty(
-                    "Auflösung",
+                    I18n.get("step4.property.resolution"),
                     info.getAbbreviatedResolution(),
                     Theme.CSS_FG
                 )
@@ -524,14 +532,22 @@ public class Step4View implements StepView {
         // ── Codec ──────────────────────────────────────────────────────
         props
             .getChildren()
-            .add(buildPropertyRow("Codec", info.codec(), info, other, "codec"));
+            .add(
+                buildPropertyRow(
+                    I18n.get("step4.property.codec"),
+                    info.codec(),
+                    info,
+                    other,
+                    "codec"
+                )
+            );
 
         // ── FPS ────────────────────────────────────────────────────────
         props
             .getChildren()
             .add(
                 buildPropertyRow(
-                    "FPS",
+                    I18n.get("step4.property.fps"),
                     ProbeInfo.formatFps(info.fps()),
                     info,
                     other,
@@ -544,7 +560,7 @@ public class Step4View implements StepView {
             .getChildren()
             .add(
                 buildPropertyRow(
-                    "Bitrate",
+                    I18n.get("step4.property.bitrate"),
                     formatBitrate(info.bitrate()),
                     info,
                     other,
@@ -557,7 +573,7 @@ public class Step4View implements StepView {
             .getChildren()
             .add(
                 buildPropertyRow(
-                    "Audio-Bitrate",
+                    I18n.get("step4.property.audio_bitrate"),
                     formatBitrate(info.audioBitrate()),
                     info,
                     other,
@@ -570,7 +586,7 @@ public class Step4View implements StepView {
             .getChildren()
             .add(
                 buildPropertyRow(
-                    "Dauer",
+                    I18n.get("step4.property.duration"),
                     info.formatDuration(),
                     info,
                     other,
@@ -588,7 +604,7 @@ public class Step4View implements StepView {
             .getChildren()
             .add(
                 buildHeroProperty(
-                    "Dateigröße",
+                    I18n.get("step4.property.file_size"),
                     formatFileSize(info.fileSize()),
                     Theme.CSS_FG
                 )
@@ -727,23 +743,35 @@ public class Step4View implements StepView {
     private String formatBitrate(int bps) {
         if (bps <= 0) return "—";
         if (bps >= 1_000_000) {
-            return String.format("%.1f Mbps", bps / 1_000_000.0);
+            return String.format(
+                I18n.getLocale(),
+                "%.1f Mbps",
+                bps / 1_000_000.0
+            );
         } else if (bps >= 1_000) {
-            return String.format("%d kbps", bps / 1_000);
+            return String.format(I18n.getLocale(), "%d kbps", bps / 1_000);
         }
-        return String.format("%d bps", bps);
+        return String.format(I18n.getLocale(), "%d bps", bps);
     }
 
     private String formatFileSize(long bytes) {
         if (bytes <= 0) return "—";
         if (bytes >= 1_073_741_824) {
-            return String.format("%.2f GB", bytes / 1_073_741_824.0);
+            return String.format(
+                I18n.getLocale(),
+                "%.2f GB",
+                bytes / 1_073_741_824.0
+            );
         } else if (bytes >= 1_048_576) {
-            return String.format("%.1f MB", bytes / 1_048_576.0);
+            return String.format(
+                I18n.getLocale(),
+                "%.1f MB",
+                bytes / 1_048_576.0
+            );
         } else if (bytes >= 1_024) {
-            return String.format("%d kB", bytes / 1024);
+            return String.format(I18n.getLocale(), "%d kB", bytes / 1024);
         }
-        return String.format("%d B", bytes);
+        return String.format(I18n.getLocale(), "%d B", bytes);
     }
 
     @Override

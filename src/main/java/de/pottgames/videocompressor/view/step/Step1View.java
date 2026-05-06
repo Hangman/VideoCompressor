@@ -2,6 +2,7 @@ package de.pottgames.videocompressor.view.step;
 
 import de.pottgames.videocompressor.WizardState;
 import de.pottgames.videocompressor.engine.Engine;
+import de.pottgames.videocompressor.i18n.I18n;
 import de.pottgames.videocompressor.view.StepView;
 import de.pottgames.videocompressor.view.cell.FileListCell;
 import java.io.File;
@@ -41,9 +42,7 @@ public class Step1View implements StepView {
         fileListView.setCellFactory(_ -> new FileListCell());
         fileListView.setSelectionModel(null);
 
-        var dropLabel = new Label(
-            "Füge Videodateien per Drag & Drop hinzu\noder klicke unten auf die Schaltfläche,\num Dateien zu importieren"
-        );
+        var dropLabel = new Label(I18n.get("step1.drop_label"));
         dropLabel.setWrapText(true);
         dropLabel.textAlignmentProperty().set(TextAlignment.CENTER);
 
@@ -92,15 +91,18 @@ public class Step1View implements StepView {
 
     private void showFileChooser() {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Select Video Files");
+        fileChooser.setTitle(I18n.get("step1.file_chooser_title"));
         fileChooser
             .getExtensionFilters()
             .addAll(
                 new FileChooser.ExtensionFilter(
-                    "Video Files",
+                    I18n.get("step1.filter_video"),
                     Engine.SUPPORTED_EXTENSION_PATTERNS.toArray(new String[0])
                 ),
-                new FileChooser.ExtensionFilter("All Files", "*.*")
+                new FileChooser.ExtensionFilter(
+                    I18n.get("step1.filter_all"),
+                    "*.*"
+                )
             );
         List<File> selectedFiles = fileChooser.showOpenMultipleDialog(
             fileListView.getScene().getWindow()
@@ -155,7 +157,7 @@ public class Step1View implements StepView {
         var nextButton = state.getNextButton();
 
         activated = true;
-        centerButton.setText("Videos importieren");
+        centerButton.setText(I18n.get("step1.import_button"));
         centerButton.setVisible(true);
         centerButton.setDisable(false);
         centerButton.setOnAction(_ -> showFileChooser());

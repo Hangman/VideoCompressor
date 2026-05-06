@@ -6,6 +6,7 @@ package de.pottgames.videocompressor;
 import atlantafx.base.theme.Dracula;
 import atlantafx.base.theme.Styles;
 import de.pottgames.videocompressor.engine.Engine;
+import de.pottgames.videocompressor.i18n.I18n;
 import de.pottgames.videocompressor.view.StepView;
 import de.pottgames.videocompressor.view.Theme;
 import de.pottgames.videocompressor.view.step.Step1View;
@@ -92,9 +93,15 @@ public class App extends Application {
         root.setPadding(new Insets(0));
 
         // Create navigation buttons
-        Button backButton = createNavigationButton("← Zurück", false);
+        Button backButton = createNavigationButton(
+            I18n.get("button.back"),
+            false
+        );
         Button centerButton = createNavigationButton("", false);
-        Button nextButton = createNavigationButton("Weiter →", true);
+        Button nextButton = createNavigationButton(
+            I18n.get("button.next"),
+            true
+        );
 
         // Create WizardState
         state = new WizardState(backButton, centerButton, nextButton);
@@ -110,7 +117,7 @@ public class App extends Application {
         switchStep(null, false);
 
         Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
-        stage.setTitle("VideoCompressor");
+        stage.setTitle(I18n.get("app.title"));
         stage
             .getIcons()
             .add(new Image(App.class.getResourceAsStream("/logo_128.png")));
@@ -209,7 +216,7 @@ public class App extends Application {
         StackPane step1NumberPane = new StackPane(step1Ring, step1Number);
         step1NumberPane.setAlignment(Pos.CENTER);
 
-        step1Label = new Label("Import");
+        step1Label = new Label(I18n.get("stepper.import"));
 
         VBox step1Box = new VBox(8, step1NumberPane, step1Label);
         step1Box.setAlignment(Pos.CENTER);
@@ -228,7 +235,7 @@ public class App extends Application {
         StackPane step2NumberPane = new StackPane(step2Ring, step2Number);
         step2NumberPane.setAlignment(Pos.CENTER);
 
-        step2Label = new Label("Einstellungen");
+        step2Label = new Label(I18n.get("stepper.settings"));
 
         VBox step2Box = new VBox(8, step2NumberPane, step2Label);
         step2Box.setAlignment(Pos.CENTER);
@@ -247,7 +254,7 @@ public class App extends Application {
         StackPane step3NumberPane = new StackPane(step3Ring, step3Number);
         step3NumberPane.setAlignment(Pos.CENTER);
 
-        step3Label = new Label("Export");
+        step3Label = new Label(I18n.get("stepper.export"));
 
         VBox step3Box = new VBox(8, step3NumberPane, step3Label);
         step3Box.setAlignment(Pos.CENTER);
@@ -266,7 +273,7 @@ public class App extends Application {
         StackPane step4NumberPane = new StackPane(step4Ring, step4Number);
         step4NumberPane.setAlignment(Pos.CENTER);
 
-        step4Label = new Label("Ergebnis");
+        step4Label = new Label(I18n.get("stepper.result"));
 
         VBox step4Box = new VBox(8, step4NumberPane, step4Label);
         step4Box.setAlignment(Pos.CENTER);

@@ -1,5 +1,6 @@
 package de.pottgames.videocompressor.engine;
 
+import de.pottgames.videocompressor.i18n.I18n;
 import java.io.File;
 
 /**
@@ -36,7 +37,7 @@ public record ProbeInfo(
         if (f == Math.floor(f) && !Double.isInfinite(f)) {
             return String.valueOf((int) f);
         }
-        return String.format("%.3f", f)
+        return String.format(I18n.getLocale(), "%.3f", f)
             .replaceAll("0+$", "")
             .replaceAll("\\.$", "");
     }
@@ -83,11 +84,17 @@ public record ProbeInfo(
         long seconds = totalSeconds % 60;
 
         if (hours > 0) {
-            return String.format("%d:%02d:%02d", hours, minutes, seconds);
+            return String.format(
+                I18n.getLocale(),
+                "%d:%02d:%02d",
+                hours,
+                minutes,
+                seconds
+            );
         } else if (minutes > 0) {
-            return String.format("%d:%02d", minutes, seconds);
+            return String.format(I18n.getLocale(), "%d:%02d", minutes, seconds);
         } else {
-            return String.format("%.1fs", duration);
+            return String.format(I18n.getLocale(), "%.1fs", duration);
         }
     }
 }

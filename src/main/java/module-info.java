@@ -18,6 +18,7 @@ module de.pottgames.videocompressor {
     // Export packages for application use
     exports de.pottgames.videocompressor;
     exports de.pottgames.videocompressor.engine;
+    exports de.pottgames.videocompressor.i18n;
     exports de.pottgames.videocompressor.view;
     exports de.pottgames.videocompressor.view.cell;
     exports de.pottgames.videocompressor.view.step;

@@ -3,6 +3,7 @@ package de.pottgames.videocompressor.view.cell;
 import atlantafx.base.theme.Styles;
 import de.pottgames.videocompressor.engine.Ffprobe;
 import de.pottgames.videocompressor.engine.ProbeInfo;
+import de.pottgames.videocompressor.i18n.I18n;
 import de.pottgames.videocompressor.view.Theme;
 import java.io.File;
 import java.util.concurrent.CompletableFuture;
@@ -218,11 +219,19 @@ public class FileListCell extends ListCell<File> {
     private void updateProbeInfoLabels(ProbeInfo info) {
         resolutionFpsText.setText(info.getResolutionFpsString());
         bitrateText.setText(
-            String.format("%.0f kbit/s", info.bitrate() / 1000.0)
+            String.format(
+                I18n.getLocale(),
+                "%.0f kbit/s",
+                info.bitrate() / 1000.0
+            )
         );
         codecText.setText(info.codec());
         fileSizeText.setText(
-            String.format("%.1f MiB", info.fileSize() / (1024.0 * 1024.0))
+            String.format(
+                I18n.getLocale(),
+                "%.1f MiB",
+                info.fileSize() / (1024.0 * 1024.0)
+            )
         );
         durationText.setText(info.formatDuration());
     }

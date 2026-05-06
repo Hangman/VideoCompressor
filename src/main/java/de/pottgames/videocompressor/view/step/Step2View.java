@@ -10,6 +10,7 @@ import de.pottgames.videocompressor.engine.Preset.ValidationResult;
 import de.pottgames.videocompressor.engine.Tune;
 import de.pottgames.videocompressor.engine.VideoCodec;
 import de.pottgames.videocompressor.engine.VideoContainer;
+import de.pottgames.videocompressor.i18n.I18n;
 import de.pottgames.videocompressor.view.StepView;
 import de.pottgames.videocompressor.view.Theme;
 import java.util.List;
@@ -323,9 +324,7 @@ public class Step2View implements StepView {
             );
             int wCount = result.warnings().size();
             validationLabel.setText(
-                wCount +
-                    " Hin" +
-                    (wCount == 1 ? "weis" : "weise") +
+                I18n.get("step2.validation.warning_count", wCount) +
                     " — " +
                     String.join(" ", result.warnings())
             );
@@ -349,13 +348,13 @@ public class Step2View implements StepView {
             );
             int eCount = result.errors().size();
             int wCount = result.warnings().size();
-            String msg = eCount + " Fehler";
+            String msg = I18n.get("step2.validation.error_count", eCount);
             if (wCount > 0) {
                 msg +=
-                    " und " +
-                    wCount +
-                    " Hin" +
-                    (wCount == 1 ? "weis" : "weise");
+                    " " +
+                    I18n.get("step2.validation.and") +
+                    " " +
+                    I18n.get("step2.validation.warning_count", wCount);
             }
             validationLabel.setText(
                 msg + " — " + String.join(" ", result.errors())
@@ -379,7 +378,7 @@ public class Step2View implements StepView {
         HBox selector = new HBox(10);
         selector.setAlignment(Pos.CENTER_LEFT);
 
-        Label label = new Label("Preset:");
+        Label label = new Label(I18n.get("step2.preset_label"));
         label.setStyle(Theme.TEXT_FILL_FG_STYLE + Theme.FONT_LARGE_STYLE);
 
         presetChoiceBox = new ChoiceBox<>(presets);
@@ -448,9 +447,9 @@ public class Step2View implements StepView {
         ScrollPane audioScroll = wrapInScrollPane(audioContent);
         ScrollPane outputScroll = wrapInScrollPane(outputContent);
 
-        Tab videoTab = new Tab("Video", videoScroll);
-        Tab audioTab = new Tab("Audio", audioScroll);
-        Tab outputTab = new Tab("Output", outputScroll);
+        Tab videoTab = new Tab(I18n.get("step2.tab.video"), videoScroll);
+        Tab audioTab = new Tab(I18n.get("step2.tab.audio"), audioScroll);
+        Tab outputTab = new Tab(I18n.get("step2.tab.output"), outputScroll);
 
         TabPane tabPane = new TabPane(videoTab, audioTab, outputTab);
         tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
@@ -482,7 +481,14 @@ public class Step2View implements StepView {
         );
         group
             .getChildren()
-            .add(buildSettingRow("Codec", "Video-Codec", "libx264", codecBox));
+            .add(
+                buildSettingRow(
+                    I18n.get("step2.video.codec.label"),
+                    I18n.get("step2.video.codec.desc"),
+                    "libx264",
+                    codecBox
+                )
+            );
 
         // CRF slider
         crfSlider = new Slider(0, 63, 23);
@@ -533,8 +539,8 @@ public class Step2View implements StepView {
             .getChildren()
             .add(
                 buildSettingRow(
-                    "CRF",
-                    "Videoqualität (niedriger = besser)",
+                    I18n.get("step2.video.crf.label"),
+                    I18n.get("step2.video.crf.desc"),
                     "",
                     crfBox
                 )
@@ -563,8 +569,8 @@ public class Step2View implements StepView {
         resBox.getChildren().addAll(resWidthField, xLabel, resHeightField);
 
         resolutionRow = (HBox) buildSettingRow(
-            "Auflösung",
-            "Breite \u00D7 Höhe in Pixel",
+            I18n.get("step2.video.resolution.label"),
+            I18n.get("step2.video.resolution.desc"),
             "1920 \u00D7 1080",
             resBox
         );
@@ -573,10 +579,10 @@ public class Step2View implements StepView {
         keepSourceResCheck = new CheckBox();
         HBox keepResCheckBox = buildCheckBoxRow(
             keepSourceResCheck,
-            "Quellaufösung beibehalten"
+            I18n.get("step2.video.keep_source_res.checkbox")
         );
         keepSourceResCheck.setTooltip(
-            new Tooltip("Nutzt die ursprüngliche Auflösung des Quellvideos")
+            new Tooltip(I18n.get("step2.video.keep_source_res.tooltip"))
         );
 
         // Hide resolution row when keepSourceResolution is checked
@@ -590,8 +596,8 @@ public class Step2View implements StepView {
             .getChildren()
             .addAll(
                 buildSettingRow(
-                    "Quellauflösung",
-                    "Behält die ursprüngliche Auflösung bei",
+                    I18n.get("step2.video.keep_source_res.label"),
+                    I18n.get("step2.video.keep_source_res.desc"),
                     "",
                     keepResCheckBox
                 ),
@@ -605,7 +611,12 @@ public class Step2View implements StepView {
         group
             .getChildren()
             .add(
-                buildSettingRow("FPS", "Bilder pro Sekunde", "30 fps", fpsBox)
+                buildSettingRow(
+                    I18n.get("step2.video.fps.label"),
+                    I18n.get("step2.video.fps.desc"),
+                    "30 fps",
+                    fpsBox
+                )
             );
 
         // FFmpeg preset
@@ -616,8 +627,8 @@ public class Step2View implements StepView {
             .getChildren()
             .add(
                 buildSettingRow(
-                    "FFmpeg Preset",
-                    "Geschwindigkeit vs. Qualität Trade-off",
+                    I18n.get("step2.video.ffmpeg_preset.label"),
+                    I18n.get("step2.video.ffmpeg_preset.desc"),
                     "medium",
                     ffmpegPresetBox
                 )
@@ -631,8 +642,8 @@ public class Step2View implements StepView {
             .getChildren()
             .add(
                 buildSettingRow(
-                    "Tune",
-                    "Optimierung für bestimmten Inhaltstyp",
+                    I18n.get("step2.video.tune.label"),
+                    I18n.get("step2.video.tune.desc"),
                     "none",
                     tuneBox
                 )
@@ -653,10 +664,10 @@ public class Step2View implements StepView {
         keepSourceAudioCheck = new CheckBox();
         HBox keepAudioCheckBox = buildCheckBoxRow(
             keepSourceAudioCheck,
-            "Quellaudio beibehalten"
+            I18n.get("step2.audio.keep_source.checkbox")
         );
         keepSourceAudioCheck.setTooltip(
-            new Tooltip("Nutzt das ursprüngliche Audio des Quellvideos")
+            new Tooltip(I18n.get("step2.audio.keep_source.tooltip"))
         );
 
         // Container for audio settings that can be disabled
@@ -670,8 +681,8 @@ public class Step2View implements StepView {
             .getChildren()
             .add(
                 buildSettingRow(
-                    "Audio Codec",
-                    "Audio-Codec",
+                    I18n.get("step2.audio.codec.label"),
+                    I18n.get("step2.audio.codec.desc"),
                     "AAC",
                     audioCodecBox
                 )
@@ -683,8 +694,8 @@ public class Step2View implements StepView {
             .getChildren()
             .add(
                 buildSettingRow(
-                    "Audio Bitrate",
-                    "in kbps",
+                    I18n.get("step2.audio.bitrate.label"),
+                    I18n.get("step2.audio.bitrate.desc"),
                     "192",
                     audioBitrateField
                 )
@@ -694,15 +705,15 @@ public class Step2View implements StepView {
         audioNormalizeCheck = new CheckBox();
         HBox checkBox = buildCheckBoxRow(
             audioNormalizeCheck,
-            "Lautstärke normalisieren (EBU R128)"
+            I18n.get("step2.audio.normalize.checkbox")
         );
 
         audioRow
             .getChildren()
             .add(
                 buildSettingRow(
-                    "Normalisierung",
-                    "Pegelausgleich über die gesamte Datei",
+                    I18n.get("step2.audio.normalize.label"),
+                    I18n.get("step2.audio.normalize.desc"),
                     "",
                     checkBox
                 )
@@ -712,15 +723,15 @@ public class Step2View implements StepView {
         mixToMonoCheck = new CheckBox();
         HBox monoBox = buildCheckBoxRow(
             mixToMonoCheck,
-            "Zu MONO heruntermischen"
+            I18n.get("step2.audio.mono.checkbox")
         );
 
         audioRow
             .getChildren()
             .add(
                 buildSettingRow(
-                    "Mono-Mixdown",
-                    "Audiokanäle zu einem MONO-Kanal mischen",
+                    I18n.get("step2.audio.mono.label"),
+                    I18n.get("step2.audio.mono.desc"),
                     "",
                     monoBox
                 )
@@ -737,8 +748,8 @@ public class Step2View implements StepView {
             .getChildren()
             .addAll(
                 buildSettingRow(
-                    "Quellaudio",
-                    "Behält das ursprüngliche Audio bei",
+                    I18n.get("step2.audio.keep_source.label"),
+                    I18n.get("step2.audio.keep_source.desc"),
                     "",
                     keepAudioCheckBox
                 ),
@@ -764,8 +775,8 @@ public class Step2View implements StepView {
             .getChildren()
             .add(
                 buildSettingRow(
-                    "Container",
-                    "Ausgabe-Containerformat",
+                    I18n.get("step2.output.container.label"),
+                    I18n.get("step2.output.container.desc"),
                     "mp4",
                     containerBox
                 )
@@ -778,15 +789,15 @@ public class Step2View implements StepView {
         fastStartCheck = new CheckBox();
         HBox checkBox = buildCheckBoxRow(
             fastStartCheck,
-            "Fast Start (Moov atom voranstellen)"
+            I18n.get("step2.output.fast_start.checkbox")
         );
 
         fastStartRow
             .getChildren()
             .add(
                 buildSettingRow(
-                    "Fast Start",
-                    "Ermöglicht sofortiges Streaming-Playback",
+                    I18n.get("step2.output.fast_start.label"),
+                    I18n.get("step2.output.fast_start.desc"),
                     "",
                     checkBox
                 )
@@ -1027,7 +1038,7 @@ public class Step2View implements StepView {
             // If the modified preset differs from the original base preset,
             // rename it to "Custom" so the user sees that in the choicebox
             if (!modified.equals(basePreset)) {
-                modified = modified.withName("Custom");
+                modified = modified.withName(I18n.get("step2.custom_preset"));
             }
         }
         state.setSelectedPreset(modified);

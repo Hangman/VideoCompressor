@@ -6,6 +6,7 @@ import de.pottgames.videocompressor.engine.JobProcessor;
 import de.pottgames.videocompressor.engine.JobProgressListener;
 import de.pottgames.videocompressor.engine.VideoJob;
 import de.pottgames.videocompressor.engine.VideoJobStatus;
+import de.pottgames.videocompressor.i18n.I18n;
 import de.pottgames.videocompressor.view.StepView;
 import de.pottgames.videocompressor.view.Theme;
 import java.io.File;
@@ -80,7 +81,7 @@ public class Step3View implements StepView {
         root.setAlignment(Pos.CENTER_LEFT);
 
         // ── Progress Counter ─────────────────────────────────────────────
-        progressCounterLabel = new Label("Bereit zum Starten");
+        progressCounterLabel = new Label(I18n.get("step3.ready"));
         progressCounterLabel.getStyleClass().addAll(Styles.TITLE_4);
 
         // ── Current Video Info Panel ─────────────────────────────────────
@@ -157,7 +158,11 @@ public class Step3View implements StepView {
      */
     private void updateProgressCounter(int current, int total) {
         progressCounterLabel.setText(
-            "Bearbeite Video " + current + " von " + total
+            I18n.get(
+                "step3.processing_counter",
+                String.valueOf(current),
+                String.valueOf(total)
+            )
         );
     }
 
@@ -173,7 +178,7 @@ public class Step3View implements StepView {
      * Reset all UI elements to their initial idle state.
      */
     private void resetUI() {
-        progressCounterLabel.setText("Bereit zum Starten");
+        progressCounterLabel.setText(I18n.get("step3.ready"));
         currentFileNameLabel.setText("");
         currentPassLabel.setVisible(false);
         currentPassLabel.setText("");
@@ -204,7 +209,7 @@ public class Step3View implements StepView {
                     updateProgressCounter(0, totalFiles);
                     progressBar.setVisible(true);
                     progressBar.setProgress(0);
-                    appendLog("Vorbereitung gestartet...");
+                    appendLog(I18n.get("step3.preparation_started"));
                 });
             }
 
@@ -231,7 +236,7 @@ public class Step3View implements StepView {
                     if (processingGeneration != generation) return;
                     updateProgressCounter(jobCount, jobCount);
                     currentFileNameLabel.setText(
-                        "Vorbereitung abgeschlossen (" + jobCount + " Job(s))"
+                        I18n.get("step3.preparation_completed", jobCount)
                     );
                     currentPassLabel.setVisible(false);
                     progressBar.setProgress(1.0);
@@ -242,8 +247,10 @@ public class Step3View implements StepView {
             public void onPreparationFailed(String errorMessage) {
                 Platform.runLater(() -> {
                     if (processingGeneration != generation) return;
-                    appendLog("Vorbereitung fehlgeschlagen: " + errorMessage);
-                    currentFileNameLabel.setText("Fehler");
+                    appendLog(
+                        I18n.get("step3.preparation_failed", errorMessage)
+                    );
+                    currentFileNameLabel.setText(I18n.get("step3.error"));
                     currentPassLabel.setVisible(false);
                     progressBar.setVisible(false);
                 });
@@ -262,7 +269,7 @@ public class Step3View implements StepView {
                     if (processingGeneration != generation) return;
                     updateProgressCounter(index + 1, total);
                     currentFileNameLabel.setText(sourceFile.getName());
-                    currentPassLabel.setText("Encodierung läuft...");
+                    currentPassLabel.setText(I18n.get("step3.encoding"));
                     currentPassLabel.setStyle(Theme.TEXT_FILL_FG_SUBTLE_STYLE);
                     currentPassLabel.setVisible(true);
                     progressBar.setVisible(true);
@@ -283,7 +290,11 @@ public class Step3View implements StepView {
                         formatDuration(status.getCurrentTimeMs()) +
                         " / " +
                         formatDuration(status.getTotalDurationMs());
-                    String fpsInfo = String.format("%.1f fps", status.getFps());
+                    String fpsInfo = String.format(
+                        I18n.getLocale(),
+                        "%.1f fps",
+                        status.getFps()
+                    );
                     String bitrateInfo = formatBitrate(status.getBitrateBps());
                     String sizeInfo = formatFileSize(
                         status.getOutputSizeBytes()
@@ -309,21 +320,27 @@ public class Step3View implements StepView {
                     int jobNumber = index + 1;
                     String fileName = currentFileNameLabel.getText();
                     if (status.isSuccess()) {
-                        appendLog("[" + jobNumber + "] ✓ Fertig: " + fileName);
-                        currentPassLabel.setText("✓ Abgeschlossen");
+                        appendLog(
+                            I18n.get(
+                                "step3.job_finished_success",
+                                jobNumber,
+                                fileName
+                            )
+                        );
+                        currentPassLabel.setText(I18n.get("step3.completed"));
                         currentPassLabel.setStyle(
                             Theme.TEXT_FILL_SUCCESS_STYLE
                         );
                     } else {
                         appendLog(
-                            "[" +
-                                jobNumber +
-                                "] ✗ Fehler: " +
-                                fileName +
-                                " – " +
+                            I18n.get(
+                                "step3.job_finished_error",
+                                jobNumber,
+                                fileName,
                                 status.getErrorMessage()
+                            )
                         );
-                        currentPassLabel.setText("✗ Fehlgeschlagen");
+                        currentPassLabel.setText(I18n.get("step3.failed"));
                         currentPassLabel.setStyle(Theme.TEXT_FILL_DANGER_STYLE);
                     }
                 });
@@ -338,26 +355,27 @@ public class Step3View implements StepView {
                     if (processingGeneration != generation) return;
                     int total = totalCompleted + totalFailed;
                     updateProgressCounter(total, total);
-                    currentFileNameLabel.setText("Alle Jobs abgeschlossen");
+                    currentFileNameLabel.setText(
+                        I18n.get("step3.all_jobs_done")
+                    );
                     currentPassLabel.setText(
-                        totalCompleted +
-                            " erfolgreich, " +
-                            totalFailed +
-                            " fehlgeschlagen"
+                        I18n.get("step3.summary", totalCompleted, totalFailed)
                     );
                     currentPassLabel.setVisible(true);
                     currentPassLabel.setStyle(Theme.TEXT_FILL_FG_STYLE);
                     progressBar.setProgress(1.0);
 
-                    appendLog("════════════════════════════════════════");
+                    appendLog(I18n.get("step3.log_separator"));
                     appendLog(
-                        "Ergebnis: " +
-                            totalCompleted +
-                            " erfolgreich, " +
-                            totalFailed +
-                            " fehlgeschlagen"
+                        I18n.get("step3.result") +
+                            " " +
+                            I18n.get(
+                                "step3.summary",
+                                totalCompleted,
+                                totalFailed
+                            )
                     );
-                    appendLog("════════════════════════════════════════");
+                    appendLog(I18n.get("step3.log_separator"));
 
                     // Show the "Weiter" button to navigate to Step 4
                     nextButton.setVisible(true);
@@ -393,7 +411,7 @@ public class Step3View implements StepView {
         var nextButton = state.getNextButton();
 
         resetUI();
-        centerButton.setText("Starte Bearbeitung");
+        centerButton.setText(I18n.get("step3.start_button"));
         centerButton.setVisible(true);
         centerButton.setDisable(false);
         clearButtonBorder(centerButton);
@@ -408,17 +426,16 @@ public class Step3View implements StepView {
         var selectedPreset = state.getSelectedPreset();
         if (!importedFiles.isEmpty()) {
             currentFileNameLabel.setText(
-                importedFiles.size() +
-                    " Datei" +
-                    (importedFiles.size() > 1 ? "en" : "") +
-                    " zu bearbeiten"
+                I18n.get("step3.files_to_process", importedFiles.size())
             );
             if (selectedPreset != null) {
-                currentPassLabel.setText("Preset: " + selectedPreset.name());
+                currentPassLabel.setText(
+                    I18n.get("step3.preset_label") + selectedPreset.name()
+                );
                 currentPassLabel.setVisible(true);
             }
         } else {
-            currentFileNameLabel.setText("Keine Dateien importiert");
+            currentFileNameLabel.setText(I18n.get("step3.no_files"));
         }
 
         centerButton.setOnAction(_ -> {
@@ -429,7 +446,7 @@ public class Step3View implements StepView {
                 if (cancelTimer != null) cancelTimer.cancel(false);
 
                 centerButton.setDisable(true);
-                centerButton.setText("Wird abgebrochen...");
+                centerButton.setText(I18n.get("step3.cancelling"));
                 clearButtonBorder(centerButton);
 
                 jobProcessor.cancel();
@@ -443,7 +460,7 @@ public class Step3View implements StepView {
 
             // Prevent double-clicking
             centerButton.setDisable(true);
-            centerButton.setText("Bearbeitung läuft...");
+            centerButton.setText(I18n.get("step3.processing_button"));
 
             // Schedule cancel button activation after 2 seconds
             cancelTimer = cancelTimerExecutor.schedule(
@@ -452,7 +469,9 @@ public class Step3View implements StepView {
                         if (isProcessing) {
                             isInCancelMode = true;
                             centerButton.setDisable(false);
-                            centerButton.setText("Abbrechen");
+                            centerButton.setText(
+                                I18n.get("step3.cancel_button")
+                            );
                             setButtonBorder(centerButton, Theme.CSS_WARNING);
                         }
                     }),
@@ -467,18 +486,18 @@ public class Step3View implements StepView {
             if (files.isEmpty()) {
                 isProcessing = false;
                 if (cancelTimer != null) cancelTimer.cancel(false);
-                appendLog("FEHLER: Keine Dateien importiert!");
+                appendLog(I18n.get("step3.error_no_files"));
                 centerButton.setDisable(false);
-                centerButton.setText("Starte Bearbeitung");
+                centerButton.setText(I18n.get("step3.start_button"));
                 return;
             }
 
             if (preset == null) {
                 isProcessing = false;
                 if (cancelTimer != null) cancelTimer.cancel(false);
-                appendLog("FEHLER: Kein Preset ausgewählt!");
+                appendLog(I18n.get("step3.error_no_preset"));
                 centerButton.setDisable(false);
-                centerButton.setText("Starte Bearbeitung");
+                centerButton.setText(I18n.get("step3.start_button"));
                 return;
             }
 
@@ -497,9 +516,7 @@ public class Step3View implements StepView {
                         if (processingGeneration != gen) return;
                         preparedJobs = jobs;
                         appendLog(
-                            "Vorbereitung abgeschlossen. " +
-                                jobs.size() +
-                                " Job(s) bereit. Starte Encodierung..."
+                            I18n.get("step3.preparation_log", jobs.size())
                         );
                         startEncoding(
                             preparedJobs,
@@ -517,14 +534,12 @@ public class Step3View implements StepView {
                         if (cancelTimer != null) cancelTimer.cancel(false);
                         String msg = ex.getMessage();
                         if (msg != null && msg.contains("abgebrochen")) {
-                            appendLog(
-                                "Bearbeitung wurde vom Benutzer abgebrochen."
-                            );
+                            appendLog(I18n.get("step3.cancelled"));
                         } else {
-                            appendLog("Fehler: " + msg);
+                            appendLog(I18n.get("step3.error_prefix") + msg);
                         }
                         centerButton.setDisable(false);
-                        centerButton.setText("Starte Bearbeitung");
+                        centerButton.setText(I18n.get("step3.start_button"));
                         clearButtonBorder(centerButton);
                     });
                     return null;
@@ -592,11 +607,17 @@ public class Step3View implements StepView {
         long seconds = totalSeconds % 60;
 
         if (hours > 0) {
-            return String.format("%d:%02d:%02d", hours, minutes, seconds);
+            return String.format(
+                I18n.getLocale(),
+                "%d:%02d:%02d",
+                hours,
+                minutes,
+                seconds
+            );
         } else if (minutes > 0) {
-            return String.format("%d:%02d", minutes, seconds);
+            return String.format(I18n.getLocale(), "%d:%02d", minutes, seconds);
         } else {
-            return String.format("%ds", seconds);
+            return String.format(I18n.getLocale(), "%ds", seconds);
         }
     }
 
@@ -605,11 +626,15 @@ public class Step3View implements StepView {
      */
     private String formatBitrate(long bps) {
         if (bps >= 1_000_000) {
-            return String.format("%.1f Mbps", bps / 1_000_000.0);
+            return String.format(
+                I18n.getLocale(),
+                "%.1f Mbps",
+                bps / 1_000_000.0
+            );
         } else if (bps >= 1_000) {
-            return String.format("%.0f kbps", bps / 1_000.0);
+            return String.format(I18n.getLocale(), "%.0f kbps", bps / 1_000.0);
         }
-        return String.format("%d bps", bps);
+        return String.format(I18n.getLocale(), "%d bps", bps);
     }
 
     /**
@@ -617,13 +642,21 @@ public class Step3View implements StepView {
      */
     private String formatFileSize(long bytes) {
         if (bytes >= 1_073_741_824) {
-            return String.format("%.1f GB", bytes / 1_073_741_824.0);
+            return String.format(
+                I18n.getLocale(),
+                "%.1f GB",
+                bytes / 1_073_741_824.0
+            );
         } else if (bytes >= 1_048_576) {
-            return String.format("%.1f MB", bytes / 1_048_576.0);
+            return String.format(
+                I18n.getLocale(),
+                "%.1f MB",
+                bytes / 1_048_576.0
+            );
         } else if (bytes >= 1_024) {
-            return String.format("%.0f kB", bytes / 1_024.0);
+            return String.format(I18n.getLocale(), "%.0f kB", bytes / 1_024.0);
         }
-        return String.format("%d B", bytes);
+        return String.format(I18n.getLocale(), "%d B", bytes);
     }
 
     @Override

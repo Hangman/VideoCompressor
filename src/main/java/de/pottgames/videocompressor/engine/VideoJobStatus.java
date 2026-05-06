@@ -1,5 +1,7 @@
 package de.pottgames.videocompressor.engine;
 
+import de.pottgames.videocompressor.i18n.I18n;
+
 /**
  * Status information for ffmpeg processing jobs.
  * Stores data that can be read during ffmpeg execution.
@@ -166,7 +168,7 @@ public class VideoJobStatus {
             "status=" +
             status +
             ", progress=" +
-            String.format("%.1f%%", progressPercent) +
+            String.format(I18n.getLocale(), "%.1f%%", progressPercent) +
             ", currentTime=" +
             currentTimeMs +
             "ms/" +

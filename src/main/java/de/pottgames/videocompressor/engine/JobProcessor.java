@@ -1,5 +1,6 @@
 package de.pottgames.videocompressor.engine;
 
+import de.pottgames.videocompressor.i18n.I18n;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -61,17 +62,17 @@ public class JobProcessor {
     ) {
         if (sourceFiles == null || sourceFiles.isEmpty()) {
             return CompletableFuture.failedFuture(
-                new IllegalArgumentException("Keine Quelldateien angegeben")
+                new IllegalArgumentException(I18n.get("job.no_source_files"))
             );
         }
         if (preset == null) {
             return CompletableFuture.failedFuture(
-                new IllegalArgumentException("Kein Preset ausgewählt")
+                new IllegalArgumentException(I18n.get("job.no_preset_selected"))
             );
         }
         if (listener == null) {
             return CompletableFuture.failedFuture(
-                new IllegalArgumentException("Listener darf nicht null sein")
+                new IllegalArgumentException(I18n.get("job.listener_null"))
             );
         }
 
@@ -86,13 +87,13 @@ public class JobProcessor {
                     for (int i = 0; i < total; i++) {
                         // Check cancellation between files
                         if (isCancelled) {
-                            listener.onLog("--- Abbruch durch Benutzer ---");
+                            listener.onLog(I18n.get("job.cancelled_log"));
                             listener.onCancelled();
                             Ffprobe.cancel();
                             Ffmpeg.resetCancelled();
                             isCancelled = false;
                             throw new RuntimeException(
-                                "Verarbeitung wurde vom Benutzer abgebrochen"
+                                I18n.get("job.cancelled")
                             );
                         }
 
@@ -105,19 +106,19 @@ public class JobProcessor {
                             current,
                             total,
                             fileName,
-                            "Analysiere Videodatei..."
+                            I18n.get("job.analyzing_video")
                         );
                         ProbeInfo probeInfo = Ffprobe.probe(file);
 
                         // Check cancellation after probe (probe can be slow)
                         if (isCancelled) {
-                            listener.onLog("--- Abbruch durch Benutzer ---");
+                            listener.onLog(I18n.get("job.cancelled_log"));
                             listener.onCancelled();
                             Ffprobe.cancel();
                             Ffmpeg.resetCancelled();
                             isCancelled = false;
                             throw new RuntimeException(
-                                "Verarbeitung wurde vom Benutzer abgebrochen"
+                                I18n.get("job.cancelled")
                             );
                         }
 
@@ -126,7 +127,7 @@ public class JobProcessor {
                             current,
                             total,
                             fileName,
-                            "Berechne finales Preset..."
+                            I18n.get("job.computing_preset")
                         );
                         Preset editingPreset = Strategy.calcEditingPreset(
                             probeInfo,
@@ -154,9 +155,11 @@ public class JobProcessor {
                     listener.onPreparationCompleted(jobs.size());
                     return jobs;
                 } catch (Exception e) {
-                    String errorMsg =
-                        "Fehler bei der Vorbereitung: " + e.getMessage();
-                    listener.onLog("FEHLER: " + errorMsg);
+                    String errorMsg = I18n.get(
+                        "job.preparation_error",
+                        e.getMessage()
+                    );
+                    listener.onLog(I18n.get("job.error_log_prefix", errorMsg));
                     listener.onPreparationFailed(errorMsg);
                     throw new RuntimeException(errorMsg, e);
                 }
@@ -196,12 +199,12 @@ public class JobProcessor {
     ) {
         if (jobs == null || jobs.isEmpty()) {
             return CompletableFuture.failedFuture(
-                new IllegalArgumentException("Keine Jobs zum Ausfuehren")
+                new IllegalArgumentException(I18n.get("job.no_jobs"))
             );
         }
         if (listener == null) {
             return CompletableFuture.failedFuture(
-                new IllegalArgumentException("Listener darf nicht null sein")
+                new IllegalArgumentException(I18n.get("job.listener_null"))
             );
         }
 
@@ -211,14 +214,12 @@ public class JobProcessor {
                 int completed = 0;
                 int failed = 0;
 
-                listener.onLog(
-                    "--- Verarbeitung gestartet (" + total + " Job(s)) ---"
-                );
+                listener.onLog(I18n.get("job.processing_started", total));
 
                 for (int i = 0; i < total; i++) {
                     // Check cancellation between jobs
                     if (isCancelled) {
-                        listener.onLog("--- Abbruch durch Benutzer ---");
+                        listener.onLog(I18n.get("job.cancelled_log"));
                         listener.onCancelled();
                         Ffmpeg.cancel();
                         Ffmpeg.resetCancelled();
@@ -274,13 +275,11 @@ public class JobProcessor {
         // Delete existing output file to prevent FFmpeg from getting stuck
         if (outputFile.exists()) {
             listener.onLog(
-                "  [Info] Ausgabedatei existiert bereits und wird gelöscht: " +
-                    outputFile.getName()
+                I18n.get("job.output_exists_deleting", outputFile.getName())
             );
             if (!outputFile.delete()) {
                 listener.onLog(
-                    "  [Warnung] Konnte existierende Ausgabedatei nicht löschen: " +
-                        outputFile.getName()
+                    I18n.get("job.output_delete_failed", outputFile.getName())
                 );
             }
         }
@@ -343,21 +342,22 @@ public class JobProcessor {
                             log.level() == FfmpegLogEvent.LogLevel.ERROR
                         ) {
                             listener.onLog(
-                                "  [FFmpeg " +
-                                    log.level() +
-                                    "] " +
+                                I18n.get(
+                                    "job.ffmpeg_log_prefix",
+                                    log.level(),
                                     log.message()
+                                )
                             );
                         }
                     }
                     case FfmpegCompleteEvent complete -> {
                         long duration = complete.durationMs();
                         listener.onLog(
-                            "  [FFmpeg] Beendet (Exit-Code: " +
-                                complete.exitCode() +
-                                ", Dauer: " +
-                                duration +
-                                "ms)"
+                            I18n.get(
+                                "job.ffmpeg_finished",
+                                complete.exitCode(),
+                                duration
+                            )
                         );
 
                         if (complete.isSuccess()) {
@@ -370,7 +370,7 @@ public class JobProcessor {
                             // Log FFmpeg stderr output for debugging
                             List<String> stderr = complete.stderrLines();
                             if (stderr != null && !stderr.isEmpty()) {
-                                listener.onLog("  [FFmpeg stderr]");
+                                listener.onLog(I18n.get("job.ffmpeg_stderr"));
                                 // Show last 20 lines to avoid flooding the log
                                 int start = Math.max(0, stderr.size() - 20);
                                 for (int i = start; i < stderr.size(); i++) {
@@ -381,14 +381,18 @@ public class JobProcessor {
                                     stderr.size() - 1
                                 );
                                 status.setErrorMessage(
-                                    "FFmpeg Exit-Code: " +
-                                        complete.exitCode() +
-                                        " - " +
+                                    I18n.get(
+                                        "job.ffmpeg_exit_code",
+                                        complete.exitCode(),
                                         lastError
+                                    )
                                 );
                             } else {
                                 status.setErrorMessage(
-                                    "FFmpeg Exit-Code: " + complete.exitCode()
+                                    I18n.get(
+                                        "job.ffmpeg_exit_code_short",
+                                        complete.exitCode()
+                                    )
                                 );
                             }
                         }
@@ -399,7 +403,9 @@ public class JobProcessor {
                     case FfmpegErrorEvent error -> {
                         status.setStatus(VideoJobStatus.Status.FAILED);
                         status.setErrorMessage(error.message());
-                        listener.onLog("  [FEHLER] " + error.message());
+                        listener.onLog(
+                            I18n.get("job.error_prefix", error.message())
+                        );
                         listener.onJobFinished(index, status);
                     }
                 }
@@ -415,20 +421,27 @@ public class JobProcessor {
             status.setStatus(VideoJobStatus.Status.FAILED);
             status.setErrorMessage(e.getMessage());
             listener.onLog(
-                "[" + (index + 1) + "/" + total + "] FEHLER: " + e.getMessage()
+                I18n.get(
+                    "job.error_log_suffix",
+                    index + 1,
+                    total,
+                    e.getMessage()
+                )
             );
             listener.onJobFinished(index, status);
             return JobResult.FAILURE;
         } catch (Exception e) {
             status.setStatus(VideoJobStatus.Status.FAILED);
-            status.setErrorMessage("Unerwarteter Fehler: " + e.getMessage());
+            status.setErrorMessage(
+                I18n.get("job.unexpected_error", e.getMessage())
+            );
             listener.onLog(
-                "[" +
-                    (index + 1) +
-                    "/" +
-                    total +
-                    "] UNERWARTET: " +
+                I18n.get(
+                    "job.unexpected_log_suffix",
+                    index + 1,
+                    total,
                     e.getMessage()
+                )
             );
             listener.onJobFinished(index, status);
             return JobResult.FAILURE;

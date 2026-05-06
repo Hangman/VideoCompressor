@@ -1,5 +1,6 @@
 package de.pottgames.videocompressor.engine;
 
+import de.pottgames.videocompressor.i18n.I18n;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -130,9 +131,25 @@ public record Preset(
     }
 
     private static Preset fromProperties(Properties props) {
+        // Resolve name: if isNameI18nKey=true, treat as i18n key; otherwise use raw text
+        String nameRaw = props.getProperty("preset.name", "Default");
+        String name = Boolean.parseBoolean(
+            props.getProperty("preset.isNameI18nKey", "false")
+        )
+            ? I18n.getOrDefault(nameRaw, nameRaw)
+            : nameRaw;
+
+        // Resolve description: if isDescriptionI18nKey=true, treat as i18n key; otherwise use raw text
+        String descRaw = props.getProperty("preset.description", "");
+        String description = Boolean.parseBoolean(
+            props.getProperty("preset.isDescriptionI18nKey", "false")
+        )
+            ? I18n.getOrDefault(descRaw, descRaw)
+            : descRaw;
+
         return new Preset(
-            props.getProperty("preset.name", "Default"),
-            props.getProperty("preset.description", ""),
+            name,
+            description,
             VideoCodec.fromName(
                 props.getProperty("preset.videoCodec", "libx264")
             ),
