@@ -843,10 +843,10 @@ class StrategyTest {
                 false,
                 false,
                 FfmpegPreset.MEDIUM,
-                Tune.STILLIMAGE
+                Tune.ANIMATION
             );
             Preset result = calc(preset);
-            assertEquals(Tune.STILLIMAGE, result.tune());
+            assertEquals(Tune.ANIMATION, result.tune());
         }
     }
 
@@ -1444,7 +1444,7 @@ class StrategyTest {
                 1080,
                 30.0,
                 VideoContainer.MP4,
-                false, // keepSourceAudio
+                true, // keepSourceAudio
                 AudioCodec.AAC,
                 192,
                 true,
