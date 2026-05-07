@@ -34,6 +34,7 @@ class StrategyTest {
             30, // fps
             5000, // bitrate
             128, // audioBitrate
+            2, // audioChannels
             120.5, // duration (seconds)
             "h264", // codec
             50L * 1024 * 1024 // 50 MB
@@ -312,6 +313,7 @@ class StrategyTest {
                 30,
                 5000,
                 128,
+                2, // audioChannels
                 120.5,
                 "h264",
                 50L * 1024 * 1024
@@ -439,6 +441,7 @@ class StrategyTest {
                 23, // 23.976 film rate
                 5000,
                 128,
+                2, // audioChannels
                 120.5,
                 "h264",
                 50L * 1024 * 1024
@@ -479,6 +482,7 @@ class StrategyTest {
                 29, // 29.97 NTSC
                 5000,
                 128,
+                2, // audioChannels
                 120.5,
                 "h264",
                 50L * 1024 * 1024
@@ -518,6 +522,7 @@ class StrategyTest {
                 59, // 59.94
                 5000,
                 128,
+                2, // audioChannels
                 120.5,
                 "h264",
                 50L * 1024 * 1024
@@ -1594,6 +1599,7 @@ class StrategyTest {
                 0, // fps = 0
                 5000,
                 128,
+                2, // audioChannels
                 120.5,
                 "h264",
                 50L * 1024 * 1024

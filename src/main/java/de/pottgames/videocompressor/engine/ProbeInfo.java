@@ -13,6 +13,7 @@ public record ProbeInfo(
     double fps,
     int bitrate,
     int audioBitrate,
+    int audioChannels,
     double duration,
     String codec,
     long fileSize
@@ -96,5 +97,36 @@ public record ProbeInfo(
         } else {
             return String.format(I18n.getLocale(), "%.1fs", duration);
         }
+    }
+
+    /**
+     * Returns an abbreviated audio channel configuration string.
+     * Standard configurations are named (e.g., "Mono", "Stereo", "5.1 Surround"),
+     * while non-standard channel counts fall back to the raw number.
+     *
+     * @return localized string like "Mono", "Stereo", "5.1 Surround", or "10"
+     */
+    public String getAbbreviatedAudioChannels() {
+        if (audioChannels > 0) {
+            return I18n.get("audio.ch." + audioChannels);
+        }
+
+        return String.valueOf(audioChannels);
+    }
+
+    /**
+     * Returns a combined string of audio bitrate and abbreviated audio channels.
+     *
+     * @return formatted string like "128 kbps Stereo" or "0 kbps Mono"
+     */
+    public String getAudioBitrateChannelString() {
+        int kbps = audioBitrate / 1000;
+        return String.format(
+            I18n.getLocale(),
+            "%d kbps %s",
+            kbps,
+            " @ ",
+            getAbbreviatedAudioChannels()
+        );
     }
 }

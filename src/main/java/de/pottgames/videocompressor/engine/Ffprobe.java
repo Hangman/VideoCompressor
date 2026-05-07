@@ -137,8 +137,9 @@ public class Ffprobe {
                 ? formatNode.get("bit_rate").asInt()
                 : 0;
 
-            // Extract audio bitrate
+            // Extract audio bitrate and channel count
             int audioBitrate = 0;
+            int audioChannels = 0;
             for (JsonNode stream : streams) {
                 String codecType = stream.has("codec_type")
                     ? stream.get("codec_type").asString()
@@ -146,6 +147,9 @@ public class Ffprobe {
                 if ("audio".equals(codecType)) {
                     if (stream.has("bit_rate")) {
                         audioBitrate = stream.get("bit_rate").asInt();
+                    }
+                    if (stream.has("channels")) {
+                        audioChannels = stream.get("channels").asInt();
                     }
                     break;
                 }
@@ -171,6 +175,7 @@ public class Ffprobe {
                 fps,
                 bitrate,
                 audioBitrate,
+                audioChannels,
                 duration,
                 codec,
                 fileSize
