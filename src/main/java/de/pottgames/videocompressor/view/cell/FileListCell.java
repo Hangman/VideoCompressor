@@ -39,6 +39,8 @@ public class FileListCell extends ListCell<File> {
     private final Label codecText;
     private final HBox fileSizeBadge;
     private final Label fileSizeText;
+    private final HBox audioBadge;
+    private final Label audioText;
     private final HBox durationBadge;
     private final Label durationText;
     private final HBox bottomRow;
@@ -49,6 +51,9 @@ public class FileListCell extends ListCell<File> {
     private CompletableFuture<ProbeInfo> probeFuture;
 
     public FileListCell() {
+        Image audioImage = new Image(
+            getClass().getResourceAsStream("/audio_icon_monochrome.png")
+        );
         Image clockImage = new Image(
             getClass().getResourceAsStream("/clock_icon_monochrome.png")
         );
@@ -95,7 +100,7 @@ public class FileListCell extends ListCell<File> {
             .get(resolutionFpsBadge.getChildren().size() - 1);
 
         // Bitrate badge
-        bitrateBadge = createBadge(100, bitrateImage);
+        bitrateBadge = createBadge(110, bitrateImage);
         bitrateText = (Label) bitrateBadge
             .getChildren()
             .get(bitrateBadge.getChildren().size() - 1);
@@ -118,6 +123,12 @@ public class FileListCell extends ListCell<File> {
             .getChildren()
             .get(fileSizeBadge.getChildren().size() - 1);
 
+        // Audio bitrate + channels badge
+        audioBadge = createBadge(190, audioImage);
+        audioText = (Label) audioBadge
+            .getChildren()
+            .get(audioBadge.getChildren().size() - 1);
+
         // Set tooltips on badges
         Tooltip.install(
             resolutionFpsBadge,
@@ -139,12 +150,17 @@ public class FileListCell extends ListCell<File> {
             fileSizeBadge,
             new Tooltip(I18n.get("cell.tooltip.file_size"))
         );
+        Tooltip.install(
+            audioBadge,
+            new Tooltip(I18n.get("cell.tooltip.audio"))
+        );
 
         bottomRow = new HBox(
             8,
             resolutionFpsBadge,
             bitrateBadge,
             codecBadge,
+            audioBadge,
             durationBadge,
             fileSizeBadge
         );
@@ -219,6 +235,7 @@ public class FileListCell extends ListCell<File> {
             codecText.setText("");
             fileSizeText.setText("");
             durationText.setText("");
+            audioText.setText("");
         } else {
             nameLabel.setText(file.getName());
             setGraphic(root);
@@ -257,5 +274,6 @@ public class FileListCell extends ListCell<File> {
             )
         );
         durationText.setText(info.formatDuration());
+        audioText.setText(info.getAudioBitrateChannelString());
     }
 }

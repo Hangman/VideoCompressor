@@ -123,9 +123,8 @@ public record ProbeInfo(
         int kbps = audioBitrate / 1000;
         return String.format(
             I18n.getLocale(),
-            "%d kbps %s",
+            "%d kbps @ %s",
             kbps,
-            " @ ",
             getAbbreviatedAudioChannels()
         );
     }
