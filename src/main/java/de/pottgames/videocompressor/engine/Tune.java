@@ -6,13 +6,13 @@ package de.pottgames.videocompressor.engine;
  * Each entry provides its FFmpeg CLI identifier and a human-readable name.
  */
 public enum Tune {
-    NONE("none", "none"),
-    FILM("film", "film"),
-    ANIMATION("animation", "animation"),
-    GRAIN("grain", "grain"),
-    STILLIMAGE("stillimage", "stillimage"),
-    FASTDECODE("fastdecode", "fastdecode"),
-    ZEROLATENCY("zerolatency", "zerolatency");
+    NONE("none", "None"),
+    FILM("film", "Film"),
+    ANIMATION("animation", "Animation"),
+    GRAIN("grain", "Grain"),
+    STILLIMAGE("stillimage", "Stillimage"),
+    FASTDECODE("fastdecode", "Fastdecode"),
+    ZEROLATENCY("zerolatency", "Zerolatency");
 
     private final String ffmpegName;
     private final String humanName;
