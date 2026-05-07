@@ -574,7 +574,7 @@ public class Step4View implements StepView {
             .add(
                 buildPropertyRow(
                     I18n.get("step4.property.audio_bitrate"),
-                    formatBitrate(info.audioBitrate()),
+                    info.getAudioBitrateChannelString(),
                     info,
                     other,
                     "audioBitrate"
@@ -695,9 +695,16 @@ public class Step4View implements StepView {
                 changed = thisNum != otherNum;
                 break;
             case "audioBitrate":
-                thisNum = thisInfo.audioBitrate();
-                otherNum = other.audioBitrate();
-                changed = thisNum != otherNum;
+                // Compare total audio memory load: bitrate * duration * channels
+                thisNum =
+                    thisInfo.audioBitrate() *
+                    thisInfo.duration() *
+                    thisInfo.audioChannels();
+                otherNum =
+                    other.audioBitrate() *
+                    other.duration() *
+                    other.audioChannels();
+                changed = Math.abs(thisNum - otherNum) > 1;
                 break;
             case "duration":
                 thisNum = thisInfo.duration();
