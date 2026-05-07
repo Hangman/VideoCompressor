@@ -14,6 +14,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.Separator;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -116,6 +117,28 @@ public class FileListCell extends ListCell<File> {
         fileSizeText = (Label) fileSizeBadge
             .getChildren()
             .get(fileSizeBadge.getChildren().size() - 1);
+
+        // Set tooltips on badges
+        Tooltip.install(
+            resolutionFpsBadge,
+            new Tooltip(I18n.get("cell.tooltip.resolution_fps"))
+        );
+        Tooltip.install(
+            bitrateBadge,
+            new Tooltip(I18n.get("cell.tooltip.bitrate"))
+        );
+        Tooltip.install(
+            codecBadge,
+            new Tooltip(I18n.get("cell.tooltip.codec"))
+        );
+        Tooltip.install(
+            durationBadge,
+            new Tooltip(I18n.get("cell.tooltip.duration"))
+        );
+        Tooltip.install(
+            fileSizeBadge,
+            new Tooltip(I18n.get("cell.tooltip.file_size"))
+        );
 
         bottomRow = new HBox(
             8,
