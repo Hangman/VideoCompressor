@@ -386,6 +386,7 @@ public class Step2View implements StepView {
         presetChoiceBox.setPrefWidth(200);
         presetChoiceBox.setMinWidth(200);
         presetChoiceBox.setMaxWidth(200);
+        presetChoiceBox.setStyle("-fx-cursor: hand;");
 
         // Custom string converter for readable preset names
         presetChoiceBox.setConverter(
@@ -479,6 +480,7 @@ public class Step2View implements StepView {
         codecBox = new ChoiceBox<>(
             FXCollections.observableArrayList(VideoCodec.values())
         );
+        codecBox.setStyle("-fx-cursor: hand;");
         group
             .getChildren()
             .add(
@@ -498,7 +500,7 @@ public class Step2View implements StepView {
         crfSlider.setMinorTickCount(9);
         crfSlider.setBlockIncrement(1);
         crfSlider.setSnapToTicks(true);
-        crfSlider.setStyle("-fx-pref-width: 300;");
+        crfSlider.setStyle("-fx-pref-width: 300; -fx-cursor: hand;");
 
         // Label that shows the current CRF value next to the slider
         crfValueLabel = new Label("23");
@@ -608,6 +610,7 @@ public class Step2View implements StepView {
         fpsBox = new ChoiceBox<>(
             FXCollections.observableArrayList(Fps.values())
         );
+        fpsBox.setStyle("-fx-cursor: hand;");
         group
             .getChildren()
             .add(
@@ -623,6 +626,7 @@ public class Step2View implements StepView {
         ffmpegPresetBox = new ChoiceBox<>(
             FXCollections.observableArrayList(FfmpegPreset.values())
         );
+        ffmpegPresetBox.setStyle("-fx-cursor: hand;");
         group
             .getChildren()
             .add(
@@ -638,6 +642,7 @@ public class Step2View implements StepView {
         tuneBox = new ChoiceBox<>(
             FXCollections.observableArrayList(Tune.values())
         );
+        tuneBox.setStyle("-fx-cursor: hand;");
         group
             .getChildren()
             .add(
@@ -677,6 +682,7 @@ public class Step2View implements StepView {
         audioCodecBox = new ChoiceBox<>(
             FXCollections.observableArrayList(AudioCodec.values())
         );
+        audioCodecBox.setStyle("-fx-cursor: hand;");
         audioRow
             .getChildren()
             .add(
@@ -771,6 +777,7 @@ public class Step2View implements StepView {
         containerBox = new ChoiceBox<>(
             FXCollections.observableArrayList(VideoContainer.values())
         );
+        containerBox.setStyle("-fx-cursor: hand;");
         group
             .getChildren()
             .add(
@@ -825,6 +832,7 @@ public class Step2View implements StepView {
      */
     private HBox buildCheckBoxRow(CheckBox checkBox, String labelText) {
         HBox box = new HBox(8);
+        checkBox.setStyle("-fx-cursor: hand;");
         box.getChildren().add(checkBox);
         Label label = new Label(labelText);
         label.setStyle(Theme.TEXT_FILL_FG_STYLE);
