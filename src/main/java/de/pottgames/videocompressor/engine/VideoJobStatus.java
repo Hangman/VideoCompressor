@@ -70,7 +70,7 @@ public class VideoJobStatus {
      * Sets the progress in percent (0.0 - 100.0).
      */
     public void setProgressPercent(double progressPercent) {
-        this.progressPercent = Math.max(0.0, Math.min(100.0, progressPercent));
+        this.progressPercent = Math.clamp(progressPercent, 0.0, 100.0);
     }
 
     public double getProgressPercent() {

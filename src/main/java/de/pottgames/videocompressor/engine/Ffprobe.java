@@ -50,26 +50,7 @@ public class Ffprobe {
      */
     public static ProbeInfo probe(File file) {
         try {
-            Path ffprobePath = Engine.getFfprobePath();
-            if (!ffprobePath.toFile().exists()) {
-                throw new IOException(
-                    "ffprobe executable not found at: " + ffprobePath
-                );
-            }
-
-            ProcessBuilder processBuilder = new ProcessBuilder(
-                ffprobePath.toString(),
-                "-v",
-                "quiet",
-                "-print_format",
-                "json",
-                "-show_format",
-                "-show_streams",
-                file.getAbsolutePath()
-            );
-            processBuilder.redirectErrorStream(true);
-
-            Process process = processBuilder.start();
+            Process process = getProcess(file);
             CURRENT_PROCESS.set(process);
 
             byte[] outputBytes;
@@ -188,12 +169,35 @@ public class Ffprobe {
         }
     }
 
+    private static Process getProcess(File file) throws IOException {
+        Path ffprobePath = Engine.getFfprobePath();
+        if (!ffprobePath.toFile().exists()) {
+            throw new IOException(
+                "ffprobe executable not found at: " + ffprobePath
+            );
+        }
+
+        ProcessBuilder processBuilder = new ProcessBuilder(
+            ffprobePath.toString(),
+            "-v",
+            "quiet",
+            "-print_format",
+            "json",
+            "-show_format",
+            "-show_streams",
+            file.getAbsolutePath()
+        );
+        processBuilder.redirectErrorStream(true);
+
+        return processBuilder.start();
+    }
+
     /**
      * Cancels any currently running ffprobe process.
      * This destroys the underlying OS process immediately.
      * If no process is running, this is a no-op.
      *
-     * @return true if a process was cancelled, false if none was running
+     * @return true if a process was canceled, false if none was running
      */
     public static boolean cancel() {
         Process process = CURRENT_PROCESS.get();

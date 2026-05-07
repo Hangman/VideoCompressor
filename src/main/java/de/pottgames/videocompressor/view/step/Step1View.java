@@ -7,9 +7,12 @@ import de.pottgames.videocompressor.view.StepView;
 import de.pottgames.videocompressor.view.cell.FileListCell;
 import java.io.File;
 import java.util.List;
+import java.util.Objects;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -33,7 +36,7 @@ public class Step1View implements StepView {
     private final ListView<File> fileListView;
     private final StackPane root;
     private Button nextButton;
-    private VBox placeholderVBox;
+    private final VBox placeholderVBox;
     private boolean activated = false;
 
     public Step1View() {
@@ -48,7 +51,7 @@ public class Step1View implements StepView {
 
         // Logo shown when no videos have been added yet
         Image logoImage = new Image(
-            getClass().getResourceAsStream("/logo_466.png")
+                Objects.requireNonNull(getClass().getResourceAsStream("/logo_466.png"))
         );
         var logoView = new ImageView(logoImage);
         logoView.setFitHeight(300);
@@ -141,13 +144,9 @@ public class Step1View implements StepView {
         });
 
         // Style the drop area when dragging over
-        root.setOnDragEntered(event -> {
-            event.consume();
-        });
+        root.setOnDragEntered(Event::consume);
 
-        root.setOnDragExited(event -> {
-            event.consume();
-        });
+        root.setOnDragExited(Event::consume);
     }
 
     @Override

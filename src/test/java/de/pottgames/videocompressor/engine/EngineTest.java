@@ -365,8 +365,8 @@ class EngineTest {
             "webm"
         );
         assertEquals(
-            expected,
-            Engine.SUPPORTED_EXTENSIONS,
+                Engine.SUPPORTED_EXTENSIONS,
+                expected,
             "SUPPORTED_EXTENSIONS should contain all expected video formats"
         );
     }
@@ -383,8 +383,8 @@ class EngineTest {
             "*.webm"
         );
         assertEquals(
-            expected,
-            Engine.SUPPORTED_EXTENSION_PATTERNS,
+                Engine.SUPPORTED_EXTENSION_PATTERNS,
+                expected,
             "SUPPORTED_EXTENSION_PATTERNS should contain all expected patterns"
         );
     }

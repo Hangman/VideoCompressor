@@ -29,6 +29,8 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 
+import java.util.Objects;
+
 public class App extends Application {
 
     // Window size
@@ -120,13 +122,13 @@ public class App extends Application {
         stage.setTitle(I18n.get("app.title"));
         stage
             .getIcons()
-            .add(new Image(App.class.getResourceAsStream("/logo_128.png")));
+            .add(new Image(Objects.requireNonNull(App.class.getResourceAsStream("/logo_128.png"))));
         stage
             .getIcons()
-            .add(new Image(App.class.getResourceAsStream("/logo_64.png")));
+            .add(new Image(Objects.requireNonNull(App.class.getResourceAsStream("/logo_64.png"))));
         stage
             .getIcons()
-            .add(new Image(App.class.getResourceAsStream("/logo_32.png")));
+            .add(new Image(Objects.requireNonNull(App.class.getResourceAsStream("/logo_32.png"))));
         stage.setScene(scene);
         stage.setMinWidth(WINDOW_WIDTH);
         stage.setMinHeight(WINDOW_HEIGHT);
@@ -218,14 +220,14 @@ public class App extends Application {
 
         step1Label = new Label(I18n.get("stepper.import"));
 
-        VBox step1Box = new VBox(8, step1NumberPane, step1Label);
+        var step1Box = new VBox(8, step1NumberPane, step1Label);
         step1Box.setAlignment(Pos.CENTER);
 
         // Line 1-2
         line1 = new Line(0, 18, 150, 18);
         line1.setStrokeWidth(3);
 
-        // Step 2: Einstellungen
+        // Step 2: Settings
         step2Ring = new Circle(18);
         step2Ring.setFill(javafx.scene.paint.Color.TRANSPARENT);
         step2Ring.setStrokeWidth(3);
@@ -236,6 +238,8 @@ public class App extends Application {
         step2NumberPane.setAlignment(Pos.CENTER);
 
         step2Label = new Label(I18n.get("stepper.settings"));
+
+
 
         VBox step2Box = new VBox(8, step2NumberPane, step2Label);
         step2Box.setAlignment(Pos.CENTER);
@@ -411,7 +415,7 @@ public class App extends Application {
         }
     }
 
-    public static void main(String[] args) {
+    static void main(String[] args) {
         launch(args);
     }
 }

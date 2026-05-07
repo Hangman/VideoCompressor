@@ -49,7 +49,6 @@ public class Step4View implements StepView {
 
     // ── Results content ──────────────────────────────────────────────────
 
-    private final ScrollPane scrollPane;
     private final VBox resultsContent;
     private final Label summaryLabel;
 
@@ -66,7 +65,7 @@ public class Step4View implements StepView {
         resultsContent = new VBox(16);
         resultsContent.setPadding(new Insets(0, 4, 0, 4));
 
-        scrollPane = new ScrollPane(resultsContent);
+        var scrollPane = new ScrollPane(resultsContent);
         scrollPane.setFitToWidth(true);
         scrollPane.setPadding(new Insets(0));
         scrollPane.setStyle("-fx-background: transparent;");
@@ -96,9 +95,7 @@ public class Step4View implements StepView {
 
         List<VideoJob> jobs = state.getPreparedJobs();
         if (jobs == null || jobs.isEmpty()) {
-            Platform.runLater(() -> {
-                summaryLabel.setText(I18n.get("step4.no_results"));
-            });
+            Platform.runLater(() -> summaryLabel.setText(I18n.get("step4.no_results")));
             return;
         }
 
@@ -122,7 +119,7 @@ public class Step4View implements StepView {
                     if (outputFile != null && outputFile.exists()) {
                         return Ffprobe.probeAsync(outputFile);
                     }
-                    return CompletableFuture.completedFuture((ProbeInfo) null);
+                    return CompletableFuture.completedFuture(null);
                 })
                 .handle((info, ex) -> {
                     if (ex != null) {
@@ -131,25 +128,21 @@ public class Step4View implements StepView {
                         outputProbes.set(index, info);
                     }
 
-                    Platform.runLater(() -> {
-                        summaryLabel.setText(
-                            I18n.get(
-                                "step4.loading_progress",
-                                index + 1,
-                                totalFiles
-                            )
-                        );
-                    });
+                    Platform.runLater(() -> summaryLabel.setText(
+                        I18n.get(
+                            "step4.loading_progress",
+                            index + 1,
+                            totalFiles
+                        )
+                    ));
 
                     return info;
                 });
         }
 
-        chain.whenComplete((_, _) -> {
-            Platform.runLater(() -> {
-                buildComparisonUI(state, jobs, outputProbes);
-            });
-        });
+        chain.whenComplete((_, _) -> Platform.runLater(() -> {
+            buildComparisonUI(state, jobs, outputProbes);
+        }));
     }
 
     // ── UI Building ──────────────────────────────────────────────────────
@@ -480,27 +473,10 @@ public class Step4View implements StepView {
                 "-fx-letter-spacing: 1.5;"
         );
 
-        Button playButton = new Button("▶");
-        playButton.setStyle(
-            "-fx-background-color: transparent;" +
-                "-fx-text-fill: " +
-                Theme.HEX_ACCENT +
-                ";" +
-                "-fx-font-size: 14px;" +
-                "-fx-cursor: hand;" +
-                "-fx-border: 1px;" +
-                "-fx-border-color: " +
-                Theme.HEX_ACCENT +
-                ";" +
-                "-fx-border-radius: 6px;"
-        );
-        playButton.setPadding(new Insets(4, 10, 4, 10));
-        playButton.setOnAction(e -> {
-            PathOpener.openAsync(info.file().toPath());
-        });
+        Button playButton = getButton(info);
 
         titleRow.getChildren().addAll(titleLabel, new Pane(), playButton);
-        HBox.setHgrow((Pane) titleRow.getChildren().get(1), Priority.ALWAYS);
+        HBox.setHgrow(titleRow.getChildren().get(1), Priority.ALWAYS);
         panel.getChildren().add(titleRow);
 
         // Divider under title
@@ -612,6 +588,26 @@ public class Step4View implements StepView {
 
         panel.getChildren().add(props);
         return panel;
+    }
+
+    private static Button getButton(ProbeInfo info) {
+        Button playButton = new Button("▶");
+        playButton.setStyle(
+            "-fx-background-color: transparent;" +
+                "-fx-text-fill: " +
+                Theme.HEX_ACCENT +
+                ";" +
+                "-fx-font-size: 14px;" +
+                "-fx-cursor: hand;" +
+                "-fx-border: 1px;" +
+                "-fx-border-color: " +
+                Theme.HEX_ACCENT +
+                ";" +
+                "-fx-border-radius: 6px;"
+        );
+        playButton.setPadding(new Insets(4, 10, 4, 10));
+        playButton.setOnAction(e -> PathOpener.openAsync(info.file().toPath()));
+        return playButton;
     }
 
     // ── Property Row Builders ────────────────────────────────────────────

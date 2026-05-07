@@ -4,6 +4,7 @@ import de.pottgames.videocompressor.i18n.I18n;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Serial;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.List;
@@ -50,17 +51,9 @@ public class Ffmpeg {
     private static volatile Process currentProcess;
 
     /** Set to true when cancel() is called. */
-    private static volatile boolean cancelled;
+    private static volatile boolean canceled;
 
     // ── Regex patterns for parsing FFmpeg stderr ─────────────────────────
-
-    /**
-     * Matches FFmpeg progress lines like:
-     * <pre>
-     *   frame=1234 fps=25.0 q=28.0 size=12345kB time=00:01:23.45 bitrate=1234.5kbits/s speed=1.2x
-     * </pre>
-     * Delegated to {@link FfmpegProgress} for parsing.
-     */
 
     /**
      * Matches FFmpeg log lines with a level prefix like:
@@ -71,16 +64,16 @@ public class Ffmpeg {
      * </pre>
      */
     private static final Pattern LOG_PATTERN = Pattern.compile(
-        "^\\[(\\w+)\\]\\s*(.*)",
+            "^\\[(\\w+)]\\s*(.*)",
         Pattern.MULTILINE
     );
 
     // ── Public API ──────────────────────────────────────────────────────
 
     /**
-     * Returns the path to the ffmpeg executable.
+     * Returns the path to the FFmpeg executable.
      *
-     * @return the path to the ffmpeg executable
+     * @return the path to the FFmpeg executable
      */
     public static Path path() {
         return Engine.getFfmpegPath();
@@ -89,14 +82,14 @@ public class Ffmpeg {
     /**
      * Cancels the currently running FFmpeg process, if any.
      * This forcibly destroys the process and marks the execution
-     * as cancelled so that callers can distinguish cancellation
+     * as canceled so that callers can distinguish cancellation
      * from a normal failure.
      *
-     * @return true if a process was actually running and got cancelled,
+     * @return true if a process was actually running and got canceled,
      *         false if no process was running
      */
     public static boolean cancel() {
-        cancelled = true;
+        canceled = true;
         Process toCancel;
         synchronized (Ffmpeg.class) {
             toCancel = currentProcess;
@@ -114,8 +107,8 @@ public class Ffmpeg {
      *
      * @return true if cancel() was called
      */
-    public static boolean isCancelled() {
-        return cancelled;
+    public static boolean isCanceled() {
+        return canceled;
     }
 
     /**
@@ -123,7 +116,7 @@ public class Ffmpeg {
      * batch of jobs so that a previous cancellation doesn't carry over.
      */
     public static void resetCancelled() {
-        cancelled = false;
+        canceled = false;
     }
 
     /**
@@ -303,14 +296,14 @@ public class Ffmpeg {
         FfmpegProgress progress = new FfmpegProgress(rawProgress);
         return new FfmpegProgressEvent(
             timestamp,
-            (Long) progress.getFrame(), // frameCount
-            (Double) progress.getFps(), // fps
-            (Double) progress.getQ(), // quality
-            (Double) (double) progress.getSize(), // sizeKb
+                progress.getFrame(), // frameCount
+                progress.getFps(), // fps
+                progress.getQ(), // quality
+                (double) progress.getSize(), // sizeKb
             progress.getTime(), // timeStr
-            (Long) progress.getTimeMs(), // timeMs
-            (Double) progress.getBitrate(), // bitrateKbps
-            (Double) progress.getSpeed() // speed
+                progress.getTimeMs(), // timeMs
+                progress.getBitrate(), // bitrateKbps
+                progress.getSpeed() // speed
         );
     }
 
@@ -326,8 +319,7 @@ public class Ffmpeg {
 
         return switch (levelStr.toLowerCase()) {
             case "info" -> FfmpegLogEvent.LogLevel.INFO;
-            case "verbose" -> FfmpegLogEvent.LogLevel.DEBUG;
-            case "debug" -> FfmpegLogEvent.LogLevel.DEBUG;
+            case "verbose", "debug" -> FfmpegLogEvent.LogLevel.DEBUG;
             case "trace" -> FfmpegLogEvent.LogLevel.TRACE;
             case "warning", "warn" -> FfmpegLogEvent.LogLevel.WARNING;
             case "error" -> FfmpegLogEvent.LogLevel.ERROR;
@@ -343,6 +335,7 @@ public class Ffmpeg {
      */
     public static class FfmpegException extends RuntimeException {
 
+        @Serial
         private static final long serialVersionUID = 7315240434659431544L;
 
         FfmpegException(String message) {

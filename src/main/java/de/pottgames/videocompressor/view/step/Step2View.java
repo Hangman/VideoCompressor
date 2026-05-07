@@ -43,7 +43,7 @@ import javafx.util.Duration;
  * shown in a scrollable section below.
  *
  * A live validation panel shows real-time feedback (debounced) as the user
- * tweaks settings, colour-coded green / amber / red.
+ * tweaks settings, color-coded green / amber / red.
  *
  * This view starts in a disabled state until the Engine is initialized
  * asynchronously. Once {@link #setEngine(Engine)} is called, the UI is
@@ -68,7 +68,7 @@ public class Step2View implements StepView {
 
     // ── UI references ────────────────────────────────────────────────────
     // Assigned in build methods called from constructor, so not final.
-    private VBox root = null;
+    private final VBox root;
     private ChoiceBox<Preset> presetChoiceBox = null;
     private Label presetDescriptionLabel = null;
 
@@ -150,7 +150,7 @@ public class Step2View implements StepView {
         List<Preset> loaded = engine.getPresets();
         if (loaded != null && !loaded.isEmpty()) {
             presets.setAll(loaded);
-            selectedPreset = loaded.get(0);
+            selectedPreset = loaded.getFirst();
             basePreset = selectedPreset;
             presetChoiceBox.setValue(selectedPreset);
             populateControls();
@@ -318,7 +318,7 @@ public class Step2View implements StepView {
             validationLabel.setVisible(true);
             validationPanel.setVisible(true);
 
-            validationIconLabel.setText("\u26A0"); // ⚠
+            validationIconLabel.setText("⚠"); // ⚠
             validationIconLabel.setStyle(
                 Theme.FONT_LARGE_STYLE + Theme.TEXT_FILL_WARNING_STYLE
             );
@@ -342,7 +342,7 @@ public class Step2View implements StepView {
             validationLabel.setVisible(true);
             validationPanel.setVisible(true);
 
-            validationIconLabel.setText("\u2717"); // ✗
+            validationIconLabel.setText("✗"); // ✗
             validationIconLabel.setStyle(
                 Theme.FONT_LARGE_STYLE + Theme.TEXT_FILL_DANGER_STYLE
             );
@@ -513,11 +513,9 @@ public class Step2View implements StepView {
         // Update label text when slider value changes
         crfSlider
             .valueProperty()
-            .addListener((_, _, _) -> {
-                crfValueLabel.setText(
-                    String.valueOf((int) crfSlider.getValue())
-                );
-            });
+            .addListener((_, _, _) -> crfValueLabel.setText(
+                String.valueOf((int) crfSlider.getValue())
+            ));
 
         // Adjust slider max based on selected codec
         codecBox
@@ -557,7 +555,7 @@ public class Step2View implements StepView {
             "-fx-prompt-text-fill: " + Theme.CSS_FG_SUBTLE + ";"
         );
 
-        Label xLabel = new Label("\u00D7");
+        Label xLabel = new Label("×");
         xLabel.setStyle(Theme.TEXT_FILL_FG_SUBTLE_STYLE);
         xLabel.setAlignment(Pos.CENTER);
 
@@ -570,10 +568,10 @@ public class Step2View implements StepView {
 
         resBox.getChildren().addAll(resWidthField, xLabel, resHeightField);
 
-        resolutionRow = (HBox) buildSettingRow(
+        resolutionRow = buildSettingRow(
             I18n.get("step2.video.resolution.label"),
             I18n.get("step2.video.resolution.desc"),
-            "1920 \u00D7 1080",
+            "1920 × 1080",
             resBox
         );
 
@@ -590,9 +588,7 @@ public class Step2View implements StepView {
         // Hide resolution row when keepSourceResolution is checked
         keepSourceResCheck
             .selectedProperty()
-            .addListener((_, _, isSelected) -> {
-                resolutionRow.setDisable(isSelected);
-            });
+            .addListener((_, _, isSelected) -> resolutionRow.setDisable(isSelected));
 
         group
             .getChildren()
@@ -746,9 +742,7 @@ public class Step2View implements StepView {
         // Disable audio settings when keepSourceAudio is checked
         keepSourceAudioCheck
             .selectedProperty()
-            .addListener((_, _, isSelected) -> {
-                audioRow.setDisable(isSelected);
-            });
+            .addListener((_, _, isSelected) -> audioRow.setDisable(isSelected));
 
         group
             .getChildren()

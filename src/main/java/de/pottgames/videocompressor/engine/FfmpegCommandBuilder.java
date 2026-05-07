@@ -71,7 +71,7 @@ public final class FfmpegCommandBuilder {
         }
 
         // ── Video Filters (Scaling + Optional Normalization) ───────────
-        String vfParts = new String();
+        String vfParts = "";
         if (!preset.keepSourceResolution()) {
             vfParts =
                 "scale=" +

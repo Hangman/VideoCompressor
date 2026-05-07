@@ -44,7 +44,6 @@ local.properties
 # IDE - NetBeans
 nbproject/
 nbbuild/
-dist/
 nbdist/
 .nb-gradle/
 

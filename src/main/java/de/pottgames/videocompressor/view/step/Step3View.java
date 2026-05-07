@@ -42,7 +42,6 @@ public class Step3View implements StepView {
 
     // ── Current video info panel ─────────────────────────────────────────
 
-    private final VBox videoInfoPanel;
     private final Label currentFileNameLabel;
     private final Label currentPassLabel;
     private final ProgressBar progressBar;
@@ -85,7 +84,7 @@ public class Step3View implements StepView {
         progressCounterLabel.getStyleClass().addAll(Styles.TITLE_4);
 
         // ── Current Video Info Panel ─────────────────────────────────────
-        videoInfoPanel = new VBox(8);
+        var videoInfoPanel = new VBox(8);
         videoInfoPanel.setPadding(new Insets(12));
         videoInfoPanel.setStyle(
             "-fx-background-color: " +
@@ -511,22 +510,20 @@ public class Step3View implements StepView {
 
             jobProcessor
                 .prepareJobs(files, preset, listener)
-                .thenAccept(jobs -> {
-                    Platform.runLater(() -> {
-                        if (processingGeneration != gen) return;
-                        preparedJobs = jobs;
-                        appendLog(
-                            I18n.get("step3.preparation_log", jobs.size())
-                        );
-                        startEncoding(
-                            preparedJobs,
-                            centerButton,
-                            backButton,
-                            nextButton,
-                            gen
-                        );
-                    });
-                })
+                .thenAccept(jobs -> Platform.runLater(() -> {
+                    if (processingGeneration != gen) return;
+                    preparedJobs = jobs;
+                    appendLog(
+                        I18n.get("step3.preparation_log", jobs.size())
+                    );
+                    startEncoding(
+                        preparedJobs,
+                        centerButton,
+                        backButton,
+                        nextButton,
+                        gen
+                    );
+                }))
                 .exceptionally(ex -> {
                     Platform.runLater(() -> {
                         if (processingGeneration != gen) return;
@@ -579,22 +576,20 @@ public class Step3View implements StepView {
 
         jobProcessor
             .executeJobs(jobs, listener)
-            .whenComplete((_, ex) -> {
-                Platform.runLater(() -> {
-                    if (processingGeneration != generation) return;
-                    isProcessing = false;
-                    if (cancelTimer != null) cancelTimer.cancel(false);
-                    if (ex != null) {
-                        appendLog(
-                            "FEHLER bei der Verarbeitung: " + ex.getMessage()
-                        );
-                    }
-                    centerButton.setVisible(false);
-                    centerButton.setText("Fertig");
-                    backButton.setVisible(true);
-                    clearButtonBorder(centerButton);
-                });
-            });
+            .whenComplete((_, ex) -> Platform.runLater(() -> {
+                if (processingGeneration != generation) return;
+                isProcessing = false;
+                if (cancelTimer != null) cancelTimer.cancel(false);
+                if (ex != null) {
+                    appendLog(
+                        "FEHLER bei der Verarbeitung: " + ex.getMessage()
+                    );
+                }
+                centerButton.setVisible(false);
+                centerButton.setText("Fertig");
+                backButton.setVisible(true);
+                clearButtonBorder(centerButton);
+            }));
     }
 
     /**

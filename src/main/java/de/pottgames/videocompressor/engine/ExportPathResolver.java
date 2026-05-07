@@ -109,11 +109,9 @@ public final class ExportPathResolver {
         }
 
         // ---- Linux: Parse XDG user-dirs.dirs (locale-independent) ----
-        if (home != null) {
-            Path xdgPath = findXdgVideoFolder(home);
-            if (xdgPath != null) {
-                return xdgPath;
-            }
+        Path xdgPath = findXdgVideoFolder(home);
+        if (xdgPath != null) {
+            return xdgPath;
         }
 
         // ---- macOS: Query Movies folder via osascript (locale-independent) ----
@@ -123,15 +121,13 @@ public final class ExportPathResolver {
         }
 
         // ---- Fallback: hardcoded folder names ----
-        if (home != null) {
-            Path videos = home.resolve("Videos");
-            if (Files.isDirectory(videos)) {
-                return videos;
-            }
-            Path films = home.resolve("Filme");
-            if (Files.isDirectory(films)) {
-                return films;
-            }
+        Path videos = home.resolve("Videos");
+        if (Files.isDirectory(videos)) {
+            return videos;
+        }
+        Path films = home.resolve("Filme");
+        if (Files.isDirectory(films)) {
+            return films;
         }
 
         return null;

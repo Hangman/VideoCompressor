@@ -74,9 +74,6 @@ public class Engine {
 
         // Try relative path from working directory (project root)
         Path relativePath = Paths.get("ffmpeg/bin/" + executableName);
-        if (relativePath.toFile().exists()) {
-            return relativePath.toAbsolutePath();
-        }
 
         // Return the relative path even if it doesn't exist yet
         return relativePath.toAbsolutePath();
@@ -232,6 +229,6 @@ public class Engine {
      * @return the default preset or {@code null} if no presets were loaded
      */
     public Preset getDefaultPreset() {
-        return presets.isEmpty() ? null : presets.get(0);
+        return presets.isEmpty() ? null : presets.getFirst();
     }
 }

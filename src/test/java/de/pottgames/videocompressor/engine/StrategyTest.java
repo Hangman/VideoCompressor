@@ -239,7 +239,6 @@ class StrategyTest {
             // 16:9 source (1920x1080) vs 4:3 target (1024x768)
             double sourceAR = 1920.0 / 1080.0; // ~1.778
             double targetAR = 1024.0 / 768.0; // ~1.333
-            assertTrue(Math.abs(sourceAR - targetAR) > 0.05);
 
             Preset preset = new Preset(
                 "P",

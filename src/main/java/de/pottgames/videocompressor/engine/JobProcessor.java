@@ -138,17 +138,7 @@ public class JobProcessor {
                         File outputFile = buildOutputFile(file, editingPreset);
 
                         // Step 4: Create VideoJob
-                        VideoJobStatus status = new VideoJobStatus();
-                        // Set total duration from probe info for progress tracking
-                        status.setTotalDurationMs(
-                            (long) (probeInfo.duration() * 1000)
-                        );
-                        VideoJob job = new VideoJob(
-                            outputFile,
-                            probeInfo,
-                            editingPreset,
-                            status
-                        );
+                        VideoJob job = getVideoJob(probeInfo, outputFile, editingPreset);
                         jobs.add(job);
                     }
 
@@ -165,6 +155,20 @@ public class JobProcessor {
                 }
             },
             EXECUTOR
+        );
+    }
+
+    private static VideoJob getVideoJob(ProbeInfo probeInfo, File outputFile, Preset editingPreset) {
+        VideoJobStatus status = new VideoJobStatus();
+        // Set total duration from probe info for progress tracking
+        status.setTotalDurationMs(
+            (long) (probeInfo.duration() * 1000)
+        );
+        return new VideoJob(
+                outputFile,
+                probeInfo,
+                editingPreset,
+            status
         );
     }
 
@@ -377,8 +381,7 @@ public class JobProcessor {
                                     listener.onLog("    " + stderr.get(i));
                                 }
                                 // Build error message from last meaningful stderr line
-                                String lastError = stderr.get(
-                                    stderr.size() - 1
+                                String lastError = stderr.getLast(
                                 );
                                 status.setErrorMessage(
                                     I18n.get(

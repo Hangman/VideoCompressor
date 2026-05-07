@@ -6,6 +6,7 @@ import de.pottgames.videocompressor.engine.ProbeInfo;
 import de.pottgames.videocompressor.i18n.I18n;
 import de.pottgames.videocompressor.view.Theme;
 import java.io.File;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -28,46 +29,36 @@ import javafx.scene.layout.VBox;
 public class FileListCell extends ListCell<File> {
 
     private final Label nameLabel;
-    private final Button removeButton;
-    private final HBox topRow;
 
-    private final HBox resolutionFpsBadge;
     private final Label resolutionFpsText;
-    private final HBox bitrateBadge;
     private final Label bitrateText;
-    private final HBox codecBadge;
     private final Label codecText;
-    private final HBox fileSizeBadge;
     private final Label fileSizeText;
-    private final HBox audioBadge;
     private final Label audioText;
-    private final HBox durationBadge;
     private final Label durationText;
-    private final HBox bottomRow;
 
     private final VBox root;
-    private final Separator separator;
 
     private CompletableFuture<ProbeInfo> probeFuture;
 
     public FileListCell() {
         Image audioImage = new Image(
-            getClass().getResourceAsStream("/audio_icon_monochrome.png")
+                Objects.requireNonNull(getClass().getResourceAsStream("/audio_icon_monochrome.png"))
         );
         Image clockImage = new Image(
-            getClass().getResourceAsStream("/clock_icon_monochrome.png")
+                Objects.requireNonNull(getClass().getResourceAsStream("/clock_icon_monochrome.png"))
         );
         Image screenImage = new Image(
-            getClass().getResourceAsStream("/screen_icon_monochrome.png")
+                Objects.requireNonNull(getClass().getResourceAsStream("/screen_icon_monochrome.png"))
         );
         Image storageImage = new Image(
-            getClass().getResourceAsStream("/database_icon_monochrome.png")
+                Objects.requireNonNull(getClass().getResourceAsStream("/database_icon_monochrome.png"))
         );
         Image codecImage = new Image(
-            getClass().getResourceAsStream("/codec_icon_monochrome.png")
+                Objects.requireNonNull(getClass().getResourceAsStream("/codec_icon_monochrome.png"))
         );
         Image bitrateImage = new Image(
-            getClass().getResourceAsStream("/bitrate_icon_monochrome.png")
+                Objects.requireNonNull(getClass().getResourceAsStream("/bitrate_icon_monochrome.png"))
         );
 
         // Top row components
@@ -76,7 +67,7 @@ public class FileListCell extends ListCell<File> {
         nameLabel.setMaxWidth(Double.MAX_VALUE);
         nameLabel.getStyleClass().addAll(Styles.TITLE_4);
 
-        removeButton = new Button("X");
+        var removeButton = new Button("X");
         removeButton.setStyle("-fx-cursor: hand;");
         removeButton.getStyleClass().addAll(Styles.TITLE_4);
         removeButton.setPadding(new Insets(0, 8, 0, 8));
@@ -87,87 +78,87 @@ public class FileListCell extends ListCell<File> {
             }
         });
 
-        topRow = new HBox(8, nameLabel, removeButton);
+        var topRow = new HBox(8, nameLabel, removeButton);
         topRow.setAlignment(Pos.CENTER_LEFT);
         HBox.setHgrow(nameLabel, Priority.ALWAYS);
 
         // Bottom row components - badges with icon + label
 
         // Resolution + FPS badge
-        resolutionFpsBadge = createBadge(120, screenImage);
+        var resolutionFpsBadge = createBadge(120, screenImage);
         resolutionFpsText = (Label) resolutionFpsBadge
             .getChildren()
-            .get(resolutionFpsBadge.getChildren().size() - 1);
+            .getLast();
 
         // Bitrate badge
-        bitrateBadge = createBadge(110, bitrateImage);
+        var bitrateBadge = createBadge(110, bitrateImage);
         bitrateText = (Label) bitrateBadge
             .getChildren()
-            .get(bitrateBadge.getChildren().size() - 1);
+            .getLast();
 
         // Codec badge
-        codecBadge = createBadge(80, codecImage);
+        var codecBadge = createBadge(80, codecImage);
         codecText = (Label) codecBadge
             .getChildren()
-            .get(codecBadge.getChildren().size() - 1);
+            .getLast();
 
         // Duration badge
-        durationBadge = createBadge(100, clockImage);
+        var durationBadge = createBadge(100, clockImage);
         durationText = (Label) durationBadge
             .getChildren()
-            .get(durationBadge.getChildren().size() - 1);
+            .getLast();
 
         // File size badge
-        fileSizeBadge = createBadge(100, storageImage);
+        var fileSizeBadge = createBadge(100, storageImage);
         fileSizeText = (Label) fileSizeBadge
             .getChildren()
-            .get(fileSizeBadge.getChildren().size() - 1);
+            .getLast();
 
         // Audio bitrate + channels badge
-        audioBadge = createBadge(190, audioImage);
+        var audioBadge = createBadge(190, audioImage);
         audioText = (Label) audioBadge
             .getChildren()
-            .get(audioBadge.getChildren().size() - 1);
+            .getLast();
 
         // Set tooltips on badges
         Tooltip.install(
-            resolutionFpsBadge,
+                resolutionFpsBadge,
             new Tooltip(I18n.get("cell.tooltip.resolution_fps"))
         );
         Tooltip.install(
-            bitrateBadge,
+                bitrateBadge,
             new Tooltip(I18n.get("cell.tooltip.bitrate"))
         );
         Tooltip.install(
-            codecBadge,
+                codecBadge,
             new Tooltip(I18n.get("cell.tooltip.codec"))
         );
         Tooltip.install(
-            durationBadge,
+                durationBadge,
             new Tooltip(I18n.get("cell.tooltip.duration"))
         );
         Tooltip.install(
-            fileSizeBadge,
+                fileSizeBadge,
             new Tooltip(I18n.get("cell.tooltip.file_size"))
         );
         Tooltip.install(
-            audioBadge,
+                audioBadge,
             new Tooltip(I18n.get("cell.tooltip.audio"))
         );
 
-        bottomRow = new HBox(
-            8,
-            resolutionFpsBadge,
-            bitrateBadge,
-            codecBadge,
-            audioBadge,
-            durationBadge,
-            fileSizeBadge
+        var bottomRow = new HBox(
+                8,
+                resolutionFpsBadge,
+                bitrateBadge,
+                codecBadge,
+                audioBadge,
+                durationBadge,
+                fileSizeBadge
         );
         bottomRow.setAlignment(Pos.CENTER_LEFT);
 
         // Separator spacer
-        separator = new Separator();
+        var separator = new Separator();
         separator.setStyle(
             "-fx-background-color: transparent; -fx-padding: 6 0 6 0;"
         );
