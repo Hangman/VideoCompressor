@@ -8,12 +8,15 @@ A desktop application for compressing videos using FFmpeg. Built with **JavaFX**
 
 This project was developed to meet the specific needs of a particular customer. It is not intended as a general-purpose, highly configurable video compressor, but rather as a tailored solution for a defined use case. While active development is currently completed, I am happy to incorporate changes or adaptations if needed.
 
+> 💡 **AI-Assisted Development**
+> This entire codebase was generated using a locally hosted AI model (Qwen). The quality and architecture of the code reflect the capabilities and limitations of that local setup at the time of creation.
+
 ---
 
 ## Prerequisites
 
 - **Java 25** (or higher)
-- **Maven 3.6+**
+- **Maven 3.9+**
 - **FFmpeg** (GPL version) — must be present as a local subfolder `ffmpeg/` in the project directory. The application **does not** rely on the system `PATH` environment variable; it exclusively expects FFmpeg binaries inside this subfolder.
 
 ---
