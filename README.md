@@ -1,18 +1,37 @@
 # VideoCompressor
 
-> 🤖 **This project is built using agentic coding.** Iterations happen fast — sometimes at the expense of clean architecture. Expect rough edges, experimental design decisions, and frequent structural changes.
-
-> 🚧 **Active development — not ready for use.** This project is a work in progress and is **not** intended for production or general use yet. APIs, configuration formats, and the overall architecture are subject to change without notice.
+A desktop application for compressing videos using FFmpeg. Built with **JavaFX**, it provides a graphical interface to apply compression presets and manage video encoding workflows.
 
 ---
 
-## What is this?
+## Overview
 
-A desktop application for compressing videos using FFmpeg. Built with **Java** and **JavaFX** (yep it's true), it provides a graphical interface to apply compression presets and manage video encoding workflows.
+This project was developed to meet the specific needs of a particular customer. It is not intended as a general-purpose, highly configurable video compressor, but rather as a tailored solution for a defined use case. While active development is currently completed, I am happy to incorporate changes or adaptations if needed.
 
 ---
 
-## ⚠️ Disclaimer
+## Prerequisites
 
-This is a personal/experimental project. Things may break, change, or disappear entirely. If you're curious, feel free to look around — but don't rely on anything just yet.  
-The project currently expects a portable version of FFmpeg (full gpl version) in a subfolder called 'ffmpeg', this is subject to change in the future.
+- **Java 25** (or higher)
+- **Maven 3.6+**
+- **FFmpeg** (GPL version) — must be present as a local subfolder `ffmpeg/` in the project directory. The application **does not** rely on the system `PATH` environment variable; it exclusively expects FFmpeg binaries inside this subfolder.
+
+---
+
+## Usage
+
+### Running the application
+
+```bash
+mvn javafx:run
+```
+
+### Building a custom image
+
+You can create a compact, standalone runtime image using the `javafx:jlink` plugin:
+
+```bash
+mvn javafx:jlink
+```
+
+The resulting image will be located in the `target/` directory. It can be executed without a local JDK installation, provided that the `ffmpeg/` and `presets/` folder is copied alongside the generated image.
